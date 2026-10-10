@@ -59,16 +59,16 @@ export const imgAt = (src: string, width: number) => `${src}?scale-down-to=${wid
 
 // Images are hotlinked from the Framer site. Copy them into /public before cancelling Framer.
 export const projects: Project[] = [
-  { id: 'meteormate', title: 'MeteorMate', tags: ['Product Design', '0→1', 'Branding'], summary: 'Designing a roommate-matching app from scratch for 20,000+ UT Dallas students.', when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
   { id: 'scout', title: 'Scout', tags: ['UX Audit', 'Design Systems', 'B2B'], summary: 'Auditing a two-sided parts marketplace and turning the findings into a design system.', when: 'Summer 2026', href: '/work/scout', img: '/work/scout/thumbnail.webp', aspect: '2000 / 1125' },
   { id: 'cosign', title: 'Cosign', tags: ['Product Design', 'UX Design', 'Growth'], summary: 'Redesigning a fintech rental flow, lifting conversions by 17%.', when: 'Spring 2025', href: '/work/cosign', img: framer('5pvYzGg5sCSysJdt9R5xFw0zvw'), aspect: '1 / 1' },
-  { id: 'backtrack', title: 'Backtrack', tags: ['Product Design', 'AI/ML', 'UX Writing'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: '2025–26', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1' },
+  { id: 'tactile', title: 'Tactile', tags: ['Interaction Design', 'Hackathon'], summary: 'A Figma plugin you control with hand gestures, built at FigBuild 2026.', when: '2026', href: '/work/tactile', img: '/work/tactile/tactile-cover.webp', aspect: '2800 / 1991' },
   { id: 'act-one', title: 'Act One Ventures', tags: ['Brand Identity', 'Strategy', 'Visual Design'], summary: 'A first-pass rebrand for a venture capital firm backing AI-native founders.', when: 'Summer 2026', href: '/work/act-one', img: '/work/act-one/thumbnail.webp', aspect: '1125 / 920' },
+  { id: 'backtrack', title: 'Backtrack', tags: ['Product Design', 'AI/ML', 'UX Writing'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: '2025–26', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1' },
   { id: 'janus', title: 'Janus', tags: ['Visual Design', 'Branding', 'Marketing'], summary: 'Brand and product marketing for a freight finance platform.', when: '2026', href: '/work/janus', img: framer('EkeLjhylkYOjeDEBOhf5IiWJac'), aspect: '16 / 9' },
   { id: 'tennr', title: 'Tennr', tags: ['Visual Design', 'Marketing'], summary: 'Refreshing the brand and marketing of a healthcare AI startup.', when: '2025', href: '/work/tennr', img: framer('bPD5Y8PqndjPdKUVdovvOTugaw'), aspect: '16 / 9' },
   { id: 'arist', title: 'Arist', tags: ['Product Design', 'Branding'], summary: 'Scaling the visual system of an AI microlearning platform.', when: '2025', href: '/work/arist', img: framer('m2dJpbsJveZCEiAWVrCpBELUX0'), aspect: '1 / 1' },
   { id: 'oro', title: 'Oro', tags: ['Product Design', 'Branding'], summary: 'A cohesive brand and platform UI for a housing-benefits fintech.', when: 'Fall 2025', href: '/work/oro', img: framer('LvAj1YZLb6lAVoXA7poLmqsEeEo'), aspect: '1 / 1' },
-  { id: 'tactile', title: 'Tactile', tags: ['FigBuild 2026', 'Interaction Design'], summary: 'A Figma plugin you control with hand gestures, built at FigBuild 2026.', when: '2026', href: '/work/tactile', img: '/work/tactile/tactile-cover.webp', aspect: '2800 / 1991' },
+  { id: 'meteormate', title: 'MeteorMate', tags: ['Product Design', '0→1', 'Branding'], summary: 'Designing a roommate-matching app from scratch for 20,000+ UT Dallas students.', when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
   { id: 'stackedcast', title: 'StackedCast', tags: ['Multimedia', 'Marketing', 'Social Media'], summary: 'Multimedia and social design.', href: 'https://www.instagram.com/stackedcast/', img: framer('wYOVZUc5oorG0NcYXskYt1ard8g'), aspect: '459 / 512' },
 ]
 
