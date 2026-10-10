@@ -51,8 +51,8 @@ export default function Work() {
             onPointerEnter={e => e.pointerType === 'mouse' && setPreviewing(true)}
             onPointerLeave={() => setPreviewing(false)}
           >
-            <span className="rise" style={{ animationDelay: '.05s' }}>I'm Chris, a product designer who talks to users,</span>{' '}
-            <span className="rise" style={{ animationDelay: '.12s' }}>figures out what's broken, and helps decide what's <span className="nowrap">worth building.</span></span>
+            <span className="rise" style={{ animationDelay: '.05s' }}>I'm Chris, an interdisciplinary designer who cares about</span>{' '}
+            <span className="rise" style={{ animationDelay: '.12s' }}>understanding users, solving ambiguous problems, and <span className="nowrap">visual polish.</span></span>
           </span>
         </h1>
         <p className="intro-sub rise" style={{ animationDelay: '.24s' }}>{profile.status}</p>
