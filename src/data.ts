@@ -5,7 +5,7 @@ export const profile = {
   location: 'Dallas, TX',
   email: 'christophertran2005@gmail.com',
   resume: 'https://drive.google.com/file/d/1n3pCD4BLmDR3glADW7w6tJi5b7yhEKVU/view?usp=sharing',
-  status: 'Looking for Summer 2027 product design & product management internships.',
+  status: 'Looking for Summer 2027 design & product internships.',
   about: [
     "I'm a product designer based in Dallas. I care about understanding users, solving ambiguous problems, and getting the visual details right. Right now I'm a Product Design Intern at Francois Labs, designing for early-stage startups in fintech, AI, healthcare, and B2B.",
     "I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design & Research. I'm also a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
