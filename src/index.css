@@ -92,10 +92,11 @@ ul { list-style: none; }
 .tile-media { position: relative; overflow: hidden; background: var(--surface); }
 .tile-media img { width: 100%; height: 100%; object-fit: cover; display: block; scale: 1.08; transition: scale 1.6s var(--ease), opacity .4s; }
 .tile.is-in .tile-media img { scale: 1; }
-.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
+/* Only tiles that go somewhere react to hover; display-only pieces stay still */
+a.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
 /* Neighbours fade back only slightly, and only once the cursor settles on a tile, so scrolling
    past the grid doesn't flash the page dark */
-.grid:has(.tile:hover) .tile:not(:hover) .tile-media img { opacity: .82; transition-delay: 0s, .15s; }
+.grid:has(a.tile:hover) .tile:not(:hover) .tile-media img { opacity: .7; transition-delay: 0s, .15s; }
 .tile-title { margin-top: 6px; font-size: 20px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; }
 .tile-tags { margin-top: 16px; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
 .tile-summary { margin-top: 6px; font-size: 15px; line-height: 1.45; color: var(--muted); max-width: 44ch; }
@@ -177,7 +178,10 @@ ul { list-style: none; }
 .shot-arrow { color: var(--muted); transition: color .2s; }
 .shot.is-link:hover .shot-arrow { color: var(--accent); }
 .shot-empty { font: 12px var(--mono); color: var(--muted); border: 1px dashed var(--line); padding: 8px 12px; border-radius: 8px; }
-.grid:has(.shot:hover) .shot .tile-media img { opacity: 1; }
+/* Visuals: title sits clear of the image with its label tucked right under it */
+.shot-caption { margin-top: 14px; }
+.shot-caption .tile-title { margin-top: 0; }
+.shot-caption .tile-tags { margin-top: 6px; }
 
 /* ───────── Case study ───────── */
 .cs { padding: 0 var(--gutter); }
