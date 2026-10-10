@@ -4,7 +4,7 @@ export const profile = {
   name: 'Christopher Tran',
   location: 'Dallas, TX',
   email: 'christophertran2005@gmail.com',
-  resume: 'https://drive.google.com/file/d/1CfTEH6HSGO63CboUmLguOxzI30ZAG0tT/view?usp=sharing',
+  resume: 'https://drive.google.com/file/d/153VBMlcOyF2H3OdRyM6LfyUrZmCey9Hi/view?usp=sharing',
   status: 'Open to product design, PM & design-adjacent internships.',
   about: [
     "I'm an interdisciplinary designer who researches, builds, and ships 0→1 products end-to-end that drive growth. I'm studying Media Arts and Design at UT Dallas, where I'm a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
@@ -37,7 +37,7 @@ export const profile = {
     { label: 'X', href: 'https://x.com/christran05' },
     { label: 'Instagram', href: 'https://www.instagram.com/centeredbyvoid/' },
     { label: 'Spotify', href: 'https://open.spotify.com/user/pf2qr87jvq2lzroh3ux6pqw8u' },
-    { label: 'Resume', href: 'https://drive.google.com/file/d/1CfTEH6HSGO63CboUmLguOxzI30ZAG0tT/view?usp=sharing' },
+    { label: 'Resume', href: 'https://drive.google.com/file/d/153VBMlcOyF2H3OdRyM6LfyUrZmCey9Hi/view?usp=sharing' },
   ],
 }
 
