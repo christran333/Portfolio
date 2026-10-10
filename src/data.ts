@@ -7,8 +7,9 @@ export const profile = {
   resume: 'https://drive.google.com/file/d/1n3pCD4BLmDR3glADW7w6tJi5b7yhEKVU/view?usp=sharing',
   status: 'Looking for Summer 2027 product design & product management internships.',
   about: [
-    "I'm a product designer who loves talking to users, finding what's broken, and designing my way to something simpler, from early research all the way to shipped UI. I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design & Research, and I'm a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
-    "I've designed AI chat interfaces, rebuilt SaaS products to boost conversion, and helped create a roommate-matching app from scratch. Outside of org, school, and client work, I'm building my creative collective @centeredbyvoid and a resource site for junior designers.",
+    "I'm a product designer based in Dallas. I care about understanding users, solving ambiguous problems, and getting the visual details right. Right now I'm a Product Design Intern at Francois Labs, designing for early-stage startups in fintech, AI, healthcare, and B2B.",
+    "I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design & Research. I'm also a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
+    "Outside of school and client work, I play in a band, screen print shirts, and run my creative collective @centeredbyvoid.",
   ],
   // Outside of work, shown under About on the Info page
   interests: [
