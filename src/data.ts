@@ -5,7 +5,7 @@ export const profile = {
   location: 'Dallas, TX',
   email: 'christophertran2005@gmail.com',
   resume: 'https://drive.google.com/file/d/1n3pCD4BLmDR3glADW7w6tJi5b7yhEKVU/view?usp=sharing',
-  status: 'Open to product design, PM & design-adjacent internships.',
+  status: 'Looking for Summer 2027 product design & product management internships.',
   about: [
     "I'm a product designer who loves talking to users, finding what's broken, and designing my way to something simpler, from early research all the way to shipped UI. I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design & Research, and I'm a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
     "I've designed AI chat interfaces, rebuilt SaaS products to boost conversion, and helped create a roommate-matching app from scratch. Outside of org, school, and client work, I'm building my creative collective @centeredbyvoid and a resource site for junior designers.",
