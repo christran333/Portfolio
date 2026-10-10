@@ -7,7 +7,7 @@ export const profile = {
   resume: 'https://drive.google.com/file/d/153VBMlcOyF2H3OdRyM6LfyUrZmCey9Hi/view?usp=sharing',
   status: 'Open to product design, PM & design-adjacent internships.',
   about: [
-    "I'm an interdisciplinary designer who researches, builds, and ships 0→1 products end-to-end that drive growth. I'm studying Media Arts and Design at UT Dallas, where I'm a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
+    "I'm an interdisciplinary designer who researches, builds, and ships 0→1 products end-to-end that drive growth. I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design & Research, where I'm a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
     "I've designed AI chat interfaces, rebuilt SaaS products to boost conversion, and helped create a roommate-matching app from scratch. Outside of org, school, and client work, I'm building my creative collective @centeredbyvoid and a resource site for junior designers.",
   ],
   // Outside of work, shown under About on the Info page
@@ -63,7 +63,7 @@ export const projects: Project[] = [
   { id: 'cosign', title: 'Cosign', tags: ['Product Design', 'UX Design', 'Growth'], summary: 'Redesigning a fintech rental flow, lifting conversions by 17%.', when: 'Spring 2025', href: '/work/cosign', img: framer('5pvYzGg5sCSysJdt9R5xFw0zvw'), aspect: '1 / 1' },
   { id: 'tactile', title: 'Tactile', tags: ['Interaction Design', 'Hackathon'], summary: 'A Figma plugin you control with hand gestures, built at FigBuild 2026.', when: '2026', href: '/work/tactile', img: '/work/tactile/tactile-cover.webp', aspect: '2800 / 1991' },
   { id: 'act-one', title: 'Act One Ventures', tags: ['Brand Identity', 'Strategy', 'Visual Design'], summary: 'A first-pass rebrand for a venture capital firm backing AI-native founders.', when: 'Summer 2026', href: '/work/act-one', img: '/work/act-one/thumbnail.webp', aspect: '1125 / 920' },
-  { id: 'backtrack', title: 'Backtrack', tags: ['Product Design', 'AI/ML', 'UX Writing'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: '2025–26', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1' },
+  { id: 'backtrack', title: 'Backtrack', tags: ['Product Design', 'AI/ML', 'UX Writing'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: 'Fall 2025', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1' },
   { id: 'janus', title: 'Janus', tags: ['Visual Design', 'Branding', 'Marketing'], summary: 'Brand and product marketing for a freight finance platform.', when: '2026', href: '/work/janus', img: framer('EkeLjhylkYOjeDEBOhf5IiWJac'), aspect: '16 / 9' },
   { id: 'tennr', title: 'Tennr', tags: ['Visual Design', 'Marketing'], summary: 'Refreshing the brand and marketing of a healthcare AI startup.', when: '2025', href: '/work/tennr', img: framer('bPD5Y8PqndjPdKUVdovvOTugaw'), aspect: '16 / 9' },
   { id: 'arist', title: 'Arist', tags: ['Product Design', 'Branding'], summary: 'Scaling the visual system of an AI microlearning platform.', when: '2025', href: '/work/arist', img: framer('m2dJpbsJveZCEiAWVrCpBELUX0'), aspect: '1 / 1' },

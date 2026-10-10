@@ -59,7 +59,7 @@ export const caseStudies: Record<string, CaseStudy> = {
         title: 'The problem',
         blocks: [
           { kind: 'lead', text: 'Students find roommates through scattered Facebook groups and Reddit threads, with no way to screen for what actually matters.' },
-          { kind: 'p', text: 'In 20+ interviews, sleep schedules and cleanliness mattered far more than major or year, and trust was the biggest barrier. That made lifestyle-first matching and UTD email verification the core of the MVP.' },
+          { kind: 'p', text: 'In 15+ interviews, sleep schedules and cleanliness mattered far more than major or year, and trust was the biggest barrier. That made lifestyle-first matching and UTD email verification the core of the MVP.' },
         ],
       },
       {
@@ -76,7 +76,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   scout: {
-    role: 'Product Designer, Francois Labs',
+    role: 'Product Design Intern, Francois Labs',
     date: 'Summer 2026',
     type: 'B2B marketplace · UX audit · Design system',
     headline: 'Auditing a two-sided parts marketplace, and turning the findings into a design system',
@@ -158,14 +158,14 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   backtrack: {
-    role: 'Product Designer',
-    date: 'Fall 2025 → Spring 2026',
+    role: 'Product Design Intern, Backtrack',
+    date: 'Fall 2025',
     type: 'AI-powered enterprise tools',
     headline: 'Designing an AI assistant that turns meeting notes into action',
     hero: img('XKHJwFkDB4kDxYxSEONjAoi0'),
     highlights: [
       { value: '50+ → 12', label: 'support conversations distilled into AI scenarios' },
-      { value: '↑ 27%', label: 'task success in usability testing' },
+      { value: '37% → 64%', label: 'task completion across 8 usability tests' },
     ],
     overview: [
       'Backtrack helps teams capture and act on meeting insights. I designed Ask Backtrack AI, a conversational assistant that turns notes into follow-ups, summaries, and action items, while keeping users in control of every output.',
@@ -188,7 +188,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   'act-one': {
-    role: 'Brand Designer, Francois Labs',
+    role: 'Product Design Intern, Francois Labs',
     date: 'Summer 2026',
     type: 'Venture capital · Brand identity',
     headline: 'Giving a venture capital firm something worth believing in',
@@ -238,7 +238,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   tennr: {
-    role: 'Product Designer',
+    role: 'Product Design Intern, Francois Labs',
     date: 'Spring 2025 → Fall 2025',
     type: 'Healthcare AI startup · Branding · Visual design',
     headline: 'Revamping brand and marketing for a healthcare AI startup',
@@ -251,7 +251,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   arist: {
-    role: 'Product Designer',
+    role: 'Product Design Intern, Francois Labs',
     date: 'Spring 2025 → Fall 2025',
     type: 'AI e-learning startup · Branding · Visual design',
     headline: 'Scaling the visual system of an AI microlearning platform',
