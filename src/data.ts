@@ -7,7 +7,7 @@ export const profile = {
   resume: 'https://drive.google.com/file/d/1n3pCD4BLmDR3glADW7w6tJi5b7yhEKVU/view?usp=sharing',
   status: 'Open to product design, PM & design-adjacent internships.',
   about: [
-    "I'm an interdisciplinary designer who researches, builds, and ships 0→1 products end-to-end that drive growth. I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design & Research, where I'm a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
+    "I'm a product designer who loves talking to users, finding what's broken, and designing my way to something simpler, from early research all the way to shipped UI. I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design & Research, and I'm a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
     "I've designed AI chat interfaces, rebuilt SaaS products to boost conversion, and helped create a roommate-matching app from scratch. Outside of org, school, and client work, I'm building my creative collective @centeredbyvoid and a resource site for junior designers.",
   ],
   // Outside of work, shown under About on the Info page
@@ -31,6 +31,7 @@ export const profile = {
   recognition: [
     { label: 'Capital One Design & Research Scholar', detail: '2x', href: 'https://news.utdallas.edu/philanthropy/capital-one-scholarship-2025/' },
     { label: 'Figma Campus Leader', detail: 'UT Dallas', href: 'https://www.instagram.com/figmacampusleaders/' },
+    { label: "Dean's List", detail: 'UT Dallas' },
   ],
   links: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/christopherthanhtran/' },
@@ -67,7 +68,6 @@ export const projects: Project[] = [
   { id: 'janus', title: 'Janus', tags: ['Visual Design', 'Branding', 'Marketing'], summary: 'Brand and product marketing for a freight finance platform.', when: '2026', href: '/work/janus', img: framer('EkeLjhylkYOjeDEBOhf5IiWJac'), aspect: '16 / 9' },
   { id: 'tennr', title: 'Tennr', tags: ['Visual Design', 'Marketing'], summary: 'Refreshing the brand and marketing of a healthcare AI startup.', when: '2025', href: '/work/tennr', img: framer('bPD5Y8PqndjPdKUVdovvOTugaw'), aspect: '16 / 9' },
   { id: 'arist', title: 'Arist', tags: ['Product Design', 'Branding'], summary: 'Scaling the visual system of an AI microlearning platform.', when: '2025', href: '/work/arist', img: framer('m2dJpbsJveZCEiAWVrCpBELUX0'), aspect: '1 / 1' },
-  { id: 'oro', title: 'Oro', tags: ['Product Design', 'Branding'], summary: 'A cohesive brand and platform UI for a housing-benefits fintech.', when: 'Fall 2025', href: '/work/oro', img: framer('LvAj1YZLb6lAVoXA7poLmqsEeEo'), aspect: '1 / 1' },
   { id: 'meteormate', title: 'MeteorMate', tags: ['Product Design', '0→1', 'Branding'], summary: 'Designing a roommate-matching app from scratch for 20,000+ UT Dallas students.', when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
   { id: 'stackedcast', title: 'StackedCast', tags: ['Multimedia', 'Marketing', 'Social Media'], summary: 'Multimedia and social design.', href: 'https://www.instagram.com/stackedcast/', img: framer('wYOVZUc5oorG0NcYXskYt1ard8g'), aspect: '459 / 512' },
 ]

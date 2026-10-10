@@ -31,7 +31,7 @@ export default function Info() {
           <ul className="info-list">
             {profile.recognition.map((r, i) => (
               <li key={r.label} className="rise" style={{ animationDelay: `${0.1 + i * 0.05}s` }}>
-                <a href={r.href} target="_blank" rel="noreferrer">{r.label}<sup>↗</sup></a>
+                {r.href ? <a href={r.href} target="_blank" rel="noreferrer">{r.label}<sup>↗</sup></a> : <span>{r.label}</span>}
                 <span className="muted">{r.detail}</span>
               </li>
             ))}

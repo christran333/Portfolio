@@ -71,7 +71,7 @@ export const caseStudies: Record<string, CaseStudy> = {
           { kind: 'gallery', images: [img('ZopPj00XIp0pniokIhqRlyL4kR4'), img('w9BGAa4AdOcQIxY739lWypxJKo')], caption: 'Brand evolution: from a detailed handshake badge to a bold, scalable meteor mark' },
         ],
       },
-      { title: 'Status', blocks: [{ kind: 'p', text: 'Brand, core flows, and high-fidelity designs for every MVP feature are complete, with a Spring 2026 launch target and usability testing with UTD students next.' }] },
+      { title: 'Status', blocks: [{ kind: 'p', text: 'Brand, core flows, and high-fidelity designs for every MVP feature are complete. The app hasn\'t launched yet, and I\'m still working with the ACM team as it gets built.' }] },
     ],
   },
 
@@ -224,7 +224,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   janus: {
-    role: 'Product Designer',
+    role: 'Product Design Intern, Francois Labs',
     date: '2026',
     type: 'Logistics startup · Branding · Visual design',
     headline: 'Brand and product marketing for a freight finance platform',
@@ -260,20 +260,6 @@ export const caseStudies: Record<string, CaseStudy> = {
     sections: [
       { title: 'UI components', blocks: [{ kind: 'image', src: img('XW7B4K8FDwhddmvFZURHcjQaBI') }, { kind: 'p', text: 'System-first: reusable components over one-off designs, rolled out incrementally so the product stayed familiar while the quality bar went up.' }] },
       { title: 'Final design', blocks: [{ kind: 'gallery', images: [img('3E4aTSItRP5dd7rQWtz1pE43rWw', 'jpg'), img('8xdlWkdbchwwJStdWcihwLqET58', 'jpg')] }] },
-    ],
-  },
-
-  oro: {
-    role: 'Product Designer',
-    date: 'Fall 2025',
-    type: 'Financial services startup · Branding · Visual design',
-    headline: 'A cohesive brand and platform UI for a housing-benefits fintech',
-    hero: img('WETbFJQasd1JYyQhta3EJWxPGTc'),
-    overview: ["Oro brings housing wellness into the employee benefits stack, helping companies support their employees' path to homeownership. As Oro moved from pilot to launch, I worked on a visual identity and platform UI that tells one cohesive story, from the employer-facing platform to outward-facing materials."],
-    sections: [
-      { title: 'Illustrations & icons', blocks: [{ kind: 'gallery', images: [img('lVveKDBHhEmcQU9H3T8O741HlXo'), img('imjuxKOFYWGeOylvF9ODSbF9Lo')] }] },
-      { title: 'Imagery', blocks: [{ kind: 'image', src: img('VKr8uWaIBgksoGXOCH8VgelHFNM') }] },
-      { title: 'Website UI', blocks: [{ kind: 'gallery', images: [img('s1kjkvQLwexs5LsmVgNodnEKKw'), img('9smDCUCMDiiDvIRuE21gRbnAA'), img('lL7sldONmojnDEWyG12Rxf0aaWc')] }] },
     ],
   },
 
