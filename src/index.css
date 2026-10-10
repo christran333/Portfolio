@@ -362,3 +362,16 @@ a.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
 .info-photo.has-caption:is(:hover, :focus-visible, :focus-within) .info-tag-text { opacity: 1; transition: opacity .3s .2s; }
 .info-photo:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .info-photo.has-caption { cursor: help; }
+
+/* Projects that aren't ready: no link, a quiet "Coming soon" label fades in over the cover on hover */
+.tile.is-soon { cursor: default; }
+.tile-soon {
+  position: absolute; left: 50%; top: 50%; translate: -50% calc(-50% + 6px); padding: 8px 14px; border-radius: 999px;
+  font: 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: #fff;
+  background: #1a1a1acc; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  opacity: 0; transition: opacity .3s, translate .5s var(--ease); pointer-events: none;
+}
+.tile.is-soon:hover .tile-soon { opacity: 1; translate: -50% -50%; }
+.tile.is-soon .tile-media img { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
+.tile.is-soon:hover .tile-media img { filter: brightness(.7); }
+@media (pointer: coarse) { .tile-soon { opacity: 1; translate: -50% -50%; } }

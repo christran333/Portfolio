@@ -49,6 +49,7 @@ export type Project = {
   summary: string // one sentence, shown under the title on the home grid
   when?: string // shown in the small line above the title
   href: string // '/work/<id>' opens a case study; full URLs open in a new tab
+  soon?: boolean // not clickable yet; shows "Coming soon" on hover
   img: string
   aspect: string // the cover image's own width / height, so it shows uncropped
 }
@@ -68,6 +69,7 @@ export const projects: Project[] = [
   { id: 'janus', title: 'Janus', tags: ['Visual Design', 'Branding', 'Marketing'], summary: 'Brand and product marketing for a freight finance platform.', when: '2026', href: '/work/janus', img: framer('EkeLjhylkYOjeDEBOhf5IiWJac'), aspect: '16 / 9' },
   { id: 'tennr', title: 'Tennr', tags: ['Visual Design', 'Marketing'], summary: 'Refreshing the brand and marketing of a healthcare AI startup.', when: '2025', href: '/work/tennr', img: framer('bPD5Y8PqndjPdKUVdovvOTugaw'), aspect: '16 / 9' },
   { id: 'arist', title: 'Arist', tags: ['Product Design', 'Branding'], summary: 'Scaling the visual system of an AI microlearning platform.', when: '2025', href: '/work/arist', img: framer('m2dJpbsJveZCEiAWVrCpBELUX0'), aspect: '1 / 1' },
+  { id: 'oro', title: 'Oro', tags: ['Product Design', 'Branding'], summary: 'Brand and platform UI for a fintech startup.', when: 'Fall 2025', href: '', soon: true, img: framer('LvAj1YZLb6lAVoXA7poLmqsEeEo'), aspect: '1 / 1' },
   { id: 'meteormate', title: 'MeteorMate', tags: ['Product Design', '0→1', 'Branding'], summary: 'Designing a roommate-matching app from scratch for 20,000+ UT Dallas students.', when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
   { id: 'stackedcast', title: 'StackedCast', tags: ['Multimedia', 'Marketing', 'Social Media'], summary: 'Multimedia and social design.', href: 'https://www.instagram.com/stackedcast/', img: framer('wYOVZUc5oorG0NcYXskYt1ard8g'), aspect: '459 / 512' },
 ]

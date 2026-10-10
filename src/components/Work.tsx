@@ -65,6 +65,17 @@ export default function Work() {
         {columns.map((col, c) => (
           <div key={c} className="grid-col">
             {col.map(p => (
+              p.soon ? (
+                <div key={p.id} className="tile is-soon reveal">
+                  <div className="tile-media" style={{ aspectRatio: p.aspect }}>
+                    <img src={imgAt(p.img, 1600)} alt={`${p.title} preview`} loading="lazy" />
+                    <span className="tile-soon">Coming soon</span>
+                  </div>
+                  <p className="tile-tags">{[p.tags[0], p.when].filter(Boolean).join(' · ')}</p>
+                  <h2 className="tile-title">{p.title}</h2>
+                  <p className="tile-summary">{p.summary}</p>
+                </div>
+              ) : (
               <a key={p.id} {...linkProps(p.href)} className="tile reveal">
                 <div className="tile-media" style={{ aspectRatio: p.aspect }}>
                   <img src={imgAt(p.img, 1600)} alt={`${p.title} preview`} loading="lazy" />
@@ -73,6 +84,7 @@ export default function Work() {
                 <h2 className="tile-title">{p.title}</h2>
                 <p className="tile-summary">{p.summary}</p>
               </a>
+              )
             ))}
           </div>
         ))}

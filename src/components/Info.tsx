@@ -41,8 +41,8 @@ export default function Info() {
           <ul className="info-list">
             {projects.map((p, i) => (
               <li key={p.id} className="rise" style={{ animationDelay: `${0.15 + i * 0.03}s` }}>
-                <a {...linkProps(p.href)}>{p.title}</a>
-                <span className="muted">{p.tags[0]}</span>
+                {p.soon ? <span>{p.title}</span> : <a {...linkProps(p.href)}>{p.title}</a>}
+                <span className="muted">{p.soon ? 'Coming soon' : p.tags[0]}</span>
               </li>
             ))}
           </ul>
