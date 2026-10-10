@@ -7,7 +7,7 @@ export const profile = {
   resume: 'https://drive.google.com/file/d/1CfTEH6HSGO63CboUmLguOxzI30ZAG0tT/view?usp=sharing',
   status: 'Open to product design, PM & design-adjacent internships.',
   about: [
-    "I'm an interdisciplinary designer who researches, builds, and ships 0→1 products end-to-end that drive growth. I'm studying design at UT Dallas, where I'm a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
+    "I'm an interdisciplinary designer who researches, builds, and ships 0→1 products end-to-end that drive growth. I'm studying Media Arts and Design at UT Dallas, where I'm a Figma Campus Leader and a 2x Capital One Design & Research Scholar.",
     "I've designed AI chat interfaces, rebuilt SaaS products to boost conversion, and helped create a roommate-matching app from scratch. Outside of org, school, and client work, I'm building my creative collective @centeredbyvoid and a resource site for junior designers.",
   ],
   // Outside of work, shown under About on the Info page
