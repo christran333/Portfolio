@@ -86,7 +86,6 @@ export const playground: Shot[] = [
   { title: 'Centeredbyvoid', caption: 'Personal brand', aspect: '16 / 9', src: '/playground/cbv-brand-2400.webp', href: 'https://www.instagram.com/centeredbyvoid/' },
   { title: 'I Bombed Out at Nationals', caption: 'Centeredbyvoid · Video', aspect: '16 / 9', src: '/playground/cbv-nationals.webp', href: 'https://www.youtube.com/watch?v=CbyjhjOL92M' },
   { title: 'Hearth × Sugar Texas Run', caption: 'Tour flyer', aspect: '1080 / 1350', src: '/playground/hearth-sugar-tour.webp' },
-  { title: 'Hearth Merch', caption: 'Screen printing', aspect: '1600 / 900', src: '/playground/hearth-screenprint.webp' },
   { title: 'Collegiate Nationals Roster', caption: 'UTD Powerlifting · Graphic', aspect: '1164 / 1323', src: '/playground/utdpl-nationals-roster.webp', href: 'https://www.instagram.com/p/DHMUCCpxenc/' },
   { title: 'C-State Roster', caption: 'UTD Powerlifting · Graphic', aspect: '1440 / 1529', src: '/playground/utdpl-c-state-roster.webp', href: 'https://www.instagram.com/p/DRTIxmqDI_p/' },
   { title: 'Fall 2026 Practice Schedule', caption: 'UTD Powerlifting · Graphic', aspect: '1296 / 1280', src: '/playground/utdpl-practice-schedule.webp', href: 'https://www.instagram.com/p/Dc1JQdcRBGC/' },
