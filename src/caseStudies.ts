@@ -90,7 +90,7 @@ export const caseStudies: Record<string, CaseStudy> = {
       { value: '34', label: 'components in the resulting design system' },
     ],
     overview: [
-      'Scout is a B2B marketplace where apartment and property teams order replacement parts, from washers to doors, directly from vendors. Working alongside Vu, a founder and senior designer, I led the audit of the buyer app while Vu led the vendor app. Over two weeks we logged every point of friction on the screen where it happened, reviewed each other\'s findings on weekly calls, and clustered them into themes. The biggest outcome was a shared design system, which Vu coded and I reviewed.',
+      "Scout is a B2B marketplace where apartment and property teams order replacement parts, from washers to doors, directly from vendors. The storefront looks like a consumer shop, but underneath it runs on purchase orders and approvals, and both the buyer and vendor apps had grown inconsistent. Vu, a founder and senior designer, and I spent two weeks auditing both to figure out what to fix first.",
     ],
     sections: [
       {
@@ -126,13 +126,31 @@ export const caseStudies: Record<string, CaseStudy> = {
         ],
       },
       {
+        title: 'Working together',
+        blocks: [
+          { kind: 'lead', text: "Vu pushed back on findings that didn't carry much weight." },
+          { kind: 'p', text: "We each logged everything we found, which meant a lot of small issues. On our weekly calls, Vu challenged the ones that wouldn't really change the experience and steered me toward the screen-level problems with the biggest impact. Early on we agreed, on his call, that fixing inconsistency at the root with a design system would do more than patching screens one by one." },
+        ],
+      },
+      {
         title: 'Outcome',
         blocks: [
           { kind: 'lead', text: "The audit's clearest theme was inconsistency, so its biggest outcome was a shared design system for both apps: 6 foundations, 34 components, and 8 patterns, in light and dark." },
+          { kind: 'p', text: "Vu coded the system. I organized the Figma files and findings for handoff, then reviewed the components once they were built." },
           { kind: 'image', src: `${S}ds-colors.jpg` },
           { kind: 'gallery', images: [`${S}ds-buttons.jpg`, `${S}ds-type.jpg`] },
           { kind: 'link', href: 'https://scout-design-system-beta.vercel.app/', label: 'Explore the live design system' },
         ],
+      },
+      {
+        title: 'What I learned',
+        blocks: [{
+          kind: 'cards', items: [
+            { title: 'Walk every flow yourself', body: "AI tools helped, but the real findings came from sitting down and trying to buy something as a user, counting every step it took." },
+            { title: 'Design for the weekly user', body: "Buyers repeat the same order, approval, and checkout loop every week. Fixing that loop matters more than polishing the first-time tour." },
+            { title: 'Impact over volume', body: "Fifty findings aren't the goal. Vu's pushback taught me to lead with the few that actually change the experience." },
+          ],
+        }],
       },
     ],
   },
