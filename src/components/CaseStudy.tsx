@@ -150,6 +150,7 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
 
       <dl className="cs-facts">
         <div className="reveal"><dt>Role</dt><dd>{study.role}</dd></div>
+        {study.team && <div className="reveal"><dt>Team</dt><dd>{study.team}</dd></div>}
         <div className="reveal"><dt>Timeline</dt><dd>{study.date}</dd></div>
         <div className="reveal"><dt>Project</dt><dd>{study.type}</dd></div>
         <div className="reveal"><dt>Disciplines</dt><dd>{project.tags.join(', ')}</dd></div>

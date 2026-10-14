@@ -30,6 +30,7 @@ export type Section = { title: string; blocks: Block[] }
 
 export type CaseStudy = {
   role: string
+  team?: string // who you worked with, shown as a Team fact
   date: string
   type: string
   headline: string
@@ -77,6 +78,7 @@ export const caseStudies: Record<string, CaseStudy> = {
 
   scout: {
     role: 'Product Design Intern, Francois Labs',
+    team: '2 designers (me + Vu), with Scout\'s founders',
     date: 'Summer 2026',
     type: 'B2B marketplace · UX audit · Design system',
     headline: 'Auditing a two-sided parts marketplace, and turning the findings into a design system',
@@ -88,7 +90,7 @@ export const caseStudies: Record<string, CaseStudy> = {
       { value: '34', label: 'components in the resulting design system' },
     ],
     overview: [
-      'Scout is a B2B marketplace where apartment and property teams order replacement parts, from washers to doors, directly from vendors. Working alongside Vu, a founder and senior designer, I audited both the buyer and vendor apps, logging every point of friction on the screen where it happened, then clustered the findings into themes. The biggest outcome was a shared design system.',
+      'Scout is a B2B marketplace where apartment and property teams order replacement parts, from washers to doors, directly from vendors. Working alongside Vu, a founder and senior designer, I led the audit of the buyer app while Vu led the vendor app. Over two weeks we logged every point of friction on the screen where it happened, reviewed each other\'s findings on weekly calls, and clustered them into themes. The biggest outcome was a shared design system, which Vu coded and I reviewed.',
     ],
     sections: [
       {

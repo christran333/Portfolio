@@ -194,7 +194,7 @@ a.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
 .cs-hero { display: block; border-radius: 8px; overflow: hidden; }
 /* Full width at the image's own ratio: never cropped */
 .cs-hero img { display: block; width: 100%; height: auto; }
-.cs-facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 0; padding: 36px 0; border-bottom: 1px solid var(--line); }
+.cs-facts { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 24px; margin: 0; padding: 36px 0; border-bottom: 1px solid var(--line); }
 .cs-facts dt { font: 12px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
 .cs-facts dd { margin: 0; font-size: 17px; line-height: 1.4; }
 .cs-highlights { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 16px; padding-top: 56px; }
@@ -265,7 +265,7 @@ a.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
 }
 @media (max-width: 860px) {
   .cs-finding, .cs-feature { grid-template-columns: 1fr; }
-  .cs-facts { grid-template-columns: repeat(2, 1fr); }
+  .cs-facts { grid-auto-flow: row; grid-template-columns: repeat(2, 1fr); }
   .cs-section { grid-template-columns: 1fr; gap: 16px; }
   .cs-section-title { position: static; }
 }
