@@ -157,6 +157,7 @@ export const caseStudies: Record<string, CaseStudy> = {
 
   cosign: {
     role: 'Product Design Intern, Francois Labs',
+    team: "2 designers (me + Vu), with Cosign's founder",
     date: 'Spring 2025',
     type: 'Rental platform · Fintech',
     headline: 'Redesigning a fintech rental platform to rebuild trust and lift conversions',
@@ -167,22 +168,51 @@ export const caseStudies: Record<string, CaseStudy> = {
       { value: '8 → 4', label: 'application steps' },
     ],
     overview: [
-      'Cosign connects renters who need housing guarantors with people willing to co-sign their lease. As Product Design Intern at Francois Labs, I redesigned the dashboard, application flow, and landing page to reduce friction and build trust.',
+      "Cosign connects renters who need housing guarantors with people willing to co-sign their lease. The founder brought us data from the old flow and their own research, and Vu and I redesigned the application, dashboard, and landing page together to reduce friction and build trust.",
     ],
     sections: [
+      {
+        title: 'In brief',
+        blocks: [{
+          kind: 'cards', numbered: true, items: [
+            { title: 'Redesign', body: 'Designed the application flow, dashboard, and landing page side by side with Vu, cutting the application from 8 steps to 4.' },
+            { title: 'Collaboration', body: "Worked in passes with a non-technical founder, showing the design reasoning behind each choice until the direction clicked." },
+            { title: 'Impact', body: 'After launch, conversions rose 17% and traffic rose 22%, comparing site analytics before and after.' },
+          ],
+        }],
+      },
       {
         title: 'The problem',
         blocks: [
           { kind: 'lead', text: '65% of applicants dropped off and 58% bounced from the landing page.' },
-          { kind: 'p', text: "Users couldn't tell the renter and guarantor paths apart, the dashboard offered no clear next step, and an 8-step application took 12 minutes on average. I cut it to 4 steps, split the two paths from the start, and added progress tracking and trust signals throughout." },
+          { kind: 'p', text: "Data from the old flow showed why: 30% of users entered the wrong path because renter and guarantor looked the same, 40% never took an action on the dashboard, and the 8-step application took 12 minutes on average." },
         ],
       },
       {
         title: 'Design',
         blocks: [
+          { kind: 'list', title: 'Key decisions', items: ['Split the renter and guarantor paths from the very first screen', 'Grouped related information into 4 sections instead of 8 steps', 'Added visual progress tracking', 'Put trust signals and plain explanations up front'] },
           { kind: 'image', src: img('BPhNVYI5YheOZ6Pp9uuWIBdT7c'), caption: 'Metrics up top, a prioritized action panel, and status badges that pair color with a label, so managers can scan a whole page at once' },
           { kind: 'feature', src: img('9hSes9fVwMjoVkUM5UA5k6tp0'), title: "A landing page for people who've been declined before", text: 'Plain language over clever copy, a calm palette, and a four-step overview that makes co-signing feel manageable before anyone signs up.' },
         ],
+      },
+      {
+        title: 'Working together',
+        blocks: [
+          { kind: 'lead', text: "The founder wasn't sold on our first ideas, so we earned trust one pass at a time." },
+          { kind: 'p', text: "Vu and I checked in twice a week and kept a running conversation in Figma comments. Vu synced weekly with the founder on direction, and after each round the two of us sat down to plan the next pass. The founder isn't a designer and didn't have a clear picture yet, so early directions met a lot of hesitation. Instead of arguing in the abstract, we answered with iterations, each one showing the reasoning behind a choice, like why splitting the two paths up front cuts confusion." },
+          { kind: 'p', text: "With a small engineering team, we also weighed how easy each idea would be to build. Nothing was technically hard, but simpler was always worth considering." },
+        ],
+      },
+      {
+        title: 'What I learned',
+        blocks: [{
+          kind: 'cards', items: [
+            { title: 'Show the why', body: "Design principles don't land with a non-technical founder until you show them. Every iteration was a chance to make the reasoning visible." },
+            { title: 'Small changes compound', body: 'Clearer headlines, better grouping, and fewer steps added up to double-digit gains.' },
+            { title: 'Design for the team you have', body: 'With a small engineering team, easier to build is a real tradeoff, not an afterthought.' },
+          ],
+        }],
       },
     ],
   },
