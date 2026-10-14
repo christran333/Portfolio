@@ -219,6 +219,7 @@ export const caseStudies: Record<string, CaseStudy> = {
 
   backtrack: {
     role: 'Product Design Intern, Backtrack',
+    team: 'Solo designer, with the founder, lead engineer, and sales team',
     date: 'Fall 2025',
     type: 'AI-powered enterprise tools',
     headline: 'Designing an AI assistant that turns meeting notes into action',
@@ -226,29 +227,93 @@ export const caseStudies: Record<string, CaseStudy> = {
     highlights: [
       { value: '50+ → 12', label: 'support conversations distilled into AI scenarios' },
       { value: '37% → 64%', label: 'task completion across 8 usability tests' },
+      { value: '< 5 min', label: 'event demo setup in internal testing' },
     ],
     overview: [
-      'Backtrack helps teams capture and act on meeting insights. I designed Ask Backtrack AI, a conversational assistant that turns notes into follow-ups, summaries, and action items, while keeping users in control of every output.',
+      "Backtrack helps teams capture and act on meeting insights. As the only designer, working directly with the founder, I owned two projects end to end: Ask Backtrack AI, a conversational assistant that turns notes into follow-ups, summaries, and action items, and an event tool that made setting up live demos at sales events faster.",
     ],
     sections: [
       {
+        title: 'In brief',
+        blocks: [{
+          kind: 'cards', numbered: true, items: [
+            { title: 'Ownership', body: 'Owned Ask Backtrack AI and the event tool end to end, deciding what to research, explore, and build next.' },
+            { title: 'Collaboration', body: 'Presented passes to the founder in weekly standups and on Slack, and worked with the lead engineer and the sales team running live demos.' },
+            { title: 'Impact', body: 'Task completion rose from 37% to 64% across 8 usability tests, and demo setup took under 5 minutes in internal testing.' },
+          ],
+        }],
+      },
+      {
         title: 'The problem',
-        blocks: [{ kind: 'lead', text: 'Users had the notes but not the time to act on them, and a blank chat box made it hard to know what to ask.' }],
+        blocks: [
+          { kind: 'lead', text: 'Users had the notes but not the time to act on them, and a blank chat box made it hard to know what to ask.' },
+          { kind: 'p', text: "I pulled from recorded transcripts and support conversations, and distilled 50+ of them into 12 interaction scenarios on my own, drafting with Claude and writing much of the copy myself. That gave every design decision a real request behind it." },
+        ],
+      },
+      {
+        title: 'Learning from the best',
+        blocks: [
+          { kind: 'lead', text: "The founder's advice was simple: find who's doing it well and build from there." },
+          { kind: 'p', text: "Teams like Notion and Granola have already tested what works for AI and meeting notes, so I studied their interaction patterns and UX writing closely before designing anything." },
+          { kind: 'video', src: video('1QddOeE35EtR2Qa05oLSMwrNtc'), caption: 'Notion: AI actions appear in context, with progress shown while it works' },
+          { kind: 'image', src: img('09QLXGndgYI0c30SZosmFBEaQ'), caption: 'Granola: one-tap prompts instead of a blank box' },
+          {
+            kind: 'cards', items: [
+              { title: 'Clarity with flexibility', body: 'Users want structured starting points they can edit, not decisions made for them.' },
+              { title: 'Tone builds trust', body: "AI has to match the user's voice. Robotic output hurts credibility." },
+              { title: 'Blank states create friction', body: 'Starting from nothing raises cognitive load. Contextual prompts reduce hesitation.' },
+              { title: 'AI supports judgment', body: 'People want tools that speed up their thinking, not replace it.' },
+            ],
+          },
+        ],
       },
       {
         title: 'Iteration',
         blocks: [
           { kind: 'image', src: img('hB1L8qYWkMRkiyEWudGnNYoT8Mc') },
           { kind: 'image', src: img('9jY6fcfvX4vnsP1zFCzZqJiFFQ'), caption: 'From a blank input to guided, refinable prompts' },
-          { kind: 'p', text: 'Structured prompt starters replaced the blank state, and inline refinements like "make this more casual" let users adjust tone instead of starting over.' },
+          {
+            kind: 'cards', numbered: true, items: [
+              { title: 'Minimal entry point', body: 'A single input with a neutral greeting. Clean, but users had to decide what to ask before getting any value.' },
+              { title: 'Guided prompts', body: 'Prompt starters for common tasks changed the question from "What should I type?" to "Which action do I need?"' },
+              { title: 'Conversational refinement', body: 'Inline refinements like "make this more casual" let users adjust tone instead of starting over.' },
+            ],
+          },
+          { kind: 'p', text: "I tested each pass with coworkers and with friends who had no stake in the product, 8 rounds in all. Task completion climbed from 37% to 64%." },
+        ],
+      },
+      {
+        title: 'Event tool',
+        blocks: [
+          { kind: 'lead', text: 'At big sales events, the team ran live demos on a bunch of phones at once, in crowded, chaotic rooms.' },
+          { kind: 'p', text: "Each phone had to show which sponsor or company it was for, and setting them all up was a pain for the sales team running demos. Working with them and the lead engineer, I designed a tool for quickly building template wallpapers and setting up the screens for each sponsor, keeping it simple both for the team and for the people dropping by to try the demo. In internal testing, setup for a sponsor took under 5 minutes." },
+        ],
+      },
+      {
+        title: 'Working together',
+        blocks: [
+          { kind: 'lead', text: "My boss was too busy to hold my hand, so I owned the direction." },
+          { kind: 'p', text: "As a design intern and the only designer, I decided what to work on next, did the research, and found the direction we needed to go. In weekly standups on Slack, I walked the founder through what I'd made and the thinking behind it, and through the day I sent passes and left comments in Figma to get quick feedback." },
+          { kind: 'p', text: "His biggest push was to go wide: explore lots of passes, even abstract ones, instead of narrowing down early, then decide with research and feedback. I also worked with the lead engineer and the sales team, since they were the ones using the software hands-on at events." },
         ],
       },
       { title: 'Final design', blocks: [{ kind: 'image', src: img('gY8uoiMxW7YpvWuX0wOIhBHiB0M') }] },
+      {
+        title: 'What I learned',
+        blocks: [{
+          kind: 'cards', items: [
+            { title: 'Ambiguity is the job', body: "No one will hold your hand forever. Owning the research and the next decision is what moves the work forward." },
+            { title: 'Go wide before you narrow', body: 'First iterations are never the final thing. Throwing out lots of ideas, failing fast, and rebuilding is how the good one shows up.' },
+            { title: 'Everyone is a collaborator', body: 'Engineers, the founder, and even sales shaped this work. The people demoing it every day knew things I never would have guessed.' },
+          ],
+        }],
+      },
     ],
   },
 
   'act-one': {
     role: 'Product Design Intern, Francois Labs',
+    team: '3 designers',
     date: 'Summer 2026',
     type: 'Venture capital · Brand identity',
     headline: 'Giving a venture capital firm something worth believing in',
@@ -285,6 +350,7 @@ export const caseStudies: Record<string, CaseStudy> = {
 
   janus: {
     role: 'Product Design Intern, Francois Labs',
+    team: '3 designers',
     date: '2026',
     type: 'Logistics startup · Branding · Visual design',
     headline: 'Brand and product marketing for a freight finance platform',
@@ -299,6 +365,7 @@ export const caseStudies: Record<string, CaseStudy> = {
 
   tennr: {
     role: 'Product Design Intern, Francois Labs',
+    team: '2 designers',
     date: 'Spring 2025 → Fall 2025',
     type: 'Healthcare AI startup · Branding · Visual design',
     headline: 'Revamping brand and marketing for a healthcare AI startup',
@@ -312,6 +379,7 @@ export const caseStudies: Record<string, CaseStudy> = {
 
   arist: {
     role: 'Product Design Intern, Francois Labs',
+    team: '2 designers (me + Vu)',
     date: 'Spring 2025 → Fall 2025',
     type: 'AI e-learning startup · Branding · Visual design',
     headline: 'Scaling the visual system of an AI microlearning platform',
