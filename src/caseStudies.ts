@@ -94,7 +94,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     ],
     sections: [
       {
-        title: 'Long story short',
+        title: 'In brief',
         blocks: [{
           kind: 'cards', numbered: true, items: [
             { title: 'Audit', body: 'Led the buyer-app audit, walking 15 flows end to end as a buyer and logging every friction point on the screen where it happened.' },
