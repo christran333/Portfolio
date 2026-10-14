@@ -94,6 +94,16 @@ export const caseStudies: Record<string, CaseStudy> = {
     ],
     sections: [
       {
+        title: 'Long story short',
+        blocks: [{
+          kind: 'cards', numbered: true, items: [
+            { title: 'Audit', body: 'Led the buyer-app audit, walking 15 flows end to end as a buyer and logging every friction point on the screen where it happened.' },
+            { title: 'Collaboration', body: 'Paired with Vu, who led the vendor app. We reviewed each other\'s findings on weekly calls and narrowed 50+ down to what mattered most.' },
+            { title: 'Design system', body: 'Clustered the findings into 6 themes. The biggest became a shared design system for both apps: 34 components, in light and dark.' },
+          ],
+        }],
+      },
+      {
         title: 'Six themes',
         blocks: [{
           kind: 'cards', numbered: true, items: [
