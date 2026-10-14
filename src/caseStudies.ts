@@ -83,7 +83,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     hero: `${S}insights.jpg`,
     highlights: [
       { value: '15', label: 'buyer flows audited end to end' },
-      { value: '50+', label: 'findings logged across the vendor app' },
+      { value: '50+', label: 'findings logged across the buyer and vendor apps' },
       { value: '6', label: 'themes distilled from the findings' },
       { value: '34', label: 'components in the resulting design system' },
     ],
@@ -256,7 +256,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     type: 'AI e-learning startup · Branding · Visual design',
     headline: 'Scaling the visual system of an AI microlearning platform',
     hero: img('BGG1xL6mAgP5bl9i3x50kdKRY'),
-    overview: ["Arist helps enterprises deliver bite-sized training through SMS, Slack, and Teams. As the product scaled, its visual language wasn't keeping up, so I worked with a senior designer on a revamp: reusable UI components, scalable asset libraries, and tighter consistency across product surfaces."],
+    overview: ["Arist helps enterprises deliver bite-sized training through SMS, Slack, and Teams. As the product scaled, its visual language wasn't keeping up, so I built a component system alongside the founder of Francois Labs, a senior designer: reusable UI components, scalable asset libraries, and tighter consistency across product surfaces."],
     sections: [
       { title: 'UI components', blocks: [{ kind: 'image', src: img('XW7B4K8FDwhddmvFZURHcjQaBI') }, { kind: 'p', text: 'System-first: reusable components over one-off designs, rolled out incrementally so the product stayed familiar while the quality bar went up.' }] },
       { title: 'Final design', blocks: [{ kind: 'gallery', images: [img('3E4aTSItRP5dd7rQWtz1pE43rWw', 'jpg'), img('8xdlWkdbchwwJStdWcihwLqET58', 'jpg')] }] },
@@ -264,7 +264,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   tactile: {
-    role: 'Product Designer',
+    role: 'Product Designer & Front-end',
     date: '2026',
     type: 'FigBuild 2026 · Figma plugin · Hackathon',
     headline: 'Designing with your hands: a Figma plugin for people with taste but no tools',
@@ -298,6 +298,7 @@ export const caseStudies: Record<string, CaseStudy> = {
         blocks: [
           { kind: 'image', src: `${T}slide-ideation.webp` },
           { kind: 'p', text: "Instead of starting from a feature list, we mapped the submissions we genuinely loved in FigJam and asked why they stuck. The best ones had a point of view, not just clever tech. That became the filter I held every idea to: it had to have soul before it earned a feature." },
+          { kind: 'p', text: "Seeing how abstract the Makeathon ideas had gotten, I pushed for something that felt unique and fun to use: a computer-vision Figma plugin you drive with your hands. That became the core of our first MVP." },
           { kind: 'p', text: "I took the brand in the same direction. We built the identity around clouds and open sky to say what the product promises: the ceiling on what you can make is gone." },
         ],
       },
@@ -305,7 +306,7 @@ export const caseStudies: Record<string, CaseStudy> = {
         title: 'Figma, code, break it, repeat',
         blocks: [
           { kind: 'image', src: `${T}slide-prototyping-hd.webp` },
-          { kind: 'p', text: "With a weekend on the clock, I kept design and engineering in one tight loop: rough frames in Figma, fed straight into Claude and Cursor as context, working code within hours, then back to Figma once it broke. Design decisions showed up in the build the same day, so we could lock the right features early instead of polishing the wrong ones." },
+          { kind: 'p', text: "With a weekend on the clock, I built the first MVP myself in HTML and CSS, using Cursor and Claude Code to get the first computer-vision gesture prototype working, the version the team built on. From there I kept design and engineering in one tight loop: rough frames in Figma, fed straight into Claude and Cursor as context, working code within hours, then back to Figma once it broke. Design decisions showed up in the build the same day, so we could lock the right features early instead of polishing the wrong ones." },
         ],
       },
       {
@@ -342,6 +343,7 @@ export const caseStudies: Record<string, CaseStudy> = {
           { kind: 'image', src: `${T}slide-outcome.webp` },
           { kind: 'lead', text: "Tactile proved that abstract language can drive real design decisions. The hardest part wasn't the tech, it was deciding what to cut." },
           { kind: 'p', text: "Coordinating frontend, backend, design, and integration in a weekend only worked once we had a real conversation about purpose and the impact we wanted. Everything fell into place after that. Design isn't about the tools; it's about giving people the confidence to decide." },
+          { kind: 'p', text: "I also built our final pitch deck and helped write the script we presented to the judges, so the story landed as clearly as the demo." },
           { kind: 'link', href: 'https://www.youtube.com/watch?v=ZS_jWvac8cY', label: 'Watch the demo' },
           { kind: 'link', href: 'https://devpost.com/software/tactile-tyoilq', label: 'See it on Devpost' },
         ],

@@ -52,7 +52,7 @@ export default function Work() {
             onPointerLeave={() => setPreviewing(false)}
           >
             <span className="rise" style={{ animationDelay: '.05s' }}>I'm Chris, a product designer who cares about</span>{' '}
-            <span className="rise" style={{ animationDelay: '.12s' }}>understanding users, solving ambiguous problems, and <span className="nowrap">visual polish.</span></span>
+            <span className="rise" style={{ animationDelay: '.12s' }}>research, solving ambiguous problems, and <span className="nowrap">visual polish.</span></span>
           </span>
         </h1>
         <p className="intro-sub rise" style={{ animationDelay: '.24s' }}>{profile.status}</p>
