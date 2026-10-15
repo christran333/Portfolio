@@ -18,6 +18,7 @@ const MSG = 'CENTEREDBYVOID '
 const SOLID = 'CENTEREDBYVOID' // no gaps inside the giant letters
 const REVEAL_CLICKS = 8
 const REVEAL_T = 4 // seconds the message holds before settling back
+const REVEAL_WAVE = 1.2 // seconds the reveal shockwave takes to cross the screen
 
 export default function AsciiField() {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -34,9 +35,9 @@ export default function AsciiField() {
     let boost = 1 // dark ink on a light page needs a bit more opacity to show
     const pointer = { x: -1e4, y: -1e4, active: false }
     // Clicks on the hero send out a shockwave; clicking fast stacks them into bigger blasts
-    const blasts: { x: number; y: number; t0: number; max: number; str: number }[] = []
+    const blasts: { x: number; y: number; t0: number; max: number; str: number; dur: number; band: number }[] = []
     const clicks: number[] = []
-    let reveal: { x: number; y: number; t0: number } | null = null
+    let reveal: { x: number; y: number; t0: number; sy: number } | null = null
     // The big lettering for the reveal, rasterized on a grid twice as fine as
     // the dots so the giant letters read cleanly
     let mask = new Float32Array(0), fcols = 0, frows = 0
@@ -94,22 +95,29 @@ export default function AsciiField() {
       const pc = pointer.x / CELL, pr = pointer.y / CELL, rad = RADIUS / CELL
       // tiny halftone dots, batched into one path per size so it stays cheap
       const paths = [new Path2D(), new Path2D(), new Path2D()]
-      for (let b = blasts.length - 1; b >= 0; b--) if (t - blasts[b].t0 > BLAST_T) blasts.splice(b, 1)
+      for (let b = blasts.length - 1; b >= 0; b--) if (t - blasts[b].t0 > blasts[b].dur) blasts.splice(b, 1)
       // the reveal: a ring that sweeps the whole screen and leaves the message behind it
-      let rv: { x: number; y: number; r: number; hold: number } | null = null
+      // It lives in the hero: it scrolls with the page and is clipped to the hero's box
+      let rv: { x: number; y: number; r: number; hold: number; dy: number; top: number; bottom: number } | null = null
       if (reveal) {
         const age = t - reveal.t0
         root.classList.toggle('field-reveal', age < REVEAL_T - 0.9)
         if (age > REVEAL_T) reveal = null
-        else rv = {
-          x: reveal.x / CELL, y: reveal.y / CELL,
-          r: Math.hypot(cols, rows) * Math.min(1, age / 1.1),
+        else {
+          const dy = reveal.sy - window.scrollY
+          const hero = document.querySelector('.intro')?.getBoundingClientRect()
+          rv = {
+          dy, top: hero ? hero.top : 0, bottom: hero ? hero.bottom : h,
+          x: reveal.x / CELL, y: (reveal.y + dy) / CELL,
+          // grows in step with the giant shockwave, so the message appears right behind it
+          r: Math.hypot(cols, rows) * 1.15 * (1 - (1 - Math.min(1, age / REVEAL_WAVE)) ** 3),
           hold: Math.min(1, (REVEAL_T - age) / 0.9), // fades out over the last second
+          }
         }
       }
-      const rings = blasts.map(b => {
-        const k = (t - b.t0) / BLAST_T
-        return { x: b.x / CELL, y: b.y / CELL, r: (b.max / CELL) * (1 - (1 - k) ** 3), s: b.str * (1 - k) }
+      const rings = blasts.filter(b => t >= b.t0).map(b => {
+        const k = (t - b.t0) / b.dur
+        return { x: b.x / CELL, y: b.y / CELL, r: (b.max / CELL) * (1 - (1 - k) ** 3), s: b.str * (1 - k * 0.7), band: b.band }
       })
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
@@ -121,16 +129,16 @@ export default function AsciiField() {
           }
           for (const g of rings) {
             const off = Math.abs(Math.hypot(x - g.x, y - g.y) - g.r)
-            if (off < 2.2) heat[i] = Math.min(1, heat[i] + (1 - off / 2.2) * g.s)
+            if (off < g.band) heat[i] = Math.min(1, heat[i] + (1 - off / g.band) * g.s)
           }
           heat[i] *= 0.88
           let spell = false
           const cx = x * CELL + CELL / 2, cy = y * CELL + CELL / 2
-          if (rv && Math.hypot(x - rv.x, y - rv.y) < rv.r) {
+          if (rv && cy >= rv.top && cy <= rv.bottom && Math.hypot(x - rv.x, y - rv.y) < rv.r) {
             // giant letters glow bright; the message fills in faintly around them,
             // and the wave keeps rolling through both
             // cells under the giant letters are drawn by the fine pass below
-            if ((mask[Math.floor(cy / FINE) * fcols + Math.floor(cx / FINE)] || 0) > 0.3) { heat[i] = 0; continue }
+            if ((mask[Math.floor((cy - rv.dy) / FINE) * fcols + Math.floor(cx / FINE)] || 0) > 0.3) { heat[i] = 0; continue }
             const wv = Math.max(0, wave(x, y))
             heat[i] = Math.max(heat[i], (0.02 + 0.4 * wv * wv) * rv.hold)
             spell = true
@@ -165,11 +173,13 @@ export default function AsciiField() {
         for (let y = 0; y < frows; y++) {
           for (let x = 0; x < fcols; x++) {
             if ((mask[y * fcols + x] || 0) < 0.3) continue
-            if (Math.hypot(x * s - rv.x, y * s - rv.y) > rv.r) continue
+            const py = y * FINE + FINE / 2 + rv.dy
+            if (py < rv.top || py > rv.bottom) continue
+            if (Math.hypot(x * s - rv.x, py / CELL - rv.y) > rv.r) continue
             // crests of the wave run bright and lift up through the letters
-            const wv = Math.max(0, Math.min(1, wave(x * s, y * s)))
+            const wv = Math.max(0, Math.min(1, wave(x * s, py / CELL)))
             ctx.globalAlpha = Math.min(1, (0.25 + 0.75 * wv * wv) * rv.hold * boost)
-            ctx.fillText(SOLID[(x + y * 3) % SOLID.length], x * FINE + FINE / 2, y * FINE + FINE / 2 - wv * 3)
+            ctx.fillText(SOLID[(x + y * 3) % SOLID.length], x * FINE + FINE / 2, py - wv * 3)
           }
         }
       }
@@ -188,7 +198,12 @@ export default function AsciiField() {
     // behind it, then gets its frosted background back once you scroll
     const root = document.documentElement
     root.classList.add('has-field')
-    const onScroll = () => root.classList.toggle('field-scrolled', window.scrollY > 8)
+    // Scrolling moves the hero out from under a still mouse, so re-check then too
+    const onScroll = () => {
+      root.classList.toggle('field-scrolled', window.scrollY > 8)
+      pointer.active = inHero()
+      heat.fill(0) // trails are drawn in screen space; drop them so they don't ride along
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
 
@@ -198,10 +213,13 @@ export default function AsciiField() {
     const mo = new MutationObserver(() => { readTheme(); draw() })
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     // Only the hero reacts to the mouse
+    function inHero() {
+      const hero = document.querySelector('.intro')?.getBoundingClientRect()
+      return !!hero && pointer.y >= hero.top && pointer.y <= hero.bottom
+    }
     const move = (e: PointerEvent) => {
       pointer.x = e.clientX; pointer.y = e.clientY
-      const hero = document.querySelector('.intro')?.getBoundingClientRect()
-      pointer.active = !!hero && e.clientY >= hero.top && e.clientY <= hero.bottom
+      pointer.active = inHero()
     }
     const leave = () => { pointer.active = false }
     // A little hint by the cursor while you're building up to the reveal
@@ -223,16 +241,22 @@ export default function AsciiField() {
       const combo = clicks.length // how many clicks in the last 1.6s
       clearTimeout(slowTimer)
       if (combo >= REVEAL_CLICKS && !reveal) {
-        reveal = { x: e.clientX, y: e.clientY, t0: now }
+        reveal = { x: e.clientX, y: e.clientY, t0: now, sy: window.scrollY }
         clicks.length = 0
         hint.classList.remove('is-on')
         buildMask()
+        // the same shockwave as a normal click, scaled up to clear the whole screen,
+        // with a second echo ring right behind it
+        const full = Math.hypot(w, h) * 1.15
+        blasts.push({ x: e.clientX, y: e.clientY, t0: now, max: full, str: 1, dur: REVEAL_WAVE, band: 5 })
+        blasts.push({ x: e.clientX, y: e.clientY, t0: now + 0.14, max: full, str: 0.7, dur: REVEAL_WAVE + 0.25, band: 3 })
+        return
       } else if (!reveal && combo >= 3) {
         const left = REVEAL_CLICKS - combo
         say(left === 1 ? 'one more…' : combo === 3 ? 'keep clicking for a surprise' : `${left} more`, e.clientX, e.clientY)
         slowTimer = window.setTimeout(() => say('too slow, click faster', e.clientX, e.clientY, 1400), 1650)
       }
-      blasts.push({ x: e.clientX, y: e.clientY, t0: now, max: Math.min(620, 110 + combo * 70), str: Math.min(1, 0.45 + combo * 0.1) })
+      blasts.push({ x: e.clientX, y: e.clientY, t0: now, max: Math.min(620, 110 + combo * 70), str: Math.min(1, 0.45 + combo * 0.1), dur: BLAST_T, band: 2.2 })
       if (blasts.length > 12) blasts.shift()
     }
     if (!reduce) {

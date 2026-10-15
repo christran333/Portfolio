@@ -56,9 +56,9 @@ ul { list-style: none; }
 .theme-switching::view-transition-old(root), .theme-switching::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
 /* Load-in and scroll-in motion */
-.rise { display: inline-block; animation: rise 1s var(--ease) both; }
+.rise { display: inline-block; animation: rise 1.8s var(--ease) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); filter: blur(6px); } }
-.reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s var(--ease), transform .9s var(--ease); }
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 1.4s var(--ease), transform 1.5s var(--ease); }
 .reveal.is-in { opacity: 1; transform: none; }
 
 /* ───────── Header: name on the left, plain text links on the right ───────── */
@@ -84,7 +84,8 @@ ul { list-style: none; }
   display: flex; flex-direction: column; justify-content: center;
   padding: 40px var(--gutter) 64px;
 }
-.ascii-field { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+.ascii-field { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; animation: field-in 2.6s .3s ease both; }
+@keyframes field-in { from { opacity: 0; } }
 .ascii-hint {
   position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; white-space: nowrap;
   font: 12px var(--mono); letter-spacing: .04em; color: var(--accent);
