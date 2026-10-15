@@ -43,36 +43,76 @@ export type CaseStudy = {
 export const caseStudies: Record<string, CaseStudy> = {
   meteormate: {
     role: 'Lead Product Designer',
+    team: '2 designers, 4 engineers, 2 project leads, and ACM\'s director of development',
     date: 'Summer 2025 → Present',
     type: 'Roommate-finding web app',
     headline: 'Building a roommate-matching platform for 20,000+ UTD students, from scratch',
     hero: img('7agbU5LMHCSPcfO7YHuy97L5PaQ'),
     highlights: [
       { value: '20,000+', label: 'students the platform is designed to serve' },
+      { value: '15+', label: 'student interviews I ran' },
       { value: '37%', label: 'faster survey completion in testing' },
       { value: '15+', label: 'reusable components in the design system' },
     ],
     overview: [
-      "MeteorMate is a roommate-matching platform built by students, for students at UT Dallas through ACM. As Lead Product Designer, I took it from zero to a full MVP design, partnering with PMs and engineers on research, information architecture, brand, and developer handoff.",
+      "MeteorMate is a roommate-matching platform built by students, for students at UT Dallas through ACM. I joined as a second designer, about six months after a co-designer had built the first concept, and later became the lead. I worked with two front-end engineers, two back-end engineers, two project leads, and ACM's director of development to take it from that early concept to a full MVP design.",
     ],
     sections: [
+      {
+        title: 'In brief',
+        blocks: [{
+          kind: 'cards', numbered: true, items: [
+            { title: 'Research', body: "Ran 15+ student interviews and a competitive analysis, which shifted matching away from personality toward daily habits." },
+            { title: 'Collaboration', body: "Joined a co-designer's existing work, met in the middle on the design system, and grew into the lead role while syncing weekly with engineers and leads." },
+            { title: 'Brand', body: "Designed the new meteor mark and design refresh, got sign-off from the dev team, and presented it to all of ACM at standup." },
+          ],
+        }],
+      },
       {
         title: 'The problem',
         blocks: [
           { kind: 'lead', text: 'Students find roommates through scattered Facebook groups and Reddit threads, with no way to screen for what actually matters.' },
-          { kind: 'p', text: 'In 15+ interviews, sleep schedules and cleanliness mattered far more than major or year, and trust was the biggest barrier. That made lifestyle-first matching and UTD email verification the core of the MVP.' },
+          { kind: 'p', text: 'In 15+ interviews I ran, sleep schedules and cleanliness mattered far more than major or year, and trust was the biggest barrier. That made lifestyle-first matching and UTD email verification the core of the MVP.' },
+        ],
+      },
+      {
+        title: 'Scoping the survey',
+        blocks: [
+          { kind: 'lead', text: 'The onboarding survey feeds an LLM that sorts students into matches, so every question had to earn its place.' },
+          { kind: 'p', text: "The original questionnaire leaned on personality questions, and its copy was loose. I cut it down to the questions that actually predict a good roommate (habits like sleep, cleanliness, and guests), rewrote the copy, and trimmed the onboarding flow around them. A leaner survey was faster for students and gave the back end less noise to sort through." },
+          { kind: 'p', text: "I tested the new survey with UTD students and compared it against data from the original questionnaire. Completion was 37% faster." },
         ],
       },
       {
         title: 'Design',
         blocks: [
           { kind: 'image', src: img('7agbU5LMHCSPcfO7YHuy97L5PaQ'), caption: 'Compatibility at a glance: matched preferences in orange, mismatches in grey, and a thumbs-up instead of a heart' },
+          { kind: 'p', text: "Swiping cards are the core feature. I studied how existing matching apps handle cards, then iterated on layouts with the engineers until we landed on one that showed compatibility at a glance and was realistic for a student team to build." },
           { kind: 'feature', video: true, src: video('OOE0SIJKu07KI4xEU7drDjBE'), title: 'A survey that feels quick', text: 'Card-based choices with custom icons and three options per category replaced long questionnaires, cutting completion time by 37% in testing.' },
           { kind: 'feature', src: img('8TqtpA6Rx4UBurd2Y7dAoJUbmw'), title: 'Match first, message second', text: 'One onboarding path collects preferences before swiping, so the algorithm is accurate from day one and nobody gets cold messages.' },
-          { kind: 'gallery', images: [img('ZopPj00XIp0pniokIhqRlyL4kR4'), img('w9BGAa4AdOcQIxY739lWypxJKo')], caption: 'Brand evolution: from a detailed handshake badge to a bold, scalable meteor mark' },
+          { kind: 'gallery', images: [img('ZopPj00XIp0pniokIhqRlyL4kR4'), img('w9BGAa4AdOcQIxY739lWypxJKo')], caption: "Brand evolution: from the original handshake badge to the meteor mark I designed, bold enough to scale down to an app icon" },
         ],
       },
-      { title: 'Status', blocks: [{ kind: 'p', text: 'Brand, core flows, and high-fidelity designs for every MVP feature are complete. The app hasn\'t launched yet, and I\'m still working with the ACM team as it gets built.' }] },
+      {
+        title: 'Working together',
+        blocks: [
+          { kind: 'lead', text: "I joined a project that already had a designer, a concept, and a flow, so the first job was building on it without bulldozing it." },
+          { kind: 'p', text: "My co-designer had spent about six months on the landing page, a small design system, and the MVP flow. I thought the system needed a redesign; they wanted to build on it. Over one-on-one calls, and with fresh eyes from leads on other ACM teams, we met in the middle: we kept the color themes and core ideas like swiping, and redesigned the logo, UI components, and onboarding. I let go of some of my own ideas along the way." },
+          { kind: 'p', text: "With the engineers, feasibility shaped the design as much as taste. Our developers are students, so elaborate card animations weren't worth the build time. We weighed every interaction on the swipe cards against what the team could ship well." },
+          { kind: 'p', text: "Standups and weekly meetings kept everyone in sync. When the refresh was ready, the dev team signed off and I presented the new logo and design direction to the entire org at standup." },
+        ],
+      },
+      { title: 'Status', blocks: [{ kind: 'p', text: "Brand, core flows, and high-fidelity designs for every MVP feature are complete. Engineering is building it now, aiming to launch around the end of this year or early next year." }] },
+      {
+        title: 'What I learned',
+        blocks: [{
+          kind: 'cards', numbered: true, items: [
+            { title: 'Feasibility is a design input', body: "Cool motion isn't always the right tradeoff. Designing with student engineers' constraints in mind made the card feature better, not smaller." },
+            { title: 'Ask less, match better', body: "Every survey question costs the user time and the back end effort. Cutting to the questions that matter helped both." },
+            { title: 'Sync early, backtrack less', body: "Standups and weekly meetings surfaced good ideas and direction early, so I spent less time redoing designs built on guesses." },
+          ],
+        }],
+      },
     ],
   },
 
