@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useReveal } from '../useReveal'
 import { distribute, useColumnCount } from '../layout'
+import AsciiField from './AsciiField'
 import { imgAt, linkProps, playground, profile, projects } from '../data'
 
 export default function Work() {
@@ -44,6 +45,7 @@ export default function Work() {
   return (
     <div ref={root}>
       <section className="intro">
+        <AsciiField />
         <h1 className="intro-lead">
           {/* Inline, so only the words themselves (not the empty space around them) open the video */}
           <span
