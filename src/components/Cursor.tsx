@@ -17,28 +17,39 @@ export default function Cursor() {
     const target = { x: -100, y: -100 }
     const pos = { x: -100, y: -100 }
     let raf = 0
+    let scrollQueued = false
+    let lastMode: Mode = 'dot'
 
+    // Ease toward the pointer for a slightly weighted feel, and stop once it has caught up,
+    // so nothing runs every frame while the mouse is still
     const loop = () => {
-      // Ease toward the pointer for a slightly weighted feel
-      pos.x += (target.x - pos.x) * 0.3
-      pos.y += (target.y - pos.y) * 0.3
+      const dx = target.x - pos.x
+      const dy = target.y - pos.y
+      pos.x += dx * 0.3
+      pos.y += dy * 0.3
       dot.current!.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`
-      raf = requestAnimationFrame(loop)
+      raf = Math.abs(dx) + Math.abs(dy) > 0.1 ? requestAnimationFrame(loop) : 0
     }
+    const wake = () => { if (!raf) raf = requestAnimationFrame(loop) }
     const sense = (el: Element | null) => {
-      setMode(el?.closest(INTERACTIVE) ? 'grow' : 'dot')
+      const next: Mode = el?.closest(INTERACTIVE) ? 'grow' : 'dot'
+      if (next !== lastMode) { lastMode = next; setMode(next) }
     }
     const move = (e: PointerEvent) => {
       setVisible(true)
       target.x = e.clientX
       target.y = e.clientY
       sense(e.target as Element)
+      wake()
     }
-    // Content moves under a still pointer while scrolling
-    const scroll = () => sense(document.elementFromPoint(target.x, target.y))
+    // Content moves under a still pointer while scrolling; check at most once per frame
+    const scroll = () => {
+      if (scrollQueued) return
+      scrollQueued = true
+      requestAnimationFrame(() => { scrollQueued = false; sense(document.elementFromPoint(target.x, target.y)) })
+    }
     const leave = () => setVisible(false)
 
-    raf = requestAnimationFrame(loop)
     window.addEventListener('pointermove', move)
     window.addEventListener('scroll', scroll, { passive: true })
     document.addEventListener('pointerleave', leave)
