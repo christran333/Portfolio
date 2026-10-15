@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import Lenis from 'lenis'
 import Header from './components/Header'
 import Work from './components/Work'
 import Info from './components/Info'
@@ -18,20 +17,9 @@ const pageFor = (path: string) => {
 
 export default function App() {
   const [path, setPath] = useState(location.pathname)
-  const lenis = useRef<Lenis | null>(null)
   const scrolls = useRef<Record<string, number>>({}) // scroll position per page, for the back button
   const restore = useRef<number | null>(null)
   const route = pageFor(path)
-
-  // Smooth scrolling
-  useEffect(() => {
-    const l = new Lenis({ lerp: 0.12 })
-    lenis.current = l
-    let raf = 0
-    const tick = (t: number) => { l.raf(t); raf = requestAnimationFrame(tick) }
-    raf = requestAnimationFrame(tick)
-    return () => { cancelAnimationFrame(raf); l.destroy() }
-  }, [])
 
   const show = (next: string, scrollTo: number) => {
     restore.current = scrollTo
@@ -40,13 +28,12 @@ export default function App() {
 
   useLayoutEffect(() => {
     if (restore.current === null) return
-    lenis.current?.scrollTo(restore.current, { immediate: true, force: true })
     window.scrollTo(0, restore.current)
     restore.current = null
   }, [path])
 
   const navigate = (to: string) => {
-    if (to === location.pathname) return lenis.current?.scrollTo(0)
+    if (to === location.pathname) return window.scrollTo(0, 0)
     scrolls.current[location.pathname] = window.scrollY
     history.pushState(null, '', to)
     show(to, 0)
