@@ -62,8 +62,8 @@ export const imgAt = (src: string, width: number) => `${src}?scale-down-to=${wid
 
 // Images are hotlinked from the Framer site. Copy them into /public before cancelling Framer.
 export const projects: Project[] = [
-  { id: 'scout', title: 'Scout', tags: ['UX Audit', 'Design Systems', 'B2B'], summary: 'Auditing a two-sided parts marketplace and turning the findings into a design system.', when: 'Summer 2026', href: '/work/scout', img: '/work/scout/thumbnail.webp', aspect: '2000 / 1125' },
   { id: 'cosign', title: 'Cosign', tags: ['Product Design', 'UX Design', 'Growth'], summary: 'Redesigning a fintech rental flow, lifting conversions by 17%.', when: 'Spring 2025', href: '/work/cosign', img: framer('5pvYzGg5sCSysJdt9R5xFw0zvw'), aspect: '1 / 1' },
+  { id: 'scout', title: 'Scout', tags: ['UX Audit', 'Design Systems', 'B2B'], summary: 'Auditing a two-sided parts marketplace and turning the findings into a design system.', when: 'Summer 2026', href: '/work/scout', img: '/work/scout/thumbnail.webp', aspect: '2000 / 1125' },
   { id: 'backtrack', title: 'Backtrack', tags: ['Product Design', 'AI/ML', 'UX Writing'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: 'Fall 2025', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1' },
   { id: 'meteormate', title: 'MeteorMate', tags: ['Product Design', '0→1', 'Branding'], summary: 'Designing a roommate-matching app from scratch for 20,000+ UT Dallas students.', when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
   { id: 'tactile', title: 'Tactile', tags: ['Interaction Design', 'Hackathon'], summary: 'A Figma plugin you control with hand gestures, built at FigBuild 2026.', when: '2026', href: '/work/tactile', img: '/work/tactile/tactile-cover.webp', aspect: '2800 / 1991' },

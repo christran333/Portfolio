@@ -52,7 +52,6 @@ export const caseStudies: Record<string, CaseStudy> = {
       { value: '20,000+', label: 'students the platform is designed to serve' },
       { value: '15+', label: 'student interviews I ran' },
       { value: '37%', label: 'faster survey completion in testing' },
-      { value: '15+', label: 'reusable components in the design system' },
     ],
     overview: [
       "MeteorMate is a roommate-matching platform built by students, for students at UT Dallas through ACM. I joined as a second designer, about six months after a co-designer had built the first concept, and later became the lead. I worked with two front-end engineers, two back-end engineers, two project leads, and ACM's director of development to take it from that early concept to a full MVP design.",
@@ -100,6 +99,7 @@ export const caseStudies: Record<string, CaseStudy> = {
           { kind: 'p', text: "My co-designer had spent about six months on the landing page, a small design system, and the MVP flow. I thought the system needed a redesign; they wanted to build on it. Over one-on-one calls, and with fresh eyes from leads on other ACM teams, we met in the middle: we kept the color themes and core ideas like swiping, and redesigned the logo, UI components, and onboarding. I let go of some of my own ideas along the way." },
           { kind: 'p', text: "With the engineers, feasibility shaped the design as much as taste. Our developers are students, so elaborate card animations weren't worth the build time. We weighed every interaction on the swipe cards against what the team could ship well." },
           { kind: 'p', text: "Standups and weekly meetings kept everyone in sync. When the refresh was ready, the dev team signed off and I presented the new logo and design direction to the entire org at standup." },
+          { kind: 'gallery', images: ['/work/meteormate/standup-updates.jpg', '/work/meteormate/standup-logo.jpg'], caption: 'Slides from my standup updates: matching-card iterations, and the new logo reveal' },
         ],
       },
       { title: 'Status', blocks: [{ kind: 'p', text: "Brand, core flows, and high-fidelity designs for every MVP feature are complete. Engineering is building it now, aiming to launch around the end of this year or early next year." }] },
@@ -170,6 +170,8 @@ export const caseStudies: Record<string, CaseStudy> = {
         blocks: [
           { kind: 'lead', text: "Vu pushed back on findings that didn't carry much weight." },
           { kind: 'p', text: "We each logged everything we found, which meant a lot of small issues. On our weekly calls, Vu challenged the ones that wouldn't really change the experience and steered me toward the screen-level problems with the biggest impact. Early on we agreed, on his call, that fixing inconsistency at the root with a design system would do more than patching screens one by one." },
+          { kind: 'image', src: `${S}audit-notes.jpg`, caption: 'My buyer-app notes, each issue logged on the screen where it happened' },
+          { kind: 'image', src: `${S}audit-board.jpg`, caption: 'The full audit board, flow by flow, with Vu reviewing alongside' },
         ],
       },
       {
@@ -215,7 +217,7 @@ export const caseStudies: Record<string, CaseStudy> = {
         title: 'In brief',
         blocks: [{
           kind: 'cards', numbered: true, items: [
-            { title: 'Redesign', body: 'Designed the application flow, dashboard, and landing page side by side with Vu, cutting the application from 8 steps to 4.' },
+            { title: 'Redesign', body: 'Designed the application flow, dashboard, landing page, and print collateral side by side with Vu, cutting the application from 8 steps to 4.' },
             { title: 'Collaboration', body: "Worked in passes with a non-technical founder, showing the design reasoning behind each choice until the direction clicked." },
             { title: 'Impact', body: 'After launch, conversions rose 17% and traffic rose 22%, comparing site analytics before and after.' },
           ],
@@ -237,6 +239,14 @@ export const caseStudies: Record<string, CaseStudy> = {
         ],
       },
       {
+        title: 'Beyond the screens',
+        blocks: [
+          { kind: 'lead', text: 'Conversions also happen off the website, so we designed the sales material too.' },
+          { kind: 'p', text: "Cosign sells to property managers and partners as much as to renters. Alongside the product work, we designed print and sales collateral: desk flyers and handouts for leasing offices, a partner revenue-share flyer, a landlord one-pager, a customer case study, and a pitch deck (confidential, so not shown here)." },
+          { kind: 'gallery', images: ['/work/cosign/landlord-onepager.jpg', '/work/cosign/how-it-works.jpg', '/work/cosign/partner-flyer.jpg'], caption: 'Landlord one-pager, leasing-office handout, and partner revenue-share flyer' },
+        ],
+      },
+      {
         title: 'Working together',
         blocks: [
           { kind: 'lead', text: "The founder wasn't sold on our first ideas, so we earned trust one pass at a time." },
@@ -250,7 +260,7 @@ export const caseStudies: Record<string, CaseStudy> = {
           kind: 'cards', items: [
             { title: 'Show the why', body: "Design principles don't land with a non-technical founder until you show them. Every iteration was a chance to make the reasoning visible." },
             { title: 'Small changes compound', body: 'Clearer headlines, better grouping, and fewer steps added up to double-digit gains.' },
-            { title: 'Design for the team you have', body: 'With a small engineering team, easier to build is a real tradeoff, not an afterthought.' },
+            { title: 'Trust is the product', body: "For someone who's been declined before, plain language and clear trust signals matter as much as fewer steps." },
           ],
         }],
       },
@@ -428,11 +438,13 @@ export const caseStudies: Record<string, CaseStudy> = {
     sections: [
       { title: 'UI components', blocks: [{ kind: 'image', src: img('XW7B4K8FDwhddmvFZURHcjQaBI') }, { kind: 'p', text: 'System-first: reusable components over one-off designs, rolled out incrementally so the product stayed familiar while the quality bar went up.' }] },
       { title: 'Final design', blocks: [{ kind: 'gallery', images: [img('3E4aTSItRP5dd7rQWtz1pE43rWw', 'jpg'), img('8xdlWkdbchwwJStdWcihwLqET58', 'jpg')] }] },
+      { title: 'What I learned', blocks: [{ kind: 'p', text: "Design systems are built for scale. Finding components that stay coherent, follow design principles, still have character, and serve a real purpose takes far more effort and deep thinking than polishing a single screen." }] },
     ],
   },
 
   tactile: {
     role: 'Product Designer & Front-end',
+    team: '4: me as lead designer, a front-end and design teammate, and 2 back-end engineers',
     date: '2026',
     type: 'FigBuild 2026 · Figma plugin · Hackathon',
     headline: 'Designing with your hands: a Figma plugin for people with taste but no tools',
@@ -441,6 +453,7 @@ export const caseStudies: Record<string, CaseStudy> = {
       { value: '8', label: 'hand gestures that drive the whole canvas' },
       { value: '4', label: 'full rewrites of the gesture map before it felt right' },
       { value: '60s', label: 'the bar we set for a first-timer to pick it up' },
+      { value: '60', label: 'likes and 20 comments on Devpost' },
     ],
     overview: [
       "Tactile is a Figma plugin you control with hand gestures and plain language. Describe a feeling (warm, bold, academic) and it becomes a real design, with no hex codes or type scales in the way. Our team built it at FigBuild 2026 around one belief: plenty of people have taste, they've just never had a tool that speaks their language.",
@@ -506,6 +519,13 @@ export const caseStudies: Record<string, CaseStudy> = {
         ],
       },
       {
+        title: 'Working together',
+        blocks: [
+          { kind: 'lead', text: 'On a team of four, I was the main designer and set the direction early.' },
+          { kind: 'p', text: "One teammate split front end and design with me, and two back-end engineers built out the full stack. Because I had a rough working MVP up within the first hours, everyone had something real to build on and argue about, instead of debating ideas in the abstract. The team really clicked once we stopped and talked about the purpose and the impact we wanted, then cut everything that didn't serve it." },
+        ],
+      },
+      {
         title: 'What it proved',
         blocks: [
           { kind: 'image', src: `${T}slide-outcome.webp` },
@@ -513,8 +533,19 @@ export const caseStudies: Record<string, CaseStudy> = {
           { kind: 'p', text: "Coordinating frontend, backend, design, and integration in a weekend only worked once we had a real conversation about purpose and the impact we wanted. Everything fell into place after that. Design isn't about the tools; it's about giving people the confidence to decide." },
           { kind: 'p', text: "I also built our final pitch deck and helped write the script we presented to the judges, so the story landed as clearly as the demo." },
           { kind: 'link', href: 'https://www.youtube.com/watch?v=ZS_jWvac8cY', label: 'Watch the demo' },
+          { kind: 'p', text: "We didn't place, but Tactile drew 60 likes and 20 comments on Devpost." },
           { kind: 'link', href: 'https://devpost.com/software/tactile-tyoilq', label: 'See it on Devpost' },
         ],
+      },
+      {
+        title: 'What I learned',
+        blocks: [{
+          kind: 'cards', numbered: true, items: [
+            { title: 'Iterate early', body: "Big changes are cheap at the start. Later on, core features get much harder to change, so the important pivots need to happen early." },
+            { title: 'Ship during ideation', body: "Students build full apps in 24 hours now. Getting an MVP out during ideation leaves room to break things, fail, and pivot in better directions." },
+            { title: 'Purpose aligns the team', body: "The work came together once we agreed on the impact we wanted, which made it obvious what to cut." },
+          ],
+        }],
       },
     ],
   },
