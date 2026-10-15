@@ -418,15 +418,15 @@ export const caseStudies: Record<string, CaseStudy> = {
       {
         title: 'Tailored by industry',
         blocks: [
-          { kind: 'p', text: 'Each industry gets its own headline, icon, screen imagery, and feature list, like age verification for liquor stores, a pizza builder for pizzerias, or a drive-thru module for quick service.' },
-          { kind: 'gallery', columns: 3, images: ['02-fine-dining', '03-qsr', '04-pizza', '05-retail', '06-bars-lounges', '07-liquor-store', '08-grocery-stores', '09-convenience-stores', '10-food-trucks', '11-coffee-shops', '12-clothing', '13-tab'].map(n => `${P}${n}-front.webp`) },
+          { kind: 'p', text: 'Each of the 13 industries gets its own headline, icon, screen imagery, and feature list, like age verification for liquor stores, a pizza builder for pizzerias, or a drive-thru module for quick service.' },
+          { kind: 'gallery', columns: 3, images: ['03-qsr', '05-retail', '11-coffee-shops'].map(n => `${P}${n}-front.webp`) },
         ],
       },
       {
         title: 'Product sheets',
         blocks: [
-          { kind: 'p', text: 'Four single-page sheets cover what plugs into the system: online ordering, integrations, delivery apps, and a version for salons.' },
-          { kind: 'gallery', columns: 2, images: ['14-online-ordering', '15-integrations', '16-delivery-apps', '17-salons'].map(n => `${P}${n}.webp`) },
+          { kind: 'p', text: 'Four single-page sheets cover what plugs into the system, like integrations and delivery apps.' },
+          { kind: 'gallery', columns: 2, images: ['15-integrations', '16-delivery-apps'].map(n => `${P}${n}.webp`) },
         ],
       },
     ],
