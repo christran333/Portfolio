@@ -89,7 +89,6 @@ export const playground: Shot[] = [
   { title: 'Hearth × Sugar Texas Run', caption: 'Tour flyer', aspect: '1080 / 1350', src: '/playground/hearth-sugar-tour.webp' },
   { title: 'Collegiate Nationals Roster', caption: 'UTD Powerlifting · Graphic', aspect: '1164 / 1323', src: '/playground/utdpl-nationals-roster.webp', href: 'https://www.instagram.com/p/DHMUCCpxenc/' },
   { title: 'C-State Roster', caption: 'UTD Powerlifting · Graphic', aspect: '1440 / 1529', src: '/playground/utdpl-c-state-roster.webp', href: 'https://www.instagram.com/p/DRTIxmqDI_p/' },
-  { title: 'Fall 2026 Practice Schedule', caption: 'UTD Powerlifting · Graphic', aspect: '1296 / 1280', src: '/playground/utdpl-practice-schedule.webp', href: 'https://www.instagram.com/p/Dc1JQdcRBGC/' },
 ]
 
 // External links open in a new tab; internal ones are handled by the router in App.tsx
