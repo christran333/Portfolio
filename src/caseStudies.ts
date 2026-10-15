@@ -405,7 +405,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     date: 'Fall 2025',
     type: 'Payments · POS · Print collateral',
     headline: 'A family of sales sheets for a point-of-sale system, one for every kind of business',
-    hero: `${P}cover.jpg`,
+    hero: `${P}hero.jpg`,
     overview: ["Priority is a payments company, and MX™ POS is its cloud-based point-of-sale system. I helped create and update its sales sheets: 13 two-sided sheets tailored to different industries, plus 4 product sheets, all built on one shared layout so the sales team could hand every prospect a sheet that spoke to their business."],
     sections: [
       {
@@ -418,22 +418,9 @@ export const caseStudies: Record<string, CaseStudy> = {
       {
         title: 'The update',
         blocks: [
-          { kind: 'p', text: "The update brought the sheets onto Priority's brand: deep green, the teal-to-yellow gradient from the logo, and the actual MX™ POS screen front and center. The front sells the system at a glance with hardware, key features, and benefits. The back groups the essential tools and add-on solutions into scannable cards, with a real person using the product in place of clip art." },
-          { kind: 'gallery', columns: 2, images: [`${P}04-pizza-front.webp`, `${P}04-pizza-back.webp`], caption: 'The same pizza sheet, updated' },
-        ],
-      },
-      {
-        title: 'Tailored by industry',
-        blocks: [
-          { kind: 'p', text: 'Each of the 13 industries gets its own headline, icon, screen imagery, and feature list, like age verification for liquor stores, a pizza builder for pizzerias, or a drive-thru module for quick service.' },
-          { kind: 'gallery', columns: 3, images: ['03-qsr', '05-retail', '11-coffee-shops'].map(n => `${P}${n}-front.webp`) },
-        ],
-      },
-      {
-        title: 'Product sheets',
-        blocks: [
-          { kind: 'p', text: 'Four single-page sheets cover what plugs into the system, like integrations and delivery apps.' },
-          { kind: 'gallery', columns: 2, images: ['15-integrations', '16-delivery-apps'].map(n => `${P}${n}.webp`) },
+          { kind: 'p', text: "The update brought the sheets onto Priority's brand: deep green, the teal-to-yellow gradient from the logo, and the actual MX™ POS screen front and center. Fronts sell the system at a glance with hardware, key features, and benefits. Backs group the essential tools and add-on solutions into scannable cards, with a real person using the product in place of clip art." },
+          { kind: 'gallery', columns: 3, images: [`${P}17-salons.webp`, `${P}04-pizza-back.webp`, `${P}15-integrations.webp`], caption: 'Updated sheets: salons, the pizza back, and integrations' },
+          { kind: 'p', text: 'Each of the 13 industry sheets gets its own headline, icon, screen imagery, and feature list, like age verification for liquor stores, a pizza builder for pizzerias, or a drive-thru module for quick service.' },
         ],
       },
     ],
