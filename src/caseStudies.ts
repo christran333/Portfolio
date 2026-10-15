@@ -409,10 +409,17 @@ export const caseStudies: Record<string, CaseStudy> = {
     overview: ["Priority is a payments company, and MX™ POS is its cloud-based point-of-sale system. I helped create and update its sales sheets: 13 two-sided sheets tailored to different industries, plus 4 product sheets, all built on one shared layout so the sales team could hand every prospect a sheet that spoke to their business."],
     sections: [
       {
-        title: 'One layout, front and back',
+        title: 'Where it started',
         blocks: [
-          { kind: 'p', text: 'The front sells the system at a glance: headline, hardware, key features, and benefits. The back goes deeper with essential tools, add-on solutions, and the business types it serves.' },
-          { kind: 'gallery', columns: 2, images: [`${P}01-restaurants-front.webp`, `${P}01-restaurants-back.webp`] },
+          { kind: 'p', text: 'Priority wanted its existing sales sheets updated. The originals were loud and playful, with lime grids, collage hands, and floating icons, but the bold graphics competed with the product, and the POS system itself never appeared.' },
+          { kind: 'gallery', columns: 2, images: [`${P}00-original-pizza-front.webp`, `${P}00-original-pizza-back.webp`], caption: 'The original pizza sheet, front and back' },
+        ],
+      },
+      {
+        title: 'The update',
+        blocks: [
+          { kind: 'p', text: "The update brought the sheets onto Priority's brand: deep green, the teal-to-yellow gradient from the logo, and the actual MX™ POS screen front and center. The front sells the system at a glance with hardware, key features, and benefits. The back groups the essential tools and add-on solutions into scannable cards, with a real person using the product in place of clip art." },
+          { kind: 'gallery', columns: 2, images: [`${P}04-pizza-front.webp`, `${P}04-pizza-back.webp`], caption: 'The same pizza sheet, updated' },
         ],
       },
       {
