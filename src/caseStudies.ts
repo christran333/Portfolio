@@ -43,7 +43,7 @@ export type CaseStudy = {
 
 export const caseStudies: Record<string, CaseStudy> = {
   meteormate: {
-    role: 'Lead Product Designer',
+    role: 'Product Design',
     team: '2 designers, 4 engineers, 2 project leads, and ACM\'s director of development',
     date: 'Summer 2025 → Present',
     type: 'Roommate-finding web app',
@@ -118,7 +118,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   scout: {
-    role: 'Product Design Intern, Francois Labs',
+    role: 'Product Design',
     team: '2 designers (me + Vu), with Scout\'s founders',
     date: 'Summer 2026',
     type: 'B2B marketplace · UX audit · Design system',
@@ -199,7 +199,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   cosign: {
-    role: 'Product Design Intern, Francois Labs',
+    role: 'Product Design',
     team: "2 designers (me + Vu), with Cosign's founder",
     date: 'Spring 2025',
     type: 'Rental platform · Fintech',
@@ -270,7 +270,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   backtrack: {
-    role: 'Product Design Intern, Backtrack',
+    role: 'Product Design',
     team: 'Solo designer, with the founder, lead engineer, and sales team',
     date: 'Fall 2025',
     type: 'AI-powered enterprise tools',
@@ -364,7 +364,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   'act-one': {
-    role: 'Product Design Intern, Francois Labs',
+    role: 'Brand Design',
     team: '3 designers',
     date: 'Summer 2026',
     type: 'Venture capital · Brand identity',
@@ -401,7 +401,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   priority: {
-    role: 'Visual Designer',
+    role: 'Visual Design',
     date: 'Fall 2025',
     type: 'Payments · POS · Print collateral',
     headline: 'A family of sales sheets for a point-of-sale system, one for every kind of business',
@@ -427,7 +427,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   janus: {
-    role: 'Product Design Intern, Francois Labs',
+    role: 'Brand Design',
     team: '3 designers',
     date: '2026',
     type: 'Logistics startup · Branding · Visual design',
@@ -442,7 +442,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   tennr: {
-    role: 'Product Design Intern, Francois Labs',
+    role: 'Visual Design',
     team: '2 designers',
     date: 'Spring 2025 → Fall 2025',
     type: 'Healthcare AI startup · Branding · Visual design',
@@ -456,7 +456,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   arist: {
-    role: 'Product Design Intern, Francois Labs',
+    role: 'Visual Design',
     team: '2 designers (me + Vu)',
     date: 'Spring 2025 → Fall 2025',
     type: 'AI e-learning startup · Branding · Visual design',
@@ -471,7 +471,7 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   tactile: {
-    role: 'Product Designer & Front-end',
+    role: 'Product Design',
     team: '4: me as lead designer, a front-end and design teammate, and 2 back-end engineers',
     date: '2026',
     type: 'FigBuild 2026 · Figma plugin · Hackathon',
