@@ -73,7 +73,6 @@ export const projects: Project[] = [
   { id: 'janus', title: 'Janus', tags: ['Visual Design', 'Branding', 'Marketing'], summary: 'Brand and product marketing for a freight finance platform.', when: '2026', href: '/work/janus', img: framer('EkeLjhylkYOjeDEBOhf5IiWJac'), aspect: '16 / 9' },
   { id: 'priority', title: 'Priority', tags: ['Visual Design', 'Print', 'Marketing'], summary: 'Sales sheets for a point-of-sale system, tailored to 13 industries.', when: 'Fall 2025', href: '/work/priority', img: '/work/priority/thumbnail.webp', aspect: '3514 / 2138' },
   { id: 'oro', title: 'Oro', tags: ['Product Design', 'Branding'], summary: 'Brand and platform UI for a fintech startup.', when: 'Fall 2025', href: '', soon: true, img: framer('LvAj1YZLb6lAVoXA7poLmqsEeEo'), aspect: '1 / 1' },
-  { id: 'stackedcast', title: 'StackedCast', tags: ['Multimedia', 'Marketing', 'Social Media'], summary: 'Multimedia and social design.', href: 'https://www.instagram.com/stackedcast/', img: framer('wYOVZUc5oorG0NcYXskYt1ard8g'), aspect: '459 / 512' },
 ]
 
 // Visual design, graphics, small projects and screens — display-only frames on the Work page.
@@ -83,6 +82,7 @@ export const projects: Project[] = [
 export type Shot = { title: string; caption: string; aspect: string; src?: string; href?: string; youtube?: string }
 
 export const playground: Shot[] = [
+  { title: 'StackedCast', caption: 'Multimedia · Social content', aspect: '459 / 512', src: 'https://framerusercontent.com/images/wYOVZUc5oorG0NcYXskYt1ard8g.png', href: 'https://www.instagram.com/stackedcast/' },
   { title: 'Mocktails & Melodies', caption: 'UX Club · Event flyer', aspect: '1600 / 2071', src: '/playground/mocktails-melodies.webp', href: 'https://www.instagram.com/ux_utd/' },
   { title: 'Centeredbyvoid', caption: 'Personal brand', aspect: '16 / 9', src: '/playground/cbv-brand-2400.webp', href: 'https://www.instagram.com/centeredbyvoid/' },
   { title: 'I Bombed Out at Nationals', caption: 'Centeredbyvoid · Video', aspect: '16 / 9', src: '/playground/cbv-nationals.webp', href: 'https://www.youtube.com/watch?v=CbyjhjOL92M' },

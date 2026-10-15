@@ -91,10 +91,10 @@ export default function Work() {
       </section>
 
       <header className="section-label">
-        <h2>Visuals & experiments</h2>
+        <h2>Marketing, video & visuals</h2>
         <p className="muted">Flyers, brands, videos, and whatever else I can't stop myself from making.</p>
       </header>
-      <section className="grid" aria-label="Visuals and experiments">
+      <section className="grid" aria-label="Marketing, video and visuals">
         {shots.map((col, c) => (
           <div key={c} className="grid-col">
             {col.map(s => {
