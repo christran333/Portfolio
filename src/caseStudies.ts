@@ -10,6 +10,7 @@ const video = (id: string) => `https://framerusercontent.com/assets/${id}.mp4`
 const A = '/work/act-one/'
 const S = '/work/scout/'
 const T = '/work/tactile/'
+const P = '/work/priority/'
 
 export type Card = { title: string; body?: string; points?: string[] }
 
@@ -235,6 +236,7 @@ export const caseStudies: Record<string, CaseStudy> = {
         blocks: [
           { kind: 'list', title: 'Key decisions', items: ['Split the renter and guarantor paths from the very first screen', 'Grouped related information into 4 sections instead of 8 steps', 'Added visual progress tracking', 'Put trust signals and plain explanations up front'] },
           { kind: 'image', src: img('BPhNVYI5YheOZ6Pp9uuWIBdT7c'), caption: 'Metrics up top, a prioritized action panel, and status badges that pair color with a label, so managers can scan a whole page at once' },
+          { kind: 'image', src: '/work/cosign/dashboard-overview.jpg', caption: 'The property-manager overview: applications, approvals, and defaults at a glance, with Refer New Applicant always one click away' },
           { kind: 'feature', src: img('9hSes9fVwMjoVkUM5UA5k6tp0'), title: "A landing page for people who've been declined before", text: 'Plain language over clever copy, a calm palette, and a four-step overview that makes co-signing feel manageable before anyone signs up.' },
         ],
       },
@@ -243,7 +245,7 @@ export const caseStudies: Record<string, CaseStudy> = {
         blocks: [
           { kind: 'lead', text: 'Conversions also happen off the website, so we designed the sales material too.' },
           { kind: 'p', text: "Cosign sells to property managers and partners as much as to renters. Alongside the product work, we designed print and sales collateral: desk flyers and handouts for leasing offices, a partner revenue-share flyer, a landlord one-pager, a customer case study, and a pitch deck (confidential, so not shown here)." },
-          { kind: 'gallery', images: ['/work/cosign/landlord-onepager.jpg', '/work/cosign/how-it-works.jpg', '/work/cosign/partner-flyer.jpg'], caption: 'Landlord one-pager, leasing-office handout, and partner revenue-share flyer' },
+          { kind: 'gallery', columns: 3, images: ['/work/cosign/landlord-onepager.jpg', '/work/cosign/how-it-works.jpg', '/work/cosign/partner-flyer.jpg'], caption: 'Landlord one-pager, leasing-office handout, and partner revenue-share flyer' },
         ],
       },
       {
@@ -395,6 +397,38 @@ export const caseStudies: Record<string, CaseStudy> = {
       { title: 'Type & color', blocks: [{ kind: 'gallery', columns: 3, images: ['type-instrument-serif', 'type-abc-favorit', 'type-geist-mono', 'color-primary', 'color-secondary', 'color-gradients'].map(n => `${A}${n}.jpg`) }] },
       { title: 'Texture', blocks: [{ kind: 'gallery', images: ['texture-wave', 'texture-dither-1', 'texture-dither-2', 'texture-dither-3'].map(n => `${A}${n}.jpg`) }] },
       { title: 'Website UI', blocks: [{ kind: 'gallery', images: ['ui-components', 'ui-quote-cards', 'ui-cms-cards', 'ui-site-section'].map(n => `${A}${n}.jpg`) }] },
+    ],
+  },
+
+  priority: {
+    role: 'Visual Designer',
+    date: 'Fall 2025',
+    type: 'Payments · POS · Print collateral',
+    headline: 'A family of sales sheets for a point-of-sale system, one for every kind of business',
+    hero: `${P}cover.jpg`,
+    overview: ["Priority is a payments company, and MX™ POS is its cloud-based point-of-sale system. I helped create and update its sales sheets: 13 two-sided sheets tailored to different industries, plus 4 product sheets, all built on one shared layout so the sales team could hand every prospect a sheet that spoke to their business."],
+    sections: [
+      {
+        title: 'One layout, front and back',
+        blocks: [
+          { kind: 'p', text: 'The front sells the system at a glance: headline, hardware, key features, and benefits. The back goes deeper with essential tools, add-on solutions, and the business types it serves.' },
+          { kind: 'gallery', columns: 2, images: [`${P}01-restaurants-front.webp`, `${P}01-restaurants-back.webp`] },
+        ],
+      },
+      {
+        title: 'Tailored by industry',
+        blocks: [
+          { kind: 'p', text: 'Each industry gets its own headline, icon, screen imagery, and feature list, like age verification for liquor stores, a pizza builder for pizzerias, or a drive-thru module for quick service.' },
+          { kind: 'gallery', columns: 3, images: ['02-fine-dining', '03-qsr', '04-pizza', '05-retail', '06-bars-lounges', '07-liquor-store', '08-grocery-stores', '09-convenience-stores', '10-food-trucks', '11-coffee-shops', '12-clothing', '13-tab'].map(n => `${P}${n}-front.webp`) },
+        ],
+      },
+      {
+        title: 'Product sheets',
+        blocks: [
+          { kind: 'p', text: 'Four single-page sheets cover what plugs into the system: online ordering, integrations, delivery apps, and a version for salons.' },
+          { kind: 'gallery', columns: 2, images: ['14-online-ordering', '15-integrations', '16-delivery-apps', '17-salons'].map(n => `${P}${n}.webp`) },
+        ],
+      },
     ],
   },
 
