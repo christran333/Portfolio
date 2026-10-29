@@ -211,9 +211,6 @@ a.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
 .cs-meta span { white-space: nowrap; }
 .cs-meta span:not(:last-child)::after { content: '·'; margin: 0 .6em; }
 .cs-title { display: block; margin-top: 18px; font-size: clamp(36px, 5vw, 76px); line-height: 1.04; letter-spacing: -.045em; font-weight: 500; }
-.cs-hero { display: block; border-radius: 8px; overflow: hidden; }
-/* Full width at the image's own ratio: never cropped */
-.cs-hero img { display: block; width: 100%; height: auto; }
 .cs-facts { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 24px; margin: 0; padding: 36px 0; border-bottom: 1px solid var(--line); }
 .cs-facts dt { font: 12px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
 .cs-facts dd { margin: 0; font-size: 17px; line-height: 1.4; }

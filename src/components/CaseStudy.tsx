@@ -144,10 +144,6 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
         <h1 className="cs-title rise" style={{ animationDelay: '.08s' }}>{study.headline}</h1>
       </header>
 
-      <div className="cs-hero rise" style={{ animationDelay: '.16s' }}>
-        <img src={imgAt(study.hero, 2048)} alt={`${project.title} hero`} />
-      </div>
-
       <dl className="cs-facts">
         <div className="reveal"><dt>Role</dt><dd>{study.role}</dd></div>
         {study.team && <div className="reveal"><dt>Team</dt><dd>{study.team}</dd></div>}
