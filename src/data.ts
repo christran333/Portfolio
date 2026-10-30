@@ -80,14 +80,17 @@ export const projects: Project[] = [
 // Visual design, graphics, small projects and screens — shown on the Exploration page (/exploration).
 // Titles below are placeholders: rename them, then drop each file into public/playground/
 // and set `src` (e.g. '/playground/poster.png'). Videos (.mp4/.webm) autoplay muted on loop.
-// `href` makes the tile a link; `youtube` (a video id) plays that video muted on loop in the frame
-export type Shot = { title: string; caption: string; aspect: string; src?: string; href?: string; youtube?: string }
+// `href` makes the tile a link; `youtube` (a video id) plays that video muted on loop in the frame;
+// `poster` is the still shown while a video loads
+export type Shot = { title: string; caption: string; aspect: string; src?: string; poster?: string; href?: string; youtube?: string }
 
 export const playground: Shot[] = [
   { title: 'StackedCast', caption: 'Multimedia · Social content', aspect: '459 / 512', src: 'https://framerusercontent.com/images/wYOVZUc5oorG0NcYXskYt1ard8g.png', href: 'https://www.instagram.com/stackedcast/' },
   { title: 'Mocktails & Melodies', caption: 'UX Club · Event flyer', aspect: '1600 / 2071', src: '/playground/mocktails-melodies.webp', href: 'https://www.instagram.com/ux_utd/' },
   { title: 'Centeredbyvoid', caption: 'Personal brand', aspect: '16 / 9', src: '/playground/cbv-brand-2400.webp', href: 'https://www.instagram.com/centeredbyvoid/' },
   { title: 'I Bombed Out at Nationals', caption: 'Centeredbyvoid · Video', aspect: '16 / 9', src: '/playground/cbv-nationals.webp', href: 'https://www.youtube.com/watch?v=CbyjhjOL92M' },
+  { title: 'Yolk', caption: 'Short film with my homies', aspect: '16 / 9', src: '/playground/yolk.mp4', poster: '/playground/yolk-poster.jpg', href: 'https://www.instagram.com/reel/DVg2mINDw4b/' },
+  { title: 'Interview', caption: 'Centeredbyvoid · Short film', aspect: '16 / 9', src: '/playground/interview.mp4', poster: '/playground/interview-poster.jpg', href: 'https://www.instagram.com/reel/DVJewMcgLzd/' },
   { title: 'Hearth × Sugar Texas Run', caption: 'Tour flyer', aspect: '1080 / 1350', src: '/playground/hearth-sugar-tour.webp' },
   { title: 'Collegiate Nationals Roster', caption: 'UTD Powerlifting · Graphic', aspect: '1164 / 1323', src: '/playground/utdpl-nationals-roster.webp', href: 'https://www.instagram.com/p/DHMUCCpxenc/' },
   { title: 'C-State Roster', caption: 'UTD Powerlifting · Graphic', aspect: '1440 / 1529', src: '/playground/utdpl-c-state-roster.webp', href: 'https://www.instagram.com/p/DRTIxmqDI_p/' },

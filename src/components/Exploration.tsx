@@ -28,7 +28,7 @@ export default function Exploration() {
                         loading="lazy"
                       />
                     )}
-                    {s.src && /\.(mp4|webm)$/.test(s.src) && <video src={s.src} autoPlay muted loop playsInline />}
+                    {s.src && /\.(mp4|webm)$/.test(s.src) && <video src={s.src} poster={s.poster} autoPlay muted loop playsInline />}
                     {s.src && !/\.(mp4|webm)$/.test(s.src) && <img src={s.src} alt={s.title} loading="lazy" />}
                     {!s.src && !s.youtube && import.meta.env.DEV && <span className="shot-empty">public/playground/ → set src in data.ts</span>}
                   </div>
