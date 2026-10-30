@@ -97,7 +97,7 @@ ul { list-style: none; }
 /* the hero steps back while the CENTEREDBYVOID reveal plays */
 .intro > :not(.ascii-field) { transition: opacity .35s; }
 .field-reveal .intro > :not(.ascii-field) { opacity: 0; }
-.intro-lead { font-family: var(--serif); font-size: clamp(30px, 3.7vw, 54px); line-height: 1.18; letter-spacing: -.03em; font-weight: 400; max-width: 26ch; text-wrap: balance; }
+.intro-lead { font-family: var(--serif); font-size: clamp(30px, 3.9vw, 64px); line-height: 1.16; letter-spacing: -.03em; font-weight: 400; max-width: 46ch; text-wrap: balance; }
 .nowrap { white-space: nowrap; }
 .intro-lead .rise { display: inline; }
 .intro-sub {
