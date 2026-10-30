@@ -13,7 +13,7 @@ export const profile = {
   ],
   // Outside of work, shown under About on the Info page
   interests: [
-    { label: 'Art', items: ['Play in a band', 'Design band flyers', 'Screen print shirts', 'Make films', 'Take photos'] },
+    { label: 'Art', items: ['Play in a band', 'Design band flyers', 'Screen print shirts', 'Make films', 'Take photos', 'Collect CDs and physical media'] },
     { label: 'Outdoors', items: ['Bouldering', 'Hiking', 'Cycling'] },
   ],
   // Photos on the Info page, from public/about/, laid out in the same staggered grid as the work.
