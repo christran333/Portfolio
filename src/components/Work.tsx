@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useReveal } from '../useReveal'
 import { distribute, useColumnCount } from '../layout'
-import AsciiField from './AsciiField'
 import { imgAt, linkProps, profile, projects, type Project } from '../data'
 
 // Tile cover: a looping muted clip when the project has one (played only while on screen), otherwise the image
@@ -61,7 +60,6 @@ export default function Work() {
   return (
     <div ref={root}>
       <section className="intro">
-        <AsciiField />
         <h1 className="intro-lead">
           {/* Inline, so only the words themselves (not the empty space around them) open the video */}
           <span

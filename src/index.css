@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&family=Libre+Baskerville:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Libre+Baskerville:ital@0;1&display=swap');
 
 
 /* Dark palette (light is the default: see the script in index.html, which sets data-theme before first paint) */
@@ -13,7 +13,6 @@
   --accent: #a98bff;
   --accent-ink: #0a0a0a; /* text on top of the accent */
   --sans: 'Geist', system-ui, sans-serif;
-  --mono: 'Geist Mono', ui-monospace, monospace; /* only the ASCII background field uses this; all visible text is Geist */
   --serif: 'Libre Baskerville', Georgia, serif; /* headlines only; everything else stays in Geist */
   --gutter: clamp(20px, 2vw, 32px); /* side margin shared by every section */
   --ease: cubic-bezier(.2, .7, .2, 1);
@@ -69,7 +68,6 @@ ul { list-style: none; }
   font: 400 14px/1.4 var(--sans); letter-spacing: 0; gap: 20px;
 }
 .header { transition: background-color .3s, backdrop-filter .3s; }
-.has-field:not(.field-scrolled) .header { background: transparent; backdrop-filter: none; }
 .brand { white-space: nowrap; text-align: left; }
 .brand-short { display: none; }
 .brand:hover { opacity: .6; }
@@ -86,17 +84,6 @@ ul { list-style: none; }
   display: flex; flex-direction: column; justify-content: center;
   padding: 40px var(--gutter) 64px;
 }
-.ascii-field { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; animation: field-in 2.6s .3s ease both; }
-@keyframes field-in { from { opacity: 0; } }
-.ascii-hint {
-  position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; white-space: nowrap;
-  font: 12px var(--sans); letter-spacing: .04em; color: var(--fg);
-  opacity: 0; transition: opacity .2s;
-}
-.ascii-hint.is-on { opacity: 1; }
-/* the hero steps back while the CENTEREDBYVOID reveal plays */
-.intro > :not(.ascii-field) { transition: opacity .35s; }
-.field-reveal .intro > :not(.ascii-field) { opacity: 0; }
 .intro-lead { font-family: var(--serif); font-size: clamp(30px, 3.9vw, 64px); line-height: 1.16; letter-spacing: -.03em; font-weight: 400; max-width: 46ch; text-wrap: balance; }
 .nowrap { white-space: nowrap; }
 .intro-lead .rise { display: inline; }
