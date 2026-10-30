@@ -69,7 +69,7 @@ export const projects: Project[] = [
   { id: 'backtrack', title: 'Backtrack', tags: ['Product Design'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: 'Fall 2025', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1' },
   { id: 'meteormate', title: 'MeteorMate', tags: ['Product Design'], summary: 'Designing a roommate-matching app from scratch for 20,000+ UT Dallas students.', when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
   { id: 'tactile', title: 'Tactile', tags: ['Product Design'], summary: 'A Figma plugin you control with hand gestures, built at FigBuild 2026.', when: '2026', href: '/work/tactile', img: '/work/tactile/tactile-cover.webp', aspect: '2800 / 1991' },
-  { id: 'act-one', title: 'Act One Ventures', tags: ['Brand Design'], summary: 'A first-pass rebrand for a venture capital firm backing AI-native founders.', when: 'Summer 2026', href: '/work/act-one', img: '/work/act-one/thumbnail.webp', aspect: '1125 / 920' },
+  { id: 'act-one', title: 'Act One Ventures', tags: ['Brand Design'], summary: 'A first-pass rebrand for a venture capital firm backing AI-native founders.', when: 'Summer 2026', href: '/work/act-one', img: '/work/act-one/thumbnail.webp', aspect: '1123 / 920' },
   { id: 'arist', title: 'Arist', tags: ['Visual Design'], summary: 'Scaling the visual system of an AI microlearning platform.', when: '2025', href: '/work/arist', img: framer('m2dJpbsJveZCEiAWVrCpBELUX0'), aspect: '1 / 1' },
   { id: 'tennr', title: 'Tennr', tags: ['Visual Design'], summary: 'Refreshing the brand and marketing of a healthcare AI startup.', when: '2025', href: '/work/tennr', img: framer('bPD5Y8PqndjPdKUVdovvOTugaw'), aspect: '16 / 9' },
   { id: 'janus', title: 'Janus', tags: ['Brand Design'], summary: 'Brand and product marketing for a freight finance platform.', when: '2026', href: '/work/janus', img: framer('EkeLjhylkYOjeDEBOhf5IiWJac'), aspect: '16 / 9' },
@@ -77,7 +77,7 @@ export const projects: Project[] = [
   { id: 'oro', title: 'Oro', tags: ['Product Design'], summary: 'Brand and platform UI for a fintech startup.', when: 'Fall 2025', href: '', soon: true, img: framer('LvAj1YZLb6lAVoXA7poLmqsEeEo'), aspect: '1 / 1' },
 ]
 
-// Visual design, graphics, small projects and screens — display-only frames on the Work page.
+// Visual design, graphics, small projects and screens — shown on the Exploration page (/exploration).
 // Titles below are placeholders: rename them, then drop each file into public/playground/
 // and set `src` (e.g. '/playground/poster.png'). Videos (.mp4/.webm) autoplay muted on loop.
 // `href` makes the tile a link; `youtube` (a video id) plays that video muted on loop in the frame

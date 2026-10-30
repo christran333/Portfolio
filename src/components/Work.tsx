@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useReveal } from '../useReveal'
 import { distribute, useColumnCount } from '../layout'
 import AsciiField from './AsciiField'
-import { imgAt, linkProps, playground, profile, projects, type Project } from '../data'
+import { imgAt, linkProps, profile, projects, type Project } from '../data'
 
 // Tile cover: a looping muted clip when the project has one (played only while on screen), otherwise the image
 function Cover({ p }: { p: Project }) {
@@ -57,7 +57,6 @@ export default function Work() {
   }, [previewing])
   const n = useColumnCount()
   const columns = distribute(projects, n)
-  const shots = distribute(playground, n)
 
   return (
     <div ref={root}>
@@ -108,43 +107,6 @@ export default function Work() {
         ))}
       </section>
 
-      <header className="section-label">
-        <h2>Marketing, video & visuals</h2>
-        <p className="muted">Flyers, brands, videos, and whatever else I can't stop myself from making.</p>
-      </header>
-      <section className="grid" aria-label="Marketing, video and visuals">
-        {shots.map((col, c) => (
-          <div key={c} className="grid-col">
-            {col.map(s => {
-              const media = (
-                <>
-                  <div className="tile-media" style={{ aspectRatio: s.aspect }}>
-                    {s.youtube && (
-                      <iframe
-                        src={`https://www.youtube-nocookie.com/embed/${s.youtube}?autoplay=1&mute=1&loop=1&playlist=${s.youtube}&controls=0&playsinline=1&modestbranding=1&rel=0`}
-                        title={s.title}
-                        allow="autoplay; encrypted-media; picture-in-picture"
-                        loading="lazy"
-                      />
-                    )}
-                    {s.src && /\.(mp4|webm)$/.test(s.src) && <video src={s.src} autoPlay muted loop playsInline />}
-                    {s.src && !/\.(mp4|webm)$/.test(s.src) && <img src={s.src} alt={s.title} loading="lazy" />}
-                    {!s.src && !s.youtube && import.meta.env.DEV && <span className="shot-empty">public/playground/ → set src in data.ts</span>}
-                  </div>
-                  <div className="shot-caption">
-                    <h3 className="tile-title">{s.title}{s.href && <span className="shot-arrow" aria-hidden> ↗</span>}</h3>
-                    <p className="tile-tags">{s.caption}</p>
-                  </div>
-                </>
-              )
-              const key = s.youtube ?? s.src ?? s.title
-              return s.href
-                ? <a key={key} {...linkProps(s.href)} className="tile shot is-link reveal">{media}</a>
-                : <figure key={key} className="tile shot reveal">{media}</figure>
-            })}
-          </div>
-        ))}
-      </section>
     </div>
   )
 }

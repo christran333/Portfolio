@@ -2,17 +2,21 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Header from './components/Header'
 import Work from './components/Work'
 import Info from './components/Info'
+import Exploration from './components/Exploration'
 import CaseStudy from './components/CaseStudy'
 import Footer from './components/Footer'
 import Cursor from './components/Cursor'
 import { caseStudies } from './caseStudies'
 import { profile, projects } from './data'
 
-// "/" → work, "/info" → info, "/work/<id>" → that case study (unknown ids fall back to work)
+// "/" → work, "/exploration" → exploration, "/info" → info, "/work/<id>" → that case study (unknown ids fall back to work)
 const pageFor = (path: string) => {
   const id = path.match(/^\/work\/([\w-]+)\/?$/)?.[1]
   if (id && caseStudies[id]) return { page: 'case' as const, id }
-  return { page: path.replace(/\/$/, '') === '/info' ? ('info' as const) : ('work' as const), id: '' }
+  const clean = path.replace(/\/$/, '')
+  if (clean === '/info') return { page: 'info' as const, id: '' }
+  if (clean === '/exploration') return { page: 'exploration' as const, id: '' }
+  return { page: 'work' as const, id: '' }
 }
 
 export default function App() {
@@ -68,10 +72,11 @@ export default function App() {
 
   return (
     <>
-      <Header tab={route.page === 'info' ? 'info' : 'work'} onTab={t => navigate(t === 'info' ? '/info' : '/')} />
+      <Header tab={route.page === 'case' ? 'work' : route.page} onTab={t => navigate(t === 'work' ? '/' : `/${t}`)} />
       <main key={path}>
         {route.page === 'case' && <CaseStudy id={route.id} study={caseStudies[route.id]} />}
         {route.page === 'info' && <Info />}
+        {route.page === 'exploration' && <Exploration />}
         {route.page === 'work' && <Work />}
       </main>
       <Footer />
