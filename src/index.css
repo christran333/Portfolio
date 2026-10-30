@@ -13,7 +13,7 @@
   --accent: #a98bff;
   --accent-ink: #0a0a0a; /* text on top of the accent */
   --sans: 'Geist', system-ui, sans-serif;
-  --mono: 'Geist Mono', ui-monospace, monospace;
+  --mono: 'Geist Mono', ui-monospace, monospace; /* only the ASCII background field uses this; all visible text is Geist */
   --serif: 'Libre Baskerville', Georgia, serif; /* headlines only; everything else stays in Geist */
   --gutter: clamp(20px, 2vw, 32px); /* side margin shared by every section */
   --ease: cubic-bezier(.2, .7, .2, 1);
@@ -66,7 +66,7 @@ ul { list-style: none; }
 .header {
   position: sticky; top: 0; z-index: 20; display: flex; justify-content: space-between; align-items: center;
   padding: 22px var(--gutter); background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(14px);
-  font: 400 14px/1.4 var(--mono); letter-spacing: 0; gap: 20px;
+  font: 400 14px/1.4 var(--sans); letter-spacing: 0; gap: 20px;
 }
 .header { transition: background-color .3s, backdrop-filter .3s; }
 .has-field:not(.field-scrolled) .header { background: transparent; backdrop-filter: none; }
@@ -90,7 +90,7 @@ ul { list-style: none; }
 @keyframes field-in { from { opacity: 0; } }
 .ascii-hint {
   position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; white-space: nowrap;
-  font: 12px var(--mono); letter-spacing: .04em; color: var(--accent);
+  font: 12px var(--sans); letter-spacing: .04em; color: var(--accent);
   opacity: 0; transition: opacity .2s;
 }
 .ascii-hint.is-on { opacity: 1; }
@@ -120,7 +120,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
    past the grid doesn't flash the page dark */
 .grid:has(a.tile:hover) .tile:not(:hover) .tile-media :is(img, video) { opacity: .7; transition-delay: 0s, .15s; }
 .tile-title { margin-top: 6px; font-size: 20px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; }
-.tile-tags { margin-top: 16px; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.tile-tags { margin-top: 16px; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
 .tile-summary { margin-top: 6px; font-size: 15px; line-height: 1.45; color: var(--muted); max-width: 44ch; }
 
 /* ───────── Info ───────── */
@@ -128,7 +128,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
   display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: clamp(32px, 4vw, 64px);
   padding: clamp(64px, 12vh, 140px) var(--gutter) 0; min-height: 70vh;
 }
-.label { display: block; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 18px; }
+.label { display: block; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 18px; }
 .info-col .label:not(:first-child) { margin-top: 48px; }
 .info-text { display: block; font-size: clamp(19px, 1.6vw, 23px); line-height: 1.45; letter-spacing: -.02em; max-width: 40ch; }
 .info-text + .info-text { margin-top: 1em; }
@@ -141,7 +141,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 /* Off the clock: three small groups under About */
 .interests { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 460px; }
 .interests h3 { font-size: 16px; font-weight: 500; margin-bottom: 10px; }
-.interests li { font: 14px/1.7 var(--mono); color: var(--muted); }
+.interests li { font: 14px/1.7 var(--sans); color: var(--muted); }
 .interests > div { display: block; }
 /* Photos reuse the work grid; only the spacing differs */
 .info-photos { padding-top: clamp(64px, 10vh, 120px); }
@@ -202,7 +202,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .shot iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
 .shot-arrow { color: var(--muted); transition: color .2s; }
 .shot.is-link:hover .shot-arrow { color: var(--accent); }
-.shot-empty { font: 12px var(--mono); color: var(--muted); border: 1px dashed var(--line); padding: 8px 12px; border-radius: 8px; }
+.shot-empty { font: 12px var(--sans); color: var(--muted); border: 1px dashed var(--line); padding: 8px 12px; border-radius: 8px; }
 /* Visuals: title sits clear of the image with its label tucked right under it */
 .shot-caption { margin-top: 14px; }
 .shot-caption .tile-title { margin-top: 0; }
@@ -211,22 +211,22 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 /* ───────── Case study ───────── */
 .cs { padding: 0 var(--gutter); }
 .cs-head { padding: clamp(56px, 12vh, 140px) 0 clamp(40px, 7vh, 80px); max-width: 1100px; }
-.cs-meta { display: block; font: 13px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.cs-meta { display: block; font: 13px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
 .cs-meta { display: flex; flex-wrap: wrap; gap: 4px 0; }
 .cs-meta span { white-space: nowrap; }
 .cs-meta span:not(:last-child)::after { content: '·'; margin: 0 .6em; }
 .cs-title { display: block; margin-top: 18px; font-family: var(--serif); font-size: clamp(34px, 4.2vw, 64px); line-height: 1.12; letter-spacing: -.03em; font-weight: 400; }
 .cs-facts { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 24px; margin: 0; padding: 36px 0; border-bottom: 1px solid var(--line); }
-.cs-facts dt { font: 12px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
+.cs-facts dt { font: 12px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
 .cs-facts dd { margin: 0; font-size: 17px; line-height: 1.4; }
 .cs-highlights { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 16px; padding-top: 56px; }
 .cs-highlight { padding: 28px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
-.cs-label { display: block; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--accent); }
+.cs-label { display: block; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--accent); }
 .cs-highlight strong { display: block; margin: 22px 0 8px; font-size: clamp(40px, 4.5vw, 64px); font-weight: 500; letter-spacing: -.05em; line-height: 1; }
 .cs-highlight p { color: var(--muted); font-size: 16px; max-width: 26ch; }
 
 .cs-section { display: grid; grid-template-columns: minmax(160px, 1fr) 3fr; gap: clamp(24px, 4vw, 64px); padding-top: clamp(80px, 12vh, 140px); }
-.cs-section-title { position: sticky; top: 104px; align-self: start; font: 13px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 400; }
+.cs-section-title { position: sticky; top: 104px; align-self: start; font: 13px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 400; }
 .cs-body { display: flex; flex-direction: column; gap: 28px; min-width: 0; }
 .cs-lead { font-size: clamp(21px, 1.9vw, 28px); line-height: 1.38; letter-spacing: -.022em; max-width: 44ch; }
 .cs-p { font-size: 18px; line-height: 1.6; color: var(--muted); max-width: 62ch; }
@@ -242,7 +242,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .cs-card p { color: var(--muted); line-height: 1.55; margin-bottom: 14px; }
 .cs-card p:last-child { margin-bottom: 0; }
 .cs-card li { font-size: 15px; }
-.cs-num { display: block; font: 12px var(--mono); color: var(--muted); margin-bottom: 18px; }
+.cs-num { display: block; font: 12px var(--sans); color: var(--muted); margin-bottom: 18px; }
 .cs-media { margin: 0; }
 /* Case-study images always show whole, at their own ratio: no object-fit cropping */
 /* Bare images (no panel, border or shadow behind them), just a small corner radius, like joseph.cv */
@@ -251,14 +251,14 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .cs-feature { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 48px); align-items: center; }
 .cs-feature-media img, .cs-feature-media video { display: block; width: 100%; height: auto; border-radius: 8px; }
 .cs-feature h4 { font-size: clamp(20px, 1.8vw, 26px); font-weight: 500; letter-spacing: -.02em; line-height: 1.2; margin: 0 0 12px; }
-.cs-feature p { font: 14px/1.7 var(--mono); color: var(--muted); margin: 0; }
+.cs-feature p { font: 14px/1.7 var(--sans); color: var(--muted); margin: 0; }
 /* Audit finding: screenshot beside theme, problem and recommendation */
 .cs-finding { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); align-items: start; padding: 24px 0; border-top: 1px solid var(--line); }
 .cs-finding.no-image { grid-template-columns: 1fr; }
 .cs-finding h4 { font-size: clamp(20px, 1.8vw, 26px); font-weight: 500; letter-spacing: -.02em; line-height: 1.2; margin: 12px 0 18px; }
 .cs-finding dl { margin: 0; }
-.cs-finding dt { font: 11px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-top: 14px; }
-.cs-finding dd { margin: 6px 0 0; font: 14px/1.65 var(--mono); color: var(--fg); }
+.cs-finding dt { font: 11px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-top: 14px; }
+.cs-finding dd { margin: 6px 0 0; font: 14px/1.65 var(--sans); color: var(--fg); }
 .cs-link { align-self: flex-start; font-size: 17px; padding-bottom: 2px; border-bottom: 1px solid var(--accent); transition: color .2s; }
 .cs-link:hover { color: var(--accent); }
 /* Gallery: justified rows. Each image's width share is its aspect ratio, so every image in a row
@@ -270,7 +270,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .cs-media figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); }
 .cs-table { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; }
 .cs-table table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 620px; }
-.cs-table th { text-align: left; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 400; padding: 16px 20px; background: var(--surface); }
+.cs-table th { text-align: left; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 400; padding: 16px 20px; background: var(--surface); }
 .cs-table td { padding: 16px 20px; border-top: 1px solid var(--line); vertical-align: top; }
 .cs-table td:first-child { font-weight: 500; }
 .cs-table td:last-child { color: var(--fg); }
@@ -302,7 +302,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
   .cs-table td { padding: 6px 0; border: 0; }
   .cs-table td:first-child { font-size: 18px; padding-bottom: 10px; }
   .cs-table td:not(:first-child)::before {
-    content: attr(data-label); display: block; font: 11px var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 2px;
+    content: attr(data-label); display: block; font: 11px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 2px;
   }
 }
 
@@ -347,7 +347,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 
 /* Case-study body text in Geist Mono; headlines, card titles and big numbers stay in Geist */
 .cs-p, .cs-lead, .cs-card p, .cs-card li, .cs-list li, .cs-media figcaption, .cs-highlight p, .cs-facts dd, .cs-table td {
-  font-family: var(--mono); letter-spacing: 0;
+  font-family: var(--sans); letter-spacing: 0;
 }
 .cs-lead { font-size: clamp(17px, 1.4vw, 21px); line-height: 1.6; max-width: none; }
 .cs-p { font-size: 15px; line-height: 1.75; max-width: none; }
@@ -383,7 +383,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 div.tile.is-soon { cursor: default; }
 .tile-soon {
   position: absolute; left: 50%; top: 50%; translate: -50% calc(-50% + 6px); padding: 8px 14px; border-radius: 999px;
-  font: 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: #fff;
+  font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: #fff;
   background: #1a1a1acc; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   opacity: 0; transition: opacity .3s, translate .5s var(--ease); pointer-events: none;
 }
