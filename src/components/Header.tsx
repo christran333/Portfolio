@@ -1,11 +1,21 @@
+import { useEffect, useState } from 'react'
 import ThemeToggle from './ThemeToggle'
 import { profile } from '../data'
 
 export type Tab = 'work' | 'exploration' | 'info'
 
 export default function Header({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
+  // See-through at the very top (so the halftone shows behind it), frosted once you scroll
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const check = () => setScrolled(window.scrollY > 8)
+    check()
+    window.addEventListener('scroll', check, { passive: true })
+    return () => window.removeEventListener('scroll', check)
+  }, [])
+
   return (
-    <header className="header">
+    <header className={`header${scrolled ? ' is-scrolled' : ''}`}>
       <button className="brand" onClick={() => onTab('work')} aria-label="Home">
         <span className="brand-full">{profile.name}</span>
         <span className="brand-short" aria-hidden>{profile.name.split(' ')[0].replace('Christopher', 'Chris')}</span>
