@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { useReveal } from '../useReveal'
 import { imgAt, profile, projects } from '../data'
 import type { Block, CaseStudy as Study } from '../caseStudies'
@@ -129,9 +129,33 @@ function BlockView({ b }: { b: Block }) {
   }
 }
 
+// "Principles around an idea" -> "principles-around-an-idea", for section anchors
+const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
 export default function CaseStudy({ id, study }: { id: string; study: Study }) {
   const root = useReveal<HTMLElement>()
   const project = projects.find(p => p.id === id)!
+
+  // Sections listed in the sticky "on this page" nav
+  const toc = ['Overview', ...study.sections.map(s => s.title), 'Want to learn more?'].map(t => ({ title: t, id: slug(t) }))
+  const [active, setActive] = useState(toc[0].id)
+
+  // Highlight whichever section is crossing the upper part of the screen
+  useEffect(() => {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) })
+    }, { rootMargin: '-25% 0px -65% 0px' })
+    toc.forEach(t => { const el = document.getElementById(t.id); if (el) io.observe(el) })
+    return () => io.disconnect()
+  }, [id])
+
+  const jump = (e: React.MouseEvent, to: string) => {
+    e.preventDefault()
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    document.getElementById(to)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+    history.replaceState(null, '', `#${to}`)
+    setActive(to)
+  }
 
   return (
     <article ref={root} className="cs">
@@ -162,7 +186,21 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
         </section>
       )}
 
-      <section className="cs-section">
+      <div className="cs-main">
+      <nav className="cs-toc" aria-label="On this page">
+        <ul>
+          {toc.map(t => (
+            <li key={t.id}>
+              <a href={`#${t.id}`} className={active === t.id ? 'is-active' : ''} aria-current={active === t.id ? 'location' : undefined} onClick={e => jump(e, t.id)}>
+                {t.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="cs-sections">
+      <section id={toc[0].id} className="cs-section">
         <h3 className="cs-section-title">Overview</h3>
         <div className="cs-body">
           {study.overview.map(t => <p key={t} className="cs-lead reveal">{t}</p>)}
@@ -170,13 +208,13 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
       </section>
 
       {study.sections.map(s => (
-        <section key={s.title} className="cs-section">
+        <section key={s.title} id={slug(s.title)} className="cs-section">
           <h3 className="cs-section-title">{s.title}</h3>
           <div className="cs-body">{s.blocks.map((b, i) => <BlockView key={i} b={b} />)}</div>
         </section>
       ))}
 
-      <section className="cs-section">
+      <section id={slug('Want to learn more?')} className="cs-section">
         <h3 className="cs-section-title">Want to learn more?</h3>
         <div className="cs-body">
           <p className="cs-lead reveal">
@@ -185,6 +223,8 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
           </p>
         </div>
       </section>
+      </div>
+      </div>
     </article>
   )
 }

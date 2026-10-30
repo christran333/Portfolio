@@ -212,8 +212,20 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .cs-highlight strong { display: block; margin: 22px 0 8px; font-size: clamp(40px, 4.5vw, 64px); font-weight: 500; letter-spacing: -.05em; line-height: 1; }
 .cs-highlight p { color: var(--muted); font-size: 16px; max-width: 26ch; }
 
-.cs-section { display: grid; grid-template-columns: minmax(160px, 1fr) 3fr; gap: clamp(24px, 4vw, 64px); padding-top: clamp(80px, 12vh, 140px); }
-.cs-section-title { position: sticky; top: 104px; align-self: start; font: 13px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 400; }
+/* Sticky "on this page" nav on the left, sections on the right */
+.cs-main { display: grid; grid-template-columns: minmax(160px, 1fr) 3fr; gap: clamp(24px, 4vw, 64px); }
+.cs-toc { position: sticky; top: 104px; align-self: start; margin-top: clamp(80px, 12vh, 140px); }
+.cs-toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.cs-toc a { position: relative; display: inline-block; padding-left: 16px; font-size: 15px; line-height: 1.35; color: var(--muted); transition: color .2s; }
+.cs-toc a::before {
+  content: ''; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; background: var(--fg);
+  opacity: 0; scale: .3; transition: opacity .25s, scale .3s var(--ease);
+}
+.cs-toc a:hover, .cs-toc a.is-active { color: var(--fg); }
+.cs-toc a.is-active::before { opacity: 1; scale: 1; }
+.cs-sections { min-width: 0; }
+.cs-section { padding-top: clamp(80px, 12vh, 140px); scroll-margin-top: 24px; }
+.cs-section-title { margin: 0 0 28px; font: 13px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 400; }
 .cs-body { display: flex; flex-direction: column; gap: 28px; min-width: 0; }
 .cs-lead { font-size: clamp(21px, 1.9vw, 28px); line-height: 1.38; letter-spacing: -.022em; max-width: 44ch; }
 .cs-p { font-size: 18px; line-height: 1.6; color: var(--muted); max-width: 62ch; }
@@ -269,8 +281,9 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 @media (max-width: 860px) {
   .cs-finding, .cs-feature { grid-template-columns: 1fr; }
   .cs-facts { grid-auto-flow: row; grid-template-columns: repeat(2, 1fr); }
-  .cs-section { grid-template-columns: 1fr; gap: 16px; }
-  .cs-section-title { position: static; }
+  .cs-main { grid-template-columns: 1fr; gap: 0; }
+  .cs-toc { display: none; } /* phones: no room for the side nav; sections just stack */
+  .cs-section-title { margin-bottom: 16px; }
 }
 @media (max-width: 640px) {
   .cs-gallery-row { flex-direction: column; }
