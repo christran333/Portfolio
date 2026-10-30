@@ -271,12 +271,6 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .cs-table td:last-child { color: var(--fg); }
 .cs-table td:not(:first-child):not(:last-child) { color: var(--muted); }
 
-.cs-next { display: block; margin-top: clamp(120px, 16vh, 200px); padding: 32px 0 0; border-top: 1px solid var(--line); }
-.cs-next-row { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-.cs-next-title { font-size: clamp(48px, 8vw, 128px); font-weight: 500; letter-spacing: -.055em; line-height: .95; transition: opacity .3s; }
-.cs-next-arrow { font-size: clamp(40px, 6vw, 96px); font-weight: 300; transition: translate .5s var(--ease), color .3s; }
-.cs-next:hover .cs-next-arrow { translate: 12px 0; color: var(--accent); }
-
 @media (max-width: 900px) {
   .cs-cards.three { grid-template-columns: 1fr; }
 }

@@ -132,8 +132,6 @@ function BlockView({ b }: { b: Block }) {
 export default function CaseStudy({ id, study }: { id: string; study: Study }) {
   const root = useReveal<HTMLElement>()
   const project = projects.find(p => p.id === id)!
-  const index = projects.findIndex(p => p.id === id)
-  const next = projects.slice(index + 1).concat(projects.slice(0, index)).find(p => p.href.startsWith('/'))!
 
   return (
     <article ref={root} className="cs">
@@ -187,14 +185,6 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
           </p>
         </div>
       </section>
-
-      <a href={next.href} className="cs-next reveal">
-        <span className="cs-label">Next project</span>
-        <span className="cs-next-row">
-          <span className="cs-next-title">{next.title}</span>
-          <span className="cs-next-arrow" aria-hidden>→</span>
-        </span>
-      </a>
     </article>
   )
 }
