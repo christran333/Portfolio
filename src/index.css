@@ -82,7 +82,7 @@ ul { list-style: none; }
    cards always peeks up into view on load, on any screen height */
 .intro {
   position: relative; user-select: none; -webkit-user-select: none;
-  min-height: calc(100svh - 68px - 220px);
+  min-height: calc(100svh - 68px - 160px);
   display: flex; flex-direction: column; justify-content: center;
   padding: 40px var(--gutter) 64px;
 }
