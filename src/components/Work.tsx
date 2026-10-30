@@ -2,7 +2,24 @@ import { useEffect, useRef, useState } from 'react'
 import { useReveal } from '../useReveal'
 import { distribute, useColumnCount } from '../layout'
 import AsciiField from './AsciiField'
-import { imgAt, linkProps, playground, profile, projects } from '../data'
+import { imgAt, linkProps, playground, profile, projects, type Project } from '../data'
+
+// Tile cover: a looping muted clip when the project has one (played only while on screen), otherwise the image
+function Cover({ p }: { p: Project }) {
+  const ref = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    const v = ref.current
+    if (!v) return
+    v.muted = true // React doesn't reliably set this, and browsers only autoplay muted video
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause() }, { threshold: 0.2 })
+    io.observe(v)
+    return () => io.disconnect()
+  }, [])
+  return p.video
+    ? <video ref={ref} src={p.video} poster={p.img} muted loop playsInline preload="metadata" aria-label={`${p.title} preview`} />
+    : <img src={imgAt(p.img, 1600)} alt={`${p.title} preview`} loading="lazy" />
+}
 
 export default function Work() {
   const root = useReveal<HTMLDivElement>()
@@ -66,28 +83,27 @@ export default function Work() {
       <section className="grid" aria-label="Selected work">
         {columns.map((col, c) => (
           <div key={c} className="grid-col">
-            {col.map(p => (
-              p.soon ? (
-                <div key={p.id} className="tile is-soon reveal">
+            {col.map(p => {
+              const body = (
+                <>
                   <div className="tile-media" style={{ aspectRatio: p.aspect }}>
-                    <img src={imgAt(p.img, 1600)} alt={`${p.title} preview`} loading="lazy" />
-                    <span className="tile-soon">Coming soon</span>
+                    <Cover p={p} />
+                    {p.soon && (
+                      <span className="tile-soon">
+                        {p.href ? <>Full case study coming soon<span className="tile-soon-cta">Watch the demo ↗</span></> : 'Coming soon'}
+                      </span>
+                    )}
                   </div>
                   <p className="tile-tags">{[p.tags[0], p.when].filter(Boolean).join(' · ')}</p>
                   <h2 className="tile-title">{p.title}</h2>
                   <p className="tile-summary">{p.summary}</p>
-                </div>
-              ) : (
-              <a key={p.id} {...linkProps(p.href)} className="tile reveal">
-                <div className="tile-media" style={{ aspectRatio: p.aspect }}>
-                  <img src={imgAt(p.img, 1600)} alt={`${p.title} preview`} loading="lazy" />
-                </div>
-                <p className="tile-tags">{[p.tags[0], p.when].filter(Boolean).join(' · ')}</p>
-                <h2 className="tile-title">{p.title}</h2>
-                <p className="tile-summary">{p.summary}</p>
-              </a>
+                </>
               )
-            ))}
+              const cls = `tile reveal${p.soon ? ' is-soon' : ''}`
+              return p.href
+                ? <a key={p.id} {...linkProps(p.href)} className={cls}>{body}</a>
+                : <div key={p.id} className={cls}>{body}</div>
+            })}
           </div>
         ))}
       </section>

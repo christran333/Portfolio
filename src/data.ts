@@ -50,8 +50,9 @@ export type Project = {
   summary: string // one sentence, shown under the title on the home grid
   when?: string // shown in the small line above the title
   href: string // '/work/<id>' opens a case study; full URLs open in a new tab
-  soon?: boolean // not clickable yet; shows "Coming soon" on hover
-  img: string
+  soon?: boolean // case study not ready: shows "Coming soon" on hover. With an href (e.g. a demo video) the tile still links there
+  img: string // cover image; also the poster frame when there's a video
+  video?: string // optional looping muted clip shown in place of the cover
   aspect: string // the cover image's own width / height, so it shows uncropped
 }
 
@@ -66,6 +67,7 @@ export const projects: Project[] = [
   { id: 'scout', title: 'Scout', tags: ['Product Design'], summary: 'Auditing a two-sided parts marketplace and turning the findings into a design system.', when: 'Summer 2026', href: '/work/scout', img: '/work/scout/thumbnail.webp', aspect: '2000 / 1125' },
   { id: 'backtrack', title: 'Backtrack', tags: ['Product Design'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: 'Fall 2025', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1' },
   { id: 'meteormate', title: 'MeteorMate', tags: ['Product Design'], summary: 'Designing a roommate-matching app from scratch for 20,000+ UT Dallas students.', when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
+  { id: 'toolkit', title: 'Toolkit', tags: ['Product Design'], summary: 'An app for saving the design tools you hear about and finding the right one later, made for the SVSD Design Competition.', when: '2026', href: 'https://youtu.be/JbNiQUGHzNo', soon: true, img: '/work/toolkit/poster.jpg', video: '/work/toolkit/thumbnail.mp4', aspect: '16 / 9' },
   { id: 'tactile', title: 'Tactile', tags: ['Product Design'], summary: 'A Figma plugin you control with hand gestures, built at FigBuild 2026.', when: '2026', href: '/work/tactile', img: '/work/tactile/tactile-cover.webp', aspect: '2800 / 1991' },
   { id: 'act-one', title: 'Act One Ventures', tags: ['Brand Design'], summary: 'A first-pass rebrand for a venture capital firm backing AI-native founders.', when: 'Summer 2026', href: '/work/act-one', img: '/work/act-one/thumbnail.webp', aspect: '1125 / 920' },
   { id: 'arist', title: 'Arist', tags: ['Visual Design'], summary: 'Scaling the visual system of an AI microlearning platform.', when: '2025', href: '/work/arist', img: framer('m2dJpbsJveZCEiAWVrCpBELUX0'), aspect: '1 / 1' },

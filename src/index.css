@@ -110,13 +110,13 @@ ul { list-style: none; }
 .grid-col { display: flex; flex-direction: column; gap: 32px; }
 .tile { display: block; }
 .tile-media { position: relative; overflow: hidden; background: var(--surface); }
-.tile-media img { width: 100%; height: 100%; object-fit: cover; display: block; scale: 1.08; transition: scale 1.6s var(--ease), opacity .4s; }
-.tile.is-in .tile-media img { scale: 1; }
+.tile-media :is(img, video) { width: 100%; height: 100%; object-fit: cover; display: block; scale: 1.08; transition: scale 1.6s var(--ease), opacity .4s; }
+.tile.is-in .tile-media :is(img, video) { scale: 1; }
 /* Only tiles that go somewhere react to hover; display-only pieces stay still */
-a.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
+a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s; }
 /* Neighbours fade back only slightly, and only once the cursor settles on a tile, so scrolling
    past the grid doesn't flash the page dark */
-.grid:has(a.tile:hover) .tile:not(:hover) .tile-media img { opacity: .7; transition-delay: 0s, .15s; }
+.grid:has(a.tile:hover) .tile:not(:hover) .tile-media :is(img, video) { opacity: .7; transition-delay: 0s, .15s; }
 .tile-title { margin-top: 6px; font-size: 20px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; }
 .tile-tags { margin-top: 16px; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
 .tile-summary { margin-top: 6px; font-size: 15px; line-height: 1.45; color: var(--muted); max-width: 44ch; }
@@ -182,7 +182,7 @@ a.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
 @media (prefers-reduced-motion: reduce) {
   .rise { animation: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
-  .tile-media img { scale: 1; }
+  .tile-media :is(img, video) { scale: 1; }
 }
 
 
@@ -381,7 +381,7 @@ a.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
 .info-photo.has-caption { cursor: help; }
 
 /* Projects that aren't ready: no link, a quiet "Coming soon" label fades in over the cover on hover */
-.tile.is-soon { cursor: default; }
+div.tile.is-soon { cursor: default; }
 .tile-soon {
   position: absolute; left: 50%; top: 50%; translate: -50% calc(-50% + 6px); padding: 8px 14px; border-radius: 999px;
   font: 12px var(--mono); text-transform: uppercase; letter-spacing: .14em; color: #fff;
@@ -389,6 +389,9 @@ a.tile:hover .tile-media img { scale: 1.03; transition-duration: 1s; }
   opacity: 0; transition: opacity .3s, translate .5s var(--ease); pointer-events: none;
 }
 .tile.is-soon:hover .tile-soon { opacity: 1; translate: -50% -50%; }
-.tile.is-soon .tile-media img { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
-.tile.is-soon:hover .tile-media img { filter: brightness(.7); }
+.tile.is-soon .tile-media :is(img, video) { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
+.tile.is-soon:hover .tile-media :is(img, video) { filter: brightness(.7); }
+/* Soon, but with a demo to watch: second line under the label */
+.tile-soon:has(.tile-soon-cta) { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 16px; border-radius: 14px; white-space: nowrap; }
+.tile-soon-cta { color: #ffffffb3; }
 @media (pointer: coarse) { .tile-soon { opacity: 1; translate: -50% -50%; } }
