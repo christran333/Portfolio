@@ -5,7 +5,7 @@ type Theme = 'dark' | 'light'
 
 // Switches themes with a circle that grows out from wherever you clicked
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(() => (document.documentElement.dataset.theme as Theme) ?? 'light')
+  const [theme, setTheme] = useState<Theme>(() => (document.documentElement.dataset.theme as Theme) ?? 'dark')
 
   const toggle = (e: MouseEvent<HTMLButtonElement>) => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark'

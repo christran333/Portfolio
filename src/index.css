@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Libre+Baskerville:ital@0;1&display=swap');
 
 
-/* Dark palette (light is the default: see the script in index.html, which sets data-theme before first paint) */
+/* Dark is the default theme (the script in index.html sets data-theme before first paint) */
 :root {
   --bg: #0a0a0a;
   --fg: #ededeb;
