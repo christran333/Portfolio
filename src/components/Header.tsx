@@ -13,7 +13,7 @@ export default function Header({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => vo
       <nav className="nav">
         <button aria-current={tab === 'work' ? 'page' : undefined} onClick={() => onTab('work')}>Work</button>
         <button aria-current={tab === 'exploration' ? 'page' : undefined} onClick={() => onTab('exploration')}>Exploration</button>
-        <button aria-current={tab === 'info' ? 'page' : undefined} onClick={() => onTab('info')}>Info</button>
+        <button aria-current={tab === 'info' ? 'page' : undefined} onClick={() => onTab('info')}>About</button>
         <a href={profile.resume} target="_blank" rel="noreferrer">Resume</a>
         <ThemeToggle />
       </nav>
