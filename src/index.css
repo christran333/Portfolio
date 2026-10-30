@@ -90,7 +90,7 @@ ul { list-style: none; }
 @keyframes field-in { from { opacity: 0; } }
 .ascii-hint {
   position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; white-space: nowrap;
-  font: 12px var(--sans); letter-spacing: .04em; color: var(--accent);
+  font: 12px var(--sans); letter-spacing: .04em; color: var(--fg);
   opacity: 0; transition: opacity .2s;
 }
 .ascii-hint.is-on { opacity: 1; }

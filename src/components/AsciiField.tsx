@@ -65,7 +65,7 @@ export default function AsciiField() {
     const readTheme = () => {
       const s = getComputedStyle(document.documentElement)
       fg = s.getPropertyValue('--fg').trim() || fg
-      accent = s.getPropertyValue('--accent').trim() || accent
+      accent = fg // black and white only: highlights use the text color, not the purple accent
       mono = s.getPropertyValue('--mono').trim() || mono
       boost = document.documentElement.dataset.theme === 'light' ? 1.8 : 1
     }
@@ -145,7 +145,7 @@ export default function AsciiField() {
           }
           const hv = heat[i]
           if (hv > 0.04) {
-            // lifted: purple ASCII, risen a few pixels, brighter the hotter it is
+            // lifted: ASCII in the text color, risen a few pixels, brighter the hotter it is
             const ch = spell
               ? MSG[(x + y * 5) % MSG.length] // reads left to right, staggered row by row
               : CORE[(x * 7 + y * 13 + Math.floor(t * 6)) % CORE.length]
