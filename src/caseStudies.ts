@@ -30,8 +30,11 @@ export type Block =
 export type Section = { title: string; blocks: Block[] }
 
 export type CaseStudy = {
-  role: string
-  team?: string // who you worked with, shown as a Team fact
+  // The facts row under the headline: short labels, one per line (like a credits list).
+  // Who led what belongs in the overview, not here.
+  role: string[] // title, then where, e.g. ['Product Design Intern', 'Francois Labs']
+  team?: string[] // names of the people you worked with
+  scope: string[] // what you made, 2–3 short items
   date: string
   type: string
   headline: string
@@ -43,8 +46,9 @@ export type CaseStudy = {
 
 export const caseStudies: Record<string, CaseStudy> = {
   meteormate: {
-    role: 'Product Design',
-    team: '2 designers, 4 engineers, 2 project leads, and ACM\'s director of development',
+    role: ['Lead Product Designer', 'ACM at UTD'],
+    team: ['2 designers', '4 engineers', '2 project leads'],
+    scope: ['User research', 'MVP design', 'Brand refresh'],
     date: 'Summer 2025 → Present',
     type: 'Roommate-finding web app',
     headline: 'Building a roommate-matching platform for 20,000+ UTD students, from scratch',
@@ -118,8 +122,9 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   scout: {
-    role: 'Product Design',
-    team: '2 designers (me + Vu), with Scout\'s founders',
+    role: ['Product Design Intern', 'Francois Labs'],
+    team: ['Vu Francois'],
+    scope: ['Buyer app audit', 'Design system'],
     date: 'Summer 2026',
     type: 'B2B marketplace · UX audit · Design system',
     headline: 'Auditing a two-sided parts marketplace, and turning the findings into a design system',
@@ -131,7 +136,7 @@ export const caseStudies: Record<string, CaseStudy> = {
       { value: '34', label: 'components in the resulting design system' },
     ],
     overview: [
-      "Scout is a B2B marketplace where apartment and property teams order replacement parts, from washers to doors, directly from vendors. The storefront looks like a consumer shop, but underneath it runs on purchase orders and approvals, and both the buyer and vendor apps had grown inconsistent. Vu, a founder and senior designer, and I spent two weeks auditing both to figure out what to fix first.",
+      "Scout is a B2B marketplace where apartment and property teams order replacement parts, from washers to doors, directly from vendors. The storefront looks like a consumer shop, but underneath it runs on purchase orders and approvals, and both the buyer and vendor apps had grown inconsistent. Vu Francois, founder and senior designer at Francois Labs, and I spent two weeks auditing both to figure out what to fix first.",
     ],
     sections: [
       {
@@ -199,8 +204,9 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   cosign: {
-    role: 'Product Design',
-    team: "2 designers (me + Vu), with Cosign's founder",
+    role: ['Product Design Intern', 'Francois Labs'],
+    team: ['Vu Francois'],
+    scope: ['Application flow', 'Dashboard', 'Landing page'],
     date: 'Spring 2025',
     type: 'Rental platform · Fintech',
     headline: 'Redesigning a fintech rental platform to rebuild trust and lift conversions',
@@ -270,8 +276,9 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   backtrack: {
-    role: 'Product Design',
-    team: 'Solo designer, with the founder, lead engineer, and sales team',
+    role: ['Product Design Intern', 'Sole designer'],
+    team: ['Founder', 'Lead engineer', 'Sales team'],
+    scope: ['AI assistant', 'Event setup tool', 'Usability testing'],
     date: 'Fall 2025',
     type: 'AI-powered enterprise tools',
     headline: 'Designing an AI assistant that turns meeting notes into action',
@@ -364,8 +371,9 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   'act-one': {
-    role: 'Brand Design',
-    team: '3 designers',
+    role: ['Product Design Intern', 'Francois Labs'],
+    team: ['Vu Francois', 'Taylor Nguyen'],
+    scope: ['Moodboards', 'Logo directions', 'Website UI'],
     date: 'Summer 2026',
     type: 'Venture capital · Brand identity',
     headline: 'Giving a venture capital firm something worth believing in',
@@ -401,7 +409,9 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   priority: {
-    role: 'Visual Design',
+    role: ['Product Design Intern', 'Francois Labs'],
+    team: ['Vu Francois'],
+    scope: ['Sales sheets', 'Shared layout system'],
     date: 'Fall 2025',
     type: 'Payments · POS · Print collateral',
     headline: 'A family of sales sheets for a point-of-sale system, one for every kind of business',
@@ -427,8 +437,9 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   janus: {
-    role: 'Brand Design',
-    team: '3 designers',
+    role: ['Product Design Intern', 'Francois Labs'],
+    team: ['Vu Francois', 'Taylor Nguyen'],
+    scope: ['One-pagers', 'Pitch deck', 'Application UI'],
     date: '2026',
     type: 'Logistics startup · Branding · Visual design',
     headline: 'Brand and product marketing for a freight finance platform',
@@ -442,8 +453,9 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   tennr: {
-    role: 'Visual Design',
-    team: '2 designers',
+    role: ['Product Design Intern', 'Francois Labs'],
+    team: ['Vu Francois'],
+    scope: ['Investor deck', 'Marketing collateral'],
     date: 'Spring 2025 → Fall 2025',
     type: 'Healthcare AI startup · Branding · Visual design',
     headline: 'Revamping brand and marketing for a healthcare AI startup',
@@ -456,13 +468,14 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   arist: {
-    role: 'Visual Design',
-    team: '2 designers (me + Vu)',
+    role: ['Product Design Intern', 'Francois Labs'],
+    team: ['Vu Francois'],
+    scope: ['Component system', 'Documentation'],
     date: 'Spring 2025 → Fall 2025',
     type: 'AI e-learning startup · Branding · Visual design',
     headline: 'Scaling the visual system of an AI microlearning platform',
     hero: img('BGG1xL6mAgP5bl9i3x50kdKRY'),
-    overview: ["Arist helps enterprises deliver bite-sized training through SMS, Slack, and Teams. As the product scaled, its visual language wasn't keeping up, so I built a component system alongside the founder of Francois Labs, a senior designer: reusable UI components, scalable asset libraries, and tighter consistency across product surfaces."],
+    overview: ["Arist helps enterprises deliver bite-sized training through SMS, Slack, and Teams. As the product scaled, its visual language wasn't keeping up, so I built a component system alongside Vu Francois, founder and senior designer at Francois Labs: reusable UI components, scalable asset libraries, and tighter consistency across product surfaces."],
     sections: [
       { title: 'UI components', blocks: [{ kind: 'image', src: img('XW7B4K8FDwhddmvFZURHcjQaBI') }, { kind: 'p', text: 'System-first: reusable components over one-off designs, rolled out incrementally so the product stayed familiar while the quality bar went up.' }] },
       { title: 'Final design', blocks: [{ kind: 'gallery', images: [img('3E4aTSItRP5dd7rQWtz1pE43rWw', 'jpg'), img('8xdlWkdbchwwJStdWcihwLqET58', 'jpg')] }] },
@@ -471,8 +484,9 @@ export const caseStudies: Record<string, CaseStudy> = {
   },
 
   tactile: {
-    role: 'Product Design',
-    team: '4: me as lead designer, a front-end and design teammate, and 2 back-end engineers',
+    role: ['Lead Designer'],
+    team: ['Front-end & design teammate', '2 back-end engineers'],
+    scope: ['Direction', 'Gesture system', 'MVP prototype'],
     date: '2026',
     type: 'FigBuild 2026 · Figma plugin · Hackathon',
     headline: 'Designing with your hands: a Figma plugin for people with taste but no tools',

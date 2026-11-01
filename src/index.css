@@ -42,20 +42,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Film-grain texture over the whole page. Tweak --grain-opacity to taste (0 turns it off).
+/* Film-grain texture on the page background. Tweak --grain-opacity to taste (0 turns it off).
    baseFrequency in the SVG: higher = finer grain, lower = blotchier paper look. */
-:root { --grain-opacity: .16; --grain-blend: screen; }
+:root { --grain-opacity: .16; --grain-blend: screen; --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 :root[data-theme='light'] { --grain-opacity: .2; --grain-blend: multiply; }
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  z-index: 999; /* above content, below the custom cursor (1000) */
+  z-index: -1; /* behind all content: the grain shows on the page background only, never on images or video */
   pointer-events: none;
   opacity: var(--grain-opacity);
   mix-blend-mode: var(--grain-blend);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: var(--grain);
   background-size: 240px 240px;
+  background-attachment: fixed;
 }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
@@ -63,7 +64,7 @@ h1, h2, h3, p, ul { margin: 0; padding: 0; }
 ul { list-style: none; }
 ::selection { background: var(--accent); color: var(--accent-ink); }
 :focus { outline: none; }
-:focus-visible { outline: 1.5px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+:focus-visible { outline: 1.5px solid var(--accent); outline-offset: 4px; }
 .muted { color: var(--muted); }
 .underline { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; transition: text-decoration-color .2s; }
 .underline:hover { text-decoration-color: var(--fg); }
@@ -80,10 +81,16 @@ ul { list-style: none; }
 /* ───────── Header: name on the left, plain text links on the right ───────── */
 .header {
   position: sticky; top: 0; z-index: 20; display: flex; justify-content: space-between; align-items: center;
-  padding: 22px var(--gutter); background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(14px);
+  padding: 22px var(--gutter); background: var(--bg); /* solid, same as the page, so the two grain layers match exactly */
   font: 400 14px/1.4 var(--sans); letter-spacing: 0; gap: 20px;
 }
-.header { transition: background-color .3s, backdrop-filter .3s; }
+.header { transition: background-color .3s; }
+/* The nav bar is nearly opaque, so it covers the page grain behind it: give it its own matching layer */
+.header::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  opacity: var(--grain-opacity); mix-blend-mode: var(--grain-blend);
+  background-image: var(--grain); background-size: 240px 240px; background-attachment: fixed;
+}
 .brand { white-space: nowrap; text-align: left; }
 .brand-short { display: none; }
 .brand:hover { opacity: .6; }
@@ -114,15 +121,30 @@ ul { list-style: none; }
 .grid { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: clamp(16px, 1.2vw, 20px); padding: 0 var(--gutter); align-items: start; }
 .grid-col { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
 .tile { display: block; }
+.tile-cover { display: block; }
 .tile-media { position: relative; overflow: hidden; background: var(--surface); }
 .tile-media :is(img, video) { width: 100%; height: 100%; object-fit: cover; display: block; scale: 1.08; transition: scale 1.6s var(--ease), opacity .4s; }
 .tile.is-in .tile-media :is(img, video) { scale: 1; }
-/* Only tiles that go somewhere react to hover; display-only pieces stay still */
-a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s; }
-/* Neighbours fade back only slightly, and only once the cursor settles on a tile, so scrolling
-   past the grid doesn't flash the page dark */
-.grid:has(a.tile:hover) .tile:not(:hover) .tile-media :is(img, video) { opacity: .7; transition-delay: 0s, .15s; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Only covers that go somewhere react to hover; display-only pieces stay still.
+   (Exploration tiles are whole-tile links, so they keep the a.tile rules.) */
+:is(a.tile-cover, a.tile):hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s; }
 .tile-title { margin-top: 6px; font-size: 20px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; }
+.tile-title a { transition: opacity .2s; }
+.tile-title > a:not(.tile-site):hover { opacity: .6; }
+/* Company name → its website. A muted ↗ (like the Exploration titles) always sits beside it;
+   on hover it turns accent and nudges up-right, and "View site" slides in after it */
+.tile-site { display: inline-flex; align-items: baseline; gap: 8px; }
+.tile-site-arrow { color: var(--muted); transition: color .2s, translate .35s var(--ease); }
+.tile-site-cta {
+  font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--accent);
+  opacity: 0; translate: -6px 0; transition: opacity .25s, translate .4s var(--ease);
+}
+.tile-site:is(:hover, :focus-visible) .tile-site-arrow { color: var(--accent); translate: 2px -2px; }
+.tile-site:is(:hover, :focus-visible) .tile-site-cta { opacity: 1; translate: 0 0; }
+/* Touch screens can't hover: the arrow alone says it's a link */
+@media (pointer: coarse) { .tile-site-cta { display: none; } }
+
 .tile-tags { margin-top: 16px; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
 .tile-summary { margin-top: 6px; font-size: 15px; line-height: 1.45; color: var(--muted); max-width: 44ch; }
 
@@ -207,8 +229,9 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 /* The embed is decoration: clicks fall through to the tile's link */
 .shot iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
 .shot-arrow { color: var(--muted); transition: color .2s; }
-.shot.is-link:hover .shot-arrow { color: var(--accent); }
-.shot-empty { font: 12px var(--sans); color: var(--muted); border: 1px dashed var(--line); padding: 8px 12px; border-radius: 8px; }
+.shot-arrow { display: inline-block; transition: color .2s, translate .35s var(--ease); }
+.shot.is-link:hover .shot-arrow { color: var(--accent); translate: 2px -2px; }
+.shot-empty { font: 12px var(--sans); color: var(--muted); border: 1px dashed var(--line); padding: 8px 12px; }
 /* Visuals: title sits clear of the image with its label tucked right under it */
 .shot-caption { margin-top: 14px; }
 .shot-caption .tile-title { margin-top: 0; }
@@ -222,11 +245,11 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .cs-meta span { white-space: nowrap; }
 .cs-meta span:not(:last-child)::after { content: '·'; margin: 0 .6em; }
 .cs-title { display: block; margin-top: 18px; font-family: var(--serif); font-size: clamp(34px, 4.2vw, 64px); line-height: 1.12; letter-spacing: -.03em; font-weight: 400; }
-.cs-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 24px; margin: 0; padding: 36px 0; border-bottom: 1px solid var(--line); }
+.cs-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: 28px 24px; margin: 0; padding: 36px 0; border-bottom: 1px solid var(--line); }
 .cs-facts dt { font: 12px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
-.cs-facts dd { margin: 0; font-size: 17px; line-height: 1.4; }
+.cs-facts dd { margin: 0; font-size: 17px; line-height: 1.75; }
 .cs-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 16px; padding-top: 56px; }
-.cs-highlight { padding: 28px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+.cs-highlight { padding: 28px; background: var(--surface); border: 1px solid var(--line); }
 .cs-label { display: block; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--accent); }
 .cs-highlight strong { display: block; margin: 22px 0 8px; font-size: clamp(40px, 4.5vw, 64px); font-weight: 500; letter-spacing: -.05em; line-height: 1; }
 .cs-highlight p { color: var(--muted); font-size: 16px; max-width: 26ch; }
@@ -256,18 +279,18 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .cs-cards { display: grid; gap: 16px; }
 .cs-cards.two { grid-template-columns: repeat(2, 1fr); }
 .cs-cards.three { grid-template-columns: repeat(3, 1fr); }
-.cs-card { padding: 26px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+.cs-card { padding: 26px; background: var(--surface); border: 1px solid var(--line); }
 .cs-card p { color: var(--muted); line-height: 1.55; margin-bottom: 14px; }
 .cs-card p:last-child { margin-bottom: 0; }
 .cs-card li { font-size: 15px; }
 .cs-num { display: block; font: 12px var(--sans); color: var(--muted); margin-bottom: 18px; }
 .cs-media { margin: 0; }
 /* Case-study images always show whole, at their own ratio: no object-fit cropping */
-/* Bare images (no panel, border or shadow behind them), just a small corner radius, like joseph.cv */
-.cs-media img, .cs-media video, .cs-finding img { display: block; width: 100%; height: auto; border-radius: 8px; }
+/* Bare images (no panel, border or shadow behind them), square corners like everything else */
+.cs-media img, .cs-media video, .cs-finding img { display: block; width: 100%; height: auto; }
 /* Feature: a big shot beside a short title and text */
 .cs-feature { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(20px, 3vw, 48px); align-items: center; }
-.cs-feature-media img, .cs-feature-media video { display: block; width: 100%; height: auto; border-radius: 8px; }
+.cs-feature-media img, .cs-feature-media video { display: block; width: 100%; height: auto; }
 .cs-feature h4 { font-size: clamp(20px, 1.8vw, 26px); font-weight: 500; letter-spacing: -.02em; line-height: 1.2; margin: 0 0 12px; }
 .cs-feature p { font: 14px/1.7 var(--sans); color: var(--muted); margin: 0; }
 /* Audit finding: screenshot beside theme, problem and recommendation */
@@ -286,7 +309,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .cs-gallery-row > * { flex: var(--r, 1.7778) 1 0; min-width: 0; }
 .cs-gallery-row img { height: auto; }
 .cs-media figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); }
-.cs-table { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; }
+.cs-table { overflow-x: auto; border: 1px solid var(--line); }
 .cs-table table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 620px; }
 .cs-table th { text-align: left; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 400; padding: 16px 20px; background: var(--surface); }
 .cs-table td { padding: 16px 20px; border-top: 1px solid var(--line); vertical-align: top; }
@@ -304,6 +327,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
   .cs-section-title { margin-bottom: 16px; }
 }
 @media (max-width: 640px) {
+  .cs-meta span { white-space: normal; } /* long titles wrap instead of running off a phone screen */
   .cs-gallery-row { flex-direction: column; }
   .cs-gallery-row > * { flex: none; width: 100%; }
   .cs-gallery-row .cs-gallery-spacer { display: none; }
@@ -313,10 +337,10 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
   .cs-highlight strong { margin: 14px 0 6px; }
   .cs-card { padding: 22px; }
   /* Table rows become stacked cards */
-  .cs-table { border: 0; border-radius: 0; overflow: visible; }
+  .cs-table { border: 0; overflow: visible; }
   .cs-table table, .cs-table tbody, .cs-table tr, .cs-table td { display: block; min-width: 0; }
   .cs-table thead { display: none; }
-  .cs-table tr { padding: 18px 20px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+  .cs-table tr { padding: 18px 20px; margin-bottom: 12px; border: 1px solid var(--line); background: var(--surface); }
   .cs-table td { padding: 6px 0; border: 0; }
   .cs-table td:first-child { font-size: 18px; padding-bottom: 10px; }
   .cs-table td:not(:first-child)::before {
@@ -350,18 +374,37 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .theme-toggle svg.is-moon .bite { cx: 17px; cy: 7px; }
 .theme-toggle svg.is-moon .rays { opacity: 0; scale: .5; }
 
-/* ───────── Hero video: a small window that pops up while the headline is hovered ───────── */
-.intro-preview {
+/* ───────── Floating previews: a small window that trails the cursor ─────────
+   Used for the hero video (hover the headline) and company site screenshots (hover a project's name) */
+.float-preview {
   position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; width: clamp(240px, 22vw, 360px);
 }
-.intro-preview video {
-  display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px;
+.float-preview.is-site { width: clamp(280px, 26vw, 420px); }
+.float-preview-frame {
+  position: relative; overflow: hidden; background: var(--raised);
   translate: 24px -50%; box-shadow: 0 30px 60px -20px #000b, 0 0 0 1px #ffffff1f;
-  clip-path: inset(50% 50% 50% 50% round 12px); opacity: 0; scale: .9;
-  transition: clip-path .55s var(--ease), opacity .3s, scale .55s var(--ease);
+  clip-path: inset(50% 50% 50% 50%); opacity: 0; scale: .9;
+  transition: clip-path .55s var(--ease), opacity .3s, scale .55s var(--ease), translate .45s var(--ease);
 }
-.intro-preview.is-open video { clip-path: inset(0 0 0 0 round 12px); opacity: 1; scale: 1; }
-@media (pointer: coarse) { .intro-preview { display: none; } }
+/* Near the right edge of the window it opens on the left of the cursor instead */
+.float-preview.is-flipped .float-preview-frame { translate: calc(-100% - 24px) -50%; }
+/* Site previews sit above the cursor so the company name stays readable (below it near the top of the screen) */
+.float-preview.is-site .float-preview-frame { translate: 16px calc(-100% - 20px); }
+.float-preview.is-site.is-flipped .float-preview-frame { translate: calc(-100% - 16px) calc(-100% - 20px); }
+.float-preview.is-site.is-below .float-preview-frame { translate: 16px 28px; }
+.float-preview.is-site.is-below.is-flipped .float-preview-frame { translate: calc(-100% - 16px) 28px; }
+.float-preview.is-open .float-preview-frame { clip-path: inset(0 0 0 0); opacity: 1; scale: 1; }
+/* Exceptions to the square corners: the hero video preview keeps its rounding (the site previews stay square) */
+.float-preview:not(.is-site) .float-preview-frame { border-radius: 12px; clip-path: inset(50% 50% 50% 50% round 12px); }
+.float-preview:not(.is-site).is-open .float-preview-frame { clip-path: inset(0 0 0 0 round 12px); }
+.float-preview video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+/* Site screenshot under a tiny browser bar with the domain */
+.site-bar { display: flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.site-bar i { width: 7px; height: 7px; background: var(--line); }
+.site-bar span { flex: 1; margin-right: 22px; text-align: center; font: 11px var(--sans); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.float-preview.is-site img { display: none; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+.float-preview.is-site img.is-current { display: block; }
+@media (pointer: coarse) { .float-preview { display: none; } }
 
 /* Case-study body text in Geist Mono; headlines, card titles and big numbers stay in Geist */
 .cs-p, .cs-lead, .cs-card p, .cs-card li, .cs-list li, .cs-media figcaption, .cs-highlight p, .cs-facts dd, .cs-table td {
@@ -379,8 +422,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
    (after aaronporter.io/about) */
 .info-photo { margin: 0; container-type: inline-size; }
 .info-tag {
-  position: absolute; right: 12px; bottom: 12px; width: 26px; max-height: 26px; overflow: hidden;
-  border-radius: 13px; background: #272727e6; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #fff;
+  position: absolute; right: 12px; bottom: 12px; width: 26px; max-height: 26px; overflow: hidden; border-radius: 13px; background: #272727e6; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #fff;
   transition: width .5s var(--ease), max-height .5s var(--ease), border-radius .5s var(--ease);
 }
 .info-tag-i {
@@ -397,18 +439,20 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .info-photo:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .info-photo.has-caption { cursor: help; }
 
-/* Projects that aren't ready: no link, a quiet "Coming soon" label fades in over the cover on hover */
-div.tile.is-soon { cursor: default; }
-.tile-soon {
-  position: absolute; left: 50%; top: 50%; translate: -50% calc(-50% + 6px); padding: 8px 14px; border-radius: 999px;
+/* Hovering a cover: a pill fades in over it saying where it goes ("View case study", "Coming soon", ...) */
+div.tile-cover { cursor: default; }
+.tile-label {
+  position: absolute; left: 50%; top: 50%; translate: -50% calc(-50% + 6px); padding: 8px 14px;
   font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: #fff;
   background: #1a1a1acc; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   opacity: 0; transition: opacity .3s, translate .5s var(--ease); pointer-events: none;
 }
-.tile.is-soon:hover .tile-soon { opacity: 1; translate: -50% -50%; }
-.tile.is-soon .tile-media :is(img, video) { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
-.tile.is-soon:hover .tile-media :is(img, video) { filter: brightness(.7); }
+.tile-label { white-space: nowrap; }
+.tile-cover:hover .tile-label { opacity: 1; translate: -50% -50%; }
+.tile-cover .tile-media :is(img, video) { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
+.tile-cover:hover .tile-media :is(img, video) { filter: brightness(.7); }
 /* Soon, but with a demo to watch: second line under the label */
-.tile-soon:has(.tile-soon-cta) { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 16px; border-radius: 14px; white-space: nowrap; }
-.tile-soon-cta { color: #ffffffb3; }
-@media (pointer: coarse) { .tile-soon { opacity: 1; translate: -50% -50%; } }
+.tile-label.is-two { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 16px; }
+.tile-label-cta { color: #ffffffb3; }
+/* Touch screens: only unfinished projects keep their label showing */
+@media (pointer: coarse) { .tile.is-soon .tile-label { opacity: 1; translate: -50% -50%; } }

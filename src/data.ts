@@ -54,6 +54,9 @@ export type Project = {
   img: string // cover image; also the poster frame when there's a video
   video?: string // optional looping muted clip shown in place of the cover
   aspect: string // the cover image's own width / height, so it shows uncropped
+  site?: string // the company's own website. Hovering the title shows a screenshot of it from
+               // public/sites/<id>.jpg (run `npm run previews` to make those)
+  siteLabel?: string // what the hover label says instead of "View site" (e.g. 'View on Devpost')
 }
 
 const framer = (id: string) => `https://framerusercontent.com/images/${id}.png`
@@ -64,17 +67,17 @@ export const imgAt = (src: string, width: number) => `${src}?scale-down-to=${wid
 // Images are hotlinked from the Framer site. Copy them into /public before cancelling Framer.
 export const projects: Project[] = [
   { id: 'toolkit', title: 'Toolkit', tags: ['Product Design'], summary: 'An app for collecting the design tools you hear about and building workflows to actually use them, made for the SVSD Design Competition.', when: '2026', href: 'https://youtu.be/JbNiQUGHzNo', soon: true, img: '/work/toolkit/poster.jpg', video: '/work/toolkit/thumbnail.mp4', aspect: '16 / 9' },
-  { id: 'cosign', title: 'Cosign', tags: ['Product Design'], summary: 'Redesigning a fintech rental flow, lifting conversions by 17%.', when: 'Spring 2025', href: '/work/cosign', img: framer('5pvYzGg5sCSysJdt9R5xFw0zvw'), aspect: '1 / 1' },
+  { id: 'cosign', title: 'Cosign', tags: ['Product Design'], summary: 'Redesigning a fintech rental flow, lifting conversions by 17%.', when: 'Spring 2025', href: '/work/cosign', img: framer('5pvYzGg5sCSysJdt9R5xFw0zvw'), aspect: '1 / 1', site: 'https://rentwithcosign.com' },
   { id: 'scout', title: 'Scout', tags: ['Product Design'], summary: 'Auditing a two-sided parts marketplace and turning the findings into a design system.', when: 'Summer 2026', href: '/work/scout', img: '/work/scout/thumbnail.webp', aspect: '2000 / 1125' },
-  { id: 'backtrack', title: 'Backtrack', tags: ['Product Design'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: 'Fall 2025', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1' },
+  { id: 'backtrack', title: 'Backtrack', tags: ['Product Design'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: 'Fall 2025', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1', site: 'https://www.usebacktrack.com' },
   { id: 'meteormate', title: 'MeteorMate', tags: ['Product Design'], summary: 'Designing a roommate-matching app from scratch for 20,000+ UT Dallas students.', when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
-  { id: 'tactile', title: 'Tactile', tags: ['Product Design'], summary: 'A Figma plugin you control with hand gestures, built at FigBuild 2026.', when: '2026', href: '/work/tactile', img: '/work/tactile/tactile-cover.webp', aspect: '2800 / 1991' },
-  { id: 'act-one', title: 'Act One Ventures', tags: ['Brand Design'], summary: 'A first-pass rebrand for a venture capital firm backing AI-native founders.', when: 'Summer 2026', href: '/work/act-one', img: '/work/act-one/thumbnail.webp', aspect: '1123 / 920' },
-  { id: 'arist', title: 'Arist', tags: ['Visual Design'], summary: 'Scaling the visual system of an AI microlearning platform.', when: '2025', href: '/work/arist', img: framer('m2dJpbsJveZCEiAWVrCpBELUX0'), aspect: '1 / 1' },
-  { id: 'tennr', title: 'Tennr', tags: ['Visual Design'], summary: 'Refreshing the brand and marketing of a healthcare AI startup.', when: '2025', href: '/work/tennr', img: framer('bPD5Y8PqndjPdKUVdovvOTugaw'), aspect: '16 / 9' },
+  { id: 'tactile', title: 'Tactile', tags: ['Product Design'], summary: 'A Figma plugin you control with hand gestures, built at FigBuild 2026.', when: '2026', href: '/work/tactile', img: '/work/tactile/tactile-cover.webp', aspect: '2800 / 1991', site: 'https://devpost.com/software/tactile-tyoilq', siteLabel: 'View on Devpost' },
+  { id: 'act-one', title: 'Act One Ventures', tags: ['Brand Design'], summary: 'A first-pass rebrand for a venture capital firm backing AI-native founders.', when: 'Summer 2026', href: '/work/act-one', img: '/work/act-one/thumbnail.webp', aspect: '1123 / 920', site: 'https://actoneventures.com' },
+  { id: 'arist', title: 'Arist', tags: ['Visual Design'], summary: 'Scaling the visual system of an AI microlearning platform.', when: '2025', href: '/work/arist', img: framer('m2dJpbsJveZCEiAWVrCpBELUX0'), aspect: '1 / 1', site: 'https://arist.co' },
+  { id: 'tennr', title: 'Tennr', tags: ['Visual Design'], summary: 'Refreshing the brand and marketing of a healthcare AI startup.', when: '2025', href: '/work/tennr', img: framer('bPD5Y8PqndjPdKUVdovvOTugaw'), aspect: '16 / 9', site: 'https://www.tennr.com' },
   { id: 'janus', title: 'Janus', tags: ['Brand Design'], summary: 'Brand and product marketing for a freight finance platform.', when: '2026', href: '/work/janus', img: framer('EkeLjhylkYOjeDEBOhf5IiWJac'), aspect: '16 / 9' },
-  { id: 'priority', title: 'Priority', tags: ['Visual Design'], summary: 'Sales sheets for a point-of-sale system, tailored to 13 industries.', when: 'Fall 2025', href: '/work/priority', img: '/work/priority/thumbnail.webp', aspect: '3514 / 2138' },
-  { id: 'oro', title: 'Oro', tags: ['Product Design'], summary: 'Brand and platform UI for a fintech startup.', when: 'Fall 2025', href: '', soon: true, img: framer('LvAj1YZLb6lAVoXA7poLmqsEeEo'), aspect: '1 / 1' },
+  { id: 'priority', title: 'Priority', tags: ['Visual Design'], summary: 'Sales sheets for a point-of-sale system, tailored to 13 industries.', when: 'Fall 2025', href: '/work/priority', img: '/work/priority/thumbnail.webp', aspect: '3514 / 2138', site: 'https://prioritycommerce.com' },
+  { id: 'oro', title: 'Oro', tags: ['Product Design'], summary: 'Brand and platform UI for a fintech startup.', when: 'Fall 2025', href: '', soon: true, img: framer('LvAj1YZLb6lAVoXA7poLmqsEeEo'), aspect: '1 / 1', site: 'https://orogold.app' },
 ]
 
 // Visual design, graphics, small projects and screens — shown on the Exploration page (/exploration).

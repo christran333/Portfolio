@@ -161,17 +161,17 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
     <article ref={root} className="cs">
       <header className="cs-head">
         <p className="cs-meta rise">
-          <span>{project.title}</span><span>{study.role}</span><span>{study.date}</span>
+          <span>{project.title}</span>{study.type.split(' · ').map(t => <span key={t}>{t}</span>)}
         </p>
         <h1 className="cs-title rise" style={{ animationDelay: '.08s' }}>{study.headline}</h1>
       </header>
 
+      {/* Short labels stacked one per line, like a credits list */}
       <dl className="cs-facts">
-        <div className="reveal"><dt>Role</dt><dd>{study.role}</dd></div>
-        {study.team && <div className="reveal"><dt>Team</dt><dd>{study.team}</dd></div>}
+        <div className="reveal"><dt>Role</dt>{study.role.map(r => <dd key={r}>{r}</dd>)}</div>
+        {study.team && <div className="reveal"><dt>Team</dt>{study.team.map(t => <dd key={t}>{t}</dd>)}</div>}
         <div className="reveal"><dt>Timeline</dt><dd>{study.date}</dd></div>
-        <div className="reveal"><dt>Project</dt><dd>{study.type}</dd></div>
-        <div className="reveal"><dt>Disciplines</dt><dd>{project.tags.join(', ')}</dd></div>
+        <div className="reveal"><dt>Scope</dt>{study.scope.map(s => <dd key={s}>{s}</dd>)}</div>
       </dl>
 
       {study.highlights && (
