@@ -161,7 +161,7 @@ ul { list-style: none; }
 .info-list li.rise { display: flex; }
 .info-list a { transition: opacity .2s; }
 .info-list a:hover { opacity: .6; }
-.info-list sup { font-size: .7em; margin-left: 2px; color: var(--muted); }
+.info-col sup { font-size: .7em; margin-left: 2px; color: var(--muted); }
 .info-col > p.rise { display: block; }
 /* Off the clock: three small groups under About */
 .interests { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 460px; }
