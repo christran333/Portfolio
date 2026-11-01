@@ -15,7 +15,10 @@ export default function Footer() {
   const time = useLocalTime()
   return (
     <footer className="footer">
-      <a className="underline" href={`mailto:${profile.email}`}>{profile.email}</a>
+      <span className="footer-links">
+        <a className="underline" href={`mailto:${profile.email}`}>{profile.email}</a>
+        <a className="underline" href={profile.resume} target="_blank" rel="noreferrer">View resume ↗</a>
+      </span>
       <span className="muted">{profile.location} · {time}</span>
       <span className="muted">© {new Date().getFullYear()} {profile.name}</span>
     </footer>

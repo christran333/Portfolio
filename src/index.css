@@ -179,6 +179,7 @@ ul { list-style: none; }
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: clamp(120px, 18vh, 220px);
   padding: 24px var(--gutter) 32px; border-top: 1px solid var(--line); font-size: 14px;
 }
+.footer-links { display: flex; flex-wrap: wrap; gap: 6px 24px; }
 .footer > :nth-child(2) { text-align: center; }
 .footer > :last-child { text-align: right; }
 
