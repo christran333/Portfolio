@@ -451,7 +451,7 @@ div.tile-cover { cursor: default; }
 .tile-label { white-space: nowrap; }
 .tile-cover:hover .tile-label { opacity: 1; translate: -50% -50%; }
 .tile-cover .tile-media :is(img, video) { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
-.tile-cover:hover .tile-media :is(img, video) { filter: brightness(.7); }
+.tile-cover:hover .tile-media :is(img, video) { filter: brightness(.84); }
 /* Soon, but with a demo to watch: second line under the label */
 .tile-label.is-two { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 16px; }
 .tile-label-cta { color: #ffffffb3; }
