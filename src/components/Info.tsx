@@ -1,10 +1,12 @@
+import type { CSSProperties } from 'react'
 import { useReveal } from '../useReveal'
 import { distribute, useColumnCount } from '../layout'
 import { linkProps, profile, projects } from '../data'
 
 export default function Info() {
   const root = useReveal<HTMLDivElement>()
-  const photoColumns = distribute(profile.photos, useColumnCount())
+  const n = useColumnCount()
+  const photoColumns = distribute(profile.photos, n)
 
   return (
     <div ref={root}>
@@ -65,7 +67,7 @@ export default function Info() {
         </section>
       </div>
 
-      <section className="grid info-photos" aria-label="Photos">
+      <section className="grid info-photos" aria-label="Photos" style={{ '--cols': n } as CSSProperties}>
         {photoColumns.map((col, c) => (
           <div key={c} className="grid-col">
             {col.map(p => (

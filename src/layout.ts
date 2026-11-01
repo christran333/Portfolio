@@ -1,14 +1,18 @@
 // Staggered grid helpers shared by the work grid and the Info page photos
 import { useEffect, useState } from 'react'
 
-// 3 columns on laptops, 2 on tablets, 1 on phones
+// 3 columns on laptops, 2 on tablets, 1 on phones. The grid's CSS reads this same number
+// (via --cols), so JS and CSS can never disagree about how many columns there are.
+const THREE = '(min-width: 1024px)'
+const TWO = '(min-width: 640px)'
 export function useColumnCount() {
-  const get = () => (innerWidth >= 1000 ? 3 : innerWidth >= 640 ? 2 : 1)
+  const get = () => (matchMedia(THREE).matches ? 3 : matchMedia(TWO).matches ? 2 : 1)
   const [n, setN] = useState(get)
   useEffect(() => {
-    const resize = () => setN(get())
-    window.addEventListener('resize', resize)
-    return () => window.removeEventListener('resize', resize)
+    const queries = [matchMedia(THREE), matchMedia(TWO)]
+    const update = () => setN(get())
+    queries.forEach(q => q.addEventListener('change', update))
+    return () => queries.forEach(q => q.removeEventListener('change', update))
   }, [])
   return n
 }

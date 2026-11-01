@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useReveal } from '../useReveal'
 import { distribute, useColumnCount } from '../layout'
 import { imgAt, linkProps, profile, projects, type Project } from '../data'
@@ -77,7 +77,7 @@ export default function Work() {
         </div>
       </section>
 
-      <section className="grid" aria-label="Selected work">
+      <section className="grid" aria-label="Selected work" style={{ '--cols': n } as CSSProperties}>
         {columns.map((col, c) => (
           <div key={c} className="grid-col">
             {col.map(p => {

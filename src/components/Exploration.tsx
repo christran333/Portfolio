@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { useReveal } from '../useReveal'
 import { distribute, useColumnCount } from '../layout'
 import { linkProps, playground } from '../data'
@@ -5,7 +6,8 @@ import { linkProps, playground } from '../data'
 // Marketing, video, visuals and side experiments. Add pieces to `playground` in data.ts
 export default function Exploration() {
   const root = useReveal<HTMLDivElement>()
-  const shots = distribute(playground, useColumnCount())
+  const n = useColumnCount()
+  const shots = distribute(playground, n)
 
   return (
     <div ref={root}>
@@ -13,7 +15,7 @@ export default function Exploration() {
         <h1 className="rise">Exploration</h1>
         <p className="muted rise" style={{ animationDelay: '.15s' }}>Flyers, brands, videos, and whatever else I can't stop myself from making.</p>
       </header>
-      <section className="grid" aria-label="Exploration">
+      <section className="grid" aria-label="Exploration" style={{ '--cols': n } as CSSProperties}>
         {shots.map((col, c) => (
           <div key={c} className="grid-col">
             {col.map(s => {

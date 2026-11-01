@@ -111,8 +111,8 @@ ul { list-style: none; }
 }
 
 /* ───────── Work: staggered full-width grid ───────── */
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 1.2vw, 20px); padding: 0 var(--gutter); align-items: start; }
-.grid-col { display: flex; flex-direction: column; gap: 32px; }
+.grid { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: clamp(16px, 1.2vw, 20px); padding: 0 var(--gutter); align-items: start; }
+.grid-col { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
 .tile { display: block; }
 .tile-media { position: relative; overflow: hidden; background: var(--surface); }
 .tile-media :is(img, video) { width: 100%; height: 100%; object-fit: cover; display: block; scale: 1.08; transition: scale 1.6s var(--ease), opacity .4s; }
@@ -160,31 +160,34 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .footer > :nth-child(2) { text-align: center; }
 .footer > :last-child { text-align: right; }
 
-@media (max-width: 1000px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+/* The work / photo / exploration grids get their column count from useColumnCount() via --cols
+   (3 from 1024px, 2 from 640px, 1 below), so they aren't set here */
+@media (max-width: 1180px) {
   /* About spans the top; the two list columns sit side by side below it */
   .info { grid-template-columns: 1fr 1fr; }
   .info-about { grid-column: 1 / -1; }
 }
+@media (max-width: 760px) {
+  .nav { gap: 20px; }
+}
 @media (max-width: 640px) {
   .interests { grid-template-columns: 1fr 1fr; }
-  .grid { grid-template-columns: 1fr; }
   .grid-col { gap: 28px; }
   .info { grid-template-columns: 1fr; }
   .footer { grid-template-columns: 1fr; gap: 8px; }
   .footer > * { text-align: left !important; }
   .section-label { flex-direction: column; gap: 6px; }
 }
-@media (max-width: 480px) {
-  .header { font-size: 12px; padding-top: 18px; padding-bottom: 18px; gap: 12px; }
-  .nav { gap: 14px; }
+@media (max-width: 560px) {
+  .header { font-size: 13px; padding-top: 18px; padding-bottom: 18px; gap: 12px; }
+  .nav { gap: 16px; }
   /* Four tabs + the theme toggle need the room: shorten the name on phones */
   .brand-full { display: none; }
   .brand-short { display: inline; }
 }
-@media (max-width: 380px) {
-  .header { font-size: 12px; gap: 12px; }
-  .nav { gap: 12px; }
+@media (max-width: 400px) {
+  .header { font-size: 12px; gap: 10px; }
+  .nav { gap: 11px; }
   .intro-sub { margin-top: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -219,10 +222,10 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 .cs-meta span { white-space: nowrap; }
 .cs-meta span:not(:last-child)::after { content: '·'; margin: 0 .6em; }
 .cs-title { display: block; margin-top: 18px; font-family: var(--serif); font-size: clamp(34px, 4.2vw, 64px); line-height: 1.12; letter-spacing: -.03em; font-weight: 400; }
-.cs-facts { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 24px; margin: 0; padding: 36px 0; border-bottom: 1px solid var(--line); }
+.cs-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 24px; margin: 0; padding: 36px 0; border-bottom: 1px solid var(--line); }
 .cs-facts dt { font: 12px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
 .cs-facts dd { margin: 0; font-size: 17px; line-height: 1.4; }
-.cs-highlights { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 16px; padding-top: 56px; }
+.cs-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 16px; padding-top: 56px; }
 .cs-highlight { padding: 28px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
 .cs-label { display: block; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--accent); }
 .cs-highlight strong { display: block; margin: 22px 0 8px; font-size: clamp(40px, 4.5vw, 64px); font-weight: 500; letter-spacing: -.05em; line-height: 1; }
@@ -296,7 +299,6 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
 }
 @media (max-width: 860px) {
   .cs-finding, .cs-feature { grid-template-columns: 1fr; }
-  .cs-facts { grid-auto-flow: row; grid-template-columns: repeat(2, 1fr); }
   .cs-main { grid-template-columns: 1fr; gap: 0; }
   .cs-toc { display: none; } /* phones: no room for the side nav; sections just stack */
   .cs-section-title { margin-bottom: 16px; }
@@ -306,7 +308,7 @@ a.tile:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s;
   .cs-gallery-row > * { flex: none; width: 100%; }
   .cs-gallery-row .cs-gallery-spacer { display: none; }
   .cs-cards.two { grid-template-columns: 1fr; }
-  .cs-highlights { grid-template-columns: 1fr; gap: 12px; padding-top: 40px; }
+  .cs-highlights { gap: 12px; padding-top: 40px; }
   .cs-highlight { padding: 22px; }
   .cs-highlight strong { margin: 14px 0 6px; }
   .cs-card { padding: 22px; }
