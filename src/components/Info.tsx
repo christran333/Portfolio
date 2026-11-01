@@ -64,6 +64,11 @@ export default function Info() {
           <p className="rise" style={{ animationDelay: '.3s' }}>
             <a className="underline" href={`mailto:${profile.email}`}>{profile.email}</a>
           </p>
+
+          <h2 className="label rise">Resume</h2>
+          <p className="rise" style={{ animationDelay: '.36s' }}>
+            <a className="underline" href={profile.resume} target="_blank" rel="noreferrer">View my resume<sup>↗</sup></a>
+          </p>
         </section>
       </div>
 

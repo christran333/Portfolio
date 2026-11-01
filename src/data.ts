@@ -4,7 +4,7 @@ export const profile = {
   name: 'Christopher Tran',
   location: 'Dallas, TX',
   email: 'christophertran2005@gmail.com',
-  resume: 'https://drive.google.com/file/d/1n3pCD4BLmDR3glADW7w6tJi5b7yhEKVU/view?usp=sharing',
+  resume: 'https://drive.google.com/file/d/1HsIvZXTdCg23kK9ESxY5pnEG8CAijosg/view?usp=sharing',
   status: 'Looking for Summer 2027 product design internships.',
   about: [
     "I'm a product designer based in Dallas. I care about research, solving ambiguous problems, and getting the visual details right. Right now I'm a Product Design Intern at Francois Labs, designing for early-stage startups in fintech, AI, healthcare, and B2B.",
@@ -39,7 +39,6 @@ export const profile = {
     { label: 'X', href: 'https://x.com/christran05' },
     { label: 'Instagram', href: 'https://www.instagram.com/centeredbyvoid/' },
     { label: 'Spotify', href: 'https://open.spotify.com/user/pf2qr87jvq2lzroh3ux6pqw8u' },
-    { label: 'Resume', href: 'https://drive.google.com/file/d/1n3pCD4BLmDR3glADW7w6tJi5b7yhEKVU/view?usp=sharing' },
   ],
 }
 
@@ -66,7 +65,7 @@ export const imgAt = (src: string, width: number) => `${src}?scale-down-to=${wid
 
 // Images are hotlinked from the Framer site. Copy them into /public before cancelling Framer.
 export const projects: Project[] = [
-  { id: 'toolkit', title: 'Toolkit', tags: ['Product Design'], summary: 'An app for collecting the design tools you hear about and building workflows to actually use them, made for the SVSD Design Competition.', when: '2026', href: 'https://youtu.be/JbNiQUGHzNo', soon: true, img: '/work/toolkit/poster.jpg', video: '/work/toolkit/thumbnail.mp4', aspect: '16 / 9' },
+  { id: 'toolkit', title: 'Toolkit', tags: ['Product Design'], summary: 'An app for collecting the design tools you hear about and building workflows to actually use them, made for the SVSD Design Competition.', when: '2026', href: 'https://youtu.be/JbNiQUGHzNo', soon: true, img: '/work/toolkit/poster.jpg', video: '/work/toolkit/thumbnail.mp4', aspect: '16 / 9', site: 'https://svsd-ten.vercel.app', siteLabel: 'View live app' },
   { id: 'cosign', title: 'Cosign', tags: ['Product Design'], summary: 'Redesigning a fintech rental flow, lifting conversions by 17%.', when: 'Spring 2025', href: '/work/cosign', img: framer('5pvYzGg5sCSysJdt9R5xFw0zvw'), aspect: '1 / 1', site: 'https://rentwithcosign.com' },
   { id: 'scout', title: 'Scout', tags: ['Product Design'], summary: 'Auditing a two-sided parts marketplace and turning the findings into a design system.', when: 'Summer 2026', href: '/work/scout', img: '/work/scout/thumbnail.webp', aspect: '2000 / 1125' },
   { id: 'backtrack', title: 'Backtrack', tags: ['Product Design'], summary: 'Designing an AI assistant that turns meeting notes into action.', when: 'Fall 2025', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1', site: 'https://www.usebacktrack.com' },
