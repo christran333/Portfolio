@@ -120,7 +120,16 @@ ul { list-style: none; }
 
 /* ───────── Instant-film print (hero photo) ───────── */
 /* The button is just the slot in the layout (and the 3D stage); .polaroid-card is the paper */
-.polaroid { display: block; max-width: 380px; width: 100%; justify-self: end; perspective: 900px; cursor: pointer; text-align: left; }
+.polaroid { display: block; position: relative; max-width: 380px; width: 100%; justify-self: end; perspective: 900px; cursor: pointer; text-align: left; }
+/* Scribbled hint above the print: small marker handwriting in the muted gray, slightly crooked, with a
+   hand-drawn arrow curling down to the photo. Gone once the photo is signed */
+.polaroid-hint {
+  position: absolute; right: 6%; bottom: calc(100% + 4px); display: flex; align-items: flex-start; gap: 2px;
+  font: 12px/1.2 'Rock Salt', 'Marker Felt', cursive; color: var(--muted); white-space: nowrap;
+  rotate: -4deg; transform-origin: right bottom; pointer-events: none; transition: opacity .5s var(--ease);
+}
+.polaroid-hint svg { width: 26px; height: auto; margin-top: 6px; }
+.polaroid.is-written .polaroid-hint { opacity: 0; }
 /* Thick paper border with the wide bottom edge, sized in % so it scales with the print */
 .polaroid-card {
   position: relative; display: block; padding: 6% 6% 24%;

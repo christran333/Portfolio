@@ -56,6 +56,15 @@ export default function Polaroid({ src, alt, width, height, style }: {
       aria-pressed={written}
       aria-label={written ? 'Photo of Christopher, signed “Go explore”' : 'Photo of Christopher. Click to sign it'}
     >
+      {/* A tiny scribbled hint above the print, with a hand-drawn arrow down to it. It sits outside the card so it
+          doesn't tilt with the photo, and fades out once the photo has been signed (it's done its job) */}
+      <span className="polaroid-hint" aria-hidden>
+        sign me
+        <svg viewBox="0 0 40 34" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 4c9-2 19 1 24 9 3 5 4 10 3 16" />
+          <path d="M24 24l6 6 5-7" />
+        </svg>
+      </span>
       {/* The paper itself is an inner layer, so the tilt never fights the page's fade-in animation */}
       <span className="polaroid-card">
         <span className="polaroid-photo">
