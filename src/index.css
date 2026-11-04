@@ -251,7 +251,7 @@ ul { list-style: none; }
 
 /* ───────── Info ───────── */
 .info {
-  display: grid; grid-template-columns: 2fr 1fr; gap: clamp(32px, 5vw, 96px);
+  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 96px); align-items: start;
   padding: clamp(64px, 12vh, 140px) var(--gutter) 0; min-height: 70vh;
 }
 .label { display: block; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 18px; }
@@ -306,9 +306,8 @@ ul { list-style: none; }
 /* The work / photo / exploration grids get their column count from useColumnCount() via --cols
    (3 from 1024px, 2 from 640px, 1 below), so they aren't set here */
 @media (max-width: 1180px) {
-  /* About spans the top; the two list columns sit side by side below it */
-  .info { grid-template-columns: 1fr 1fr; }
-  .info-about { grid-column: 1 / -1; }
+  /* Too narrow for two columns: About (with its lists) first, Experience below it */
+  .info { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
   .nav { gap: 20px; }

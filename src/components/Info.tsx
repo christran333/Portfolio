@@ -60,20 +60,11 @@ export default function Info() {
           {profile.aboutIntro.map((para, i) => (
             <p key={i} className="info-text rise" style={{ animationDelay: `${0.06 + i * 0.07}s` }}>{para}</p>
           ))}
-
-          <Timeline title="Experience" entries={profile.experience} delay={0.2} />
         </section>
 
-        <section className="info-col">
-          <h2 className="label rise">Recognition</h2>
-          <ul className="info-list">
-            {profile.recognition.map((r, i) => (
-              <li key={r.label} className="rise" style={{ animationDelay: `${0.1 + i * 0.05}s` }}>
-                {r.href ? <a href={r.href} target="_blank" rel="noreferrer">{r.label}<sup>↗</sup></a> : <span>{r.label}</span>}
-                <span className="muted">{r.detail}</span>
-              </li>
-            ))}
-          </ul>
+        {/* Right column: the resume-style timeline level with the About text, then the lists */}
+        <section className="info-col info-experience">
+          <Timeline title="Experience" entries={profile.experience} delay={0.2} />
 
           <h2 className="label rise">Elsewhere</h2>
           <ul className="info-list">
@@ -83,11 +74,6 @@ export default function Info() {
               </li>
             ))}
           </ul>
-
-          <h2 className="label rise">Contact</h2>
-          <p className="rise" style={{ animationDelay: '.3s' }}>
-            <a className="underline" href={`mailto:${profile.email}`}>{profile.email}</a>
-          </p>
 
           <h2 className="label rise">Resume</h2>
           <p className="rise" style={{ animationDelay: '.36s' }}>
