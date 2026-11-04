@@ -27,7 +27,6 @@ export const profile = {
     { src: '/about/pup.webp', alt: 'Christopher holding a hairless chihuahua', aspect: '1200 / 1600', caption: 'Me with a hairless chihuahua. Need I say more?' },
     { src: '/about/band.jpg', alt: 'Playing a show with the band Hearth', aspect: '1 / 1', caption: 'My first show with my band, Hearth' },
     { src: '/about/capital-one.jpg', alt: 'With Professor Cox at a Capital One Design & Research award ceremony', aspect: '1154 / 1728', caption: 'With my dear Professor Cox at my first Capital One Design & Research award ceremony' },
-    { src: '/about/working.webp', alt: 'Christopher laughing with his friend Prabhas at a laptop during HackAI', aspect: '2000 / 1500', caption: 'At HackAI with my friend Prabhas' },
     { src: '/about/bouldering.webp', alt: 'Bouldering outdoors with friends from the UTD climbing club, crash pads in hand', aspect: '1200 / 1600', caption: 'Rock climbing outdoors with friends and the UTD climbing club' },
     { src: '/about/friend.jpg', alt: 'Christopher with his friend Miguel at a ColorStack meeting', aspect: '1440 / 1014', caption: 'My friend Miguel and me at a ColorStack meeting' },
     { src: '/about/capital-one-backdrop.jpg', alt: 'Christopher with his mentor Ben Doctor at Capital One', aspect: '1071 / 1600', caption: 'My mentor Ben Doctor (Director of Design Systems, Capital One)!!!' },

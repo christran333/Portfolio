@@ -139,9 +139,9 @@ export default function Work() {
           <Polaroid
             style={{ animationDelay: '.25s' }}
             src="/about/hero-portrait.jpg"
-            alt="Christopher smiling and throwing a peace sign in a garden full of purple flowers"
-            width={1100}
-            height={1031}
+            alt="Christopher laughing behind his laptop, mid-conversation"
+            width={1033}
+            height={1300}
           />
           <div ref={heroBox} className={`float-preview ${previewing ? 'is-open' : ''}`} aria-hidden>
             <div className="float-preview-frame">
