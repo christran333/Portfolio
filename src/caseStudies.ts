@@ -27,7 +27,9 @@ export type Block =
   | { kind: 'video'; src: string; caption?: string }
   | { kind: 'table'; head: string[]; rows: string[][] }
 
-export type Section = { title: string; blocks: Block[] }
+// `title` can be a full statement ("Volume isn't value"); `nav` is the short label for the side nav.
+// When `nav` is set the title renders as a sentence-case heading instead of a small label.
+export type Section = { title: string; nav?: string; blocks: Block[] }
 
 export type CaseStudy = {
   // The facts row under the headline: short labels, one per line (like a credits list).
@@ -127,44 +129,35 @@ export const caseStudies: Record<string, CaseStudy> = {
     scope: ['Buyer app audit', 'Design system'],
     date: 'Summer 2026',
     type: 'B2B marketplace · UX audit · Design system',
-    headline: 'Auditing a two-sided parts marketplace, and turning the findings into a design system',
     hero: `${S}insights.jpg`,
-    highlights: [
-      { value: '15', label: 'buyer flows audited end to end' },
-      { value: '50+', label: 'findings logged across the buyer and vendor apps' },
-      { value: '6', label: 'themes distilled from the findings' },
-      { value: '34', label: 'components in the resulting design system' },
-    ],
+    headline: 'AI found the problems. I had to decide which ones mattered.',
     overview: [
-      "Scout is a B2B marketplace where apartment and property teams order replacement parts, from washers to doors, directly from vendors. The storefront looks like a consumer shop, but underneath it runs on purchase orders and approvals, and both the buyer and vendor apps had grown inconsistent. Vu Francois, founder and senior designer at Francois Labs, and I spent two weeks auditing both to figure out what to fix first.",
+      "AI made it easy to find problems. In two weeks of walking Scout's buyer app with AI tools at my side, I logged 50+ findings and felt pretty good about it. Then Vu, the senior designer I worked with, started crossing them out.",
     ],
     sections: [
       {
-        title: 'In brief',
-        blocks: [{
-          kind: 'cards', numbered: true, items: [
-            { title: 'Audit', body: 'Led the buyer-app audit, walking 15 flows end to end as a buyer and logging every friction point on the screen where it happened.' },
-            { title: 'Collaboration', body: 'Paired with Vu, who led the vendor app. We reviewed each other\'s findings on weekly calls and narrowed 50+ down to what mattered most.' },
-            { title: 'Design system', body: 'Clustered the findings into 6 themes. The biggest became a shared design system for both apps: 34 components, in light and dark.' },
-          ],
-        }],
-      },
-      {
-        title: 'Six themes',
-        blocks: [{
-          kind: 'cards', numbered: true, items: [
-            { title: 'Related features are split apart', body: 'Collapse co-dependent tabs into one place.' },
-            { title: 'Inconsistent UI', body: 'Unify styling into one design system.' },
-            { title: 'Redundant data', body: 'Show each piece of information once.' },
-            { title: 'Friction in repeat workflows', body: 'Optimize for the weekly user, not the first-time tour.' },
-            { title: 'Marketing over action', body: 'Lead with what users came to do.' },
-            { title: 'Underserved error states', body: 'Guide users toward a fix.' },
-          ],
-        }],
-      },
-      {
-        title: 'Key findings',
+        title: "Volume isn't value",
+        nav: "Volume isn't value",
         blocks: [
+          { kind: 'p', text: "Scout is a marketplace where apartment teams order replacement parts straight from vendors. I walked 15 buyer flows end to end, using AI to move fast and draft write-ups. Some of those write-ups didn't even fit the screen they were about. Finding issues was never the hard part." },
+          { kind: 'image', src: `${S}audit-notes.jpg`, caption: 'My buyer-app notes, each issue logged on the screen where it happened' },
+        ],
+      },
+      {
+        title: 'If you have to dig for a problem, the screen is probably working',
+        nav: "Vu's rule",
+        blocks: [
+          { kind: 'p', text: "That was Vu's rule on our weekly calls. AI can generate a finding for any screen. A person has to decide whether it changes anything for someone who orders parts every week." },
+          { kind: 'p', text: "Vu cut more than one of mine. AI mostly caught UI inconsistencies one screen at a time. Those did compound, but on their own they read as a pile of minor details. They only connected into something meaningful once I walked the whole flow." },
+          { kind: 'image', src: `${S}audit-board.jpg`, caption: 'The full audit board, flow by flow, with Vu reviewing alongside' },
+        ],
+      },
+      {
+        title: 'Building the intuition',
+        nav: 'Building the intuition',
+        blocks: [
+          { kind: 'p', text: "Over the two weeks, my question changed from “what's wrong here?” to “would fixing this change the experience?” The biggest thing I learned: in a UX audit, work through the flows yourself. Vu explained that polish can only really happen after the fact, once the core flow holds up." },
+          { kind: 'p', text: "These are the findings that made the cut." },
           { kind: 'finding', theme: 'Information hierarchy', src: `${S}insights.jpg`, title: "The homepage isn't where users expect it", problem: 'Insights acts as the dashboard home but sits second in the navigation, so there is no obvious way back.', fix: 'Rename it Home and make it the first tab.' },
           { kind: 'finding', theme: 'Related features are split apart', src: `${S}price-lists.jpg`, title: 'Features that belong together live on separate pages', problem: 'Customer Groups exist mainly to assign price lists, yet they are a separate page.', fix: 'Collapse co-dependent features into one page with tabs.' },
           { kind: 'finding', theme: 'Friction in repeat workflows', src: `${S}import-landing.jpg`, title: 'A weekly task built like a first-time tour', problem: 'The import page repeats the same pitch three times before the button, and the wizard shows six steps in one place and four in another.', fix: 'Lead with the action and show one consistent step count.' },
@@ -172,33 +165,28 @@ export const caseStudies: Record<string, CaseStudy> = {
         ],
       },
       {
-        title: 'Working together',
+        title: 'The few that mattered pointed at the cause',
+        nav: 'The root cause',
         blocks: [
-          { kind: 'lead', text: "Vu pushed back on findings that didn't carry much weight." },
-          { kind: 'p', text: "We each logged everything we found, which meant a lot of small issues. On our weekly calls, Vu challenged the ones that wouldn't really change the experience and steered me toward the screen-level problems with the biggest impact. Early on we agreed, on his call, that fixing inconsistency at the root with a design system would do more than patching screens one by one." },
-          { kind: 'image', src: `${S}audit-notes.jpg`, caption: 'My buyer-app notes, each issue logged on the screen where it happened' },
-          { kind: 'image', src: `${S}audit-board.jpg`, caption: 'The full audit board, flow by flow, with Vu reviewing alongside' },
+          { kind: 'p', text: "Seen across the whole flow, those small inconsistencies added up: the same button, card, or table looked different on every page. Patching screens one by one would drift again, so we fixed it at the root with a shared design system. That's why the system was so valuable in the end: we found the leaks in the core flow first, then worked backward from the flow to the components, so it came out as one coherent system instead of a pile of patches." },
         ],
       },
       {
-        title: 'Outcome',
+        title: 'What we shipped',
+        nav: 'What we shipped',
         blocks: [
-          { kind: 'lead', text: "The audit's clearest theme was inconsistency, so its biggest outcome was a shared design system for both apps: 6 foundations, 34 components, and 8 patterns, in light and dark." },
-          { kind: 'p', text: "Vu coded the system. I organized the Figma files and findings for handoff, then reviewed the components once they were built." },
+          { kind: 'p', text: "34 components, 6 foundations, and 8 patterns, in light and dark. Vu coded it; I organized the Figma files and findings for handoff and reviewed the built components. It's live." },
           { kind: 'image', src: `${S}ds-colors.jpg` },
           { kind: 'gallery', images: [`${S}ds-buttons.jpg`, `${S}ds-type.jpg`] },
           { kind: 'link', href: 'https://scout-design-system-beta.vercel.app/', label: 'Explore the live design system' },
         ],
       },
       {
-        title: 'What I learned',
-        blocks: [{
-          kind: 'cards', items: [
-            { title: 'Walk every flow yourself', body: "AI tools helped, but the real findings came from sitting down and trying to buy something as a user, counting every step it took." },
-            { title: 'Design for the weekly user', body: "Buyers repeat the same order, approval, and checkout loop every week. Fixing that loop matters more than polishing the first-time tour." },
-            { title: 'Impact over volume', body: "Fifty findings aren't the goal. Vu's pushback taught me to lead with the few that actually change the experience." },
-          ],
-        }],
+        title: "What I'd tell another designer",
+        nav: 'What I learned',
+        blocks: [
+          { kind: 'lead', text: "AI is great at finding problems. Your value is knowing which few are worth anyone's time." },
+        ],
       },
     ],
   },
@@ -209,68 +197,74 @@ export const caseStudies: Record<string, CaseStudy> = {
     scope: ['Application flow', 'Dashboard', 'Landing page'],
     date: 'Spring 2025',
     type: 'Rental platform · Fintech',
-    headline: 'Redesigning a fintech rental platform to rebuild trust and lift conversions',
     hero: img('5pvYzGg5sCSysJdt9R5xFw0zvw'),
-    highlights: [
-      { value: '↑ 22%', label: 'increase in traffic' },
-      { value: '↑ 17%', label: 'increase in conversions' },
-      { value: '8 → 4', label: 'application steps' },
-    ],
+    headline: 'Selling design to a non-technical founder is storytelling',
     overview: [
-      "Cosign connects renters who need housing guarantors with people willing to co-sign their lease. The founder brought us data from the old flow and their own research, and Vu and I redesigned the application, dashboard, and landing page together to reduce friction and build trust.",
+      "Cosign's founder knew exactly what was broken: 65% of applicants were dropping off. What he didn't have was a picture of what fixed looked like, and our first directions didn't land.",
     ],
     sections: [
       {
-        title: 'In brief',
-        blocks: [{
-          kind: 'cards', numbered: true, items: [
-            { title: 'Redesign', body: 'Designed the application flow, dashboard, landing page, and print collateral side by side with Vu, cutting the application from 8 steps to 4.' },
-            { title: 'Collaboration', body: "Worked in passes with a non-technical founder, showing the design reasoning behind each choice until the direction clicked." },
-            { title: 'Impact', body: 'After launch, conversions rose 17% and traffic rose 22%, comparing site analytics before and after.' },
-          ],
-        }],
-      },
-      {
-        title: 'The problem',
+        title: 'The old flow lost people before they started',
+        nav: 'The old flow',
         blocks: [
-          { kind: 'lead', text: '65% of applicants dropped off and 58% bounced from the landing page.' },
-          { kind: 'p', text: "Data from the old flow showed why: 30% of users entered the wrong path because renter and guarantor looked the same, 40% never took an action on the dashboard, and the 8-step application took 12 minutes on average." },
-        ],
-      },
-      {
-        title: 'Design',
-        blocks: [
+          { kind: 'p', text: "Data from the old flow showed where: 30% of users entered the wrong path because renter and guarantor looked the same, 40% never took an action on the dashboard, and the 8-step application took 12 minutes on average." },
           { kind: 'list', title: 'Key decisions', items: ['Split the renter and guarantor paths from the very first screen', 'Grouped related information into 4 sections instead of 8 steps', 'Added visual progress tracking', 'Put trust signals and plain explanations up front'] },
           { kind: 'image', src: img('BPhNVYI5YheOZ6Pp9uuWIBdT7c'), caption: 'Metrics up top, a prioritized action panel, and status badges that pair color with a label, so managers can scan a whole page at once' },
           { kind: 'image', src: '/work/cosign/dashboard-overview.jpg', caption: 'The property-manager overview: applications, approvals, and defaults at a glance, with Refer New Applicant always one click away' },
+        ],
+      },
+      {
+        title: "Design words don't mean much to people who don't design",
+        nav: 'Show, not tell',
+        blocks: [
+          { kind: 'p', text: "His feedback came as reactions more than reasons, so part of our job was understanding each one and digging for what it really meant." },
+          { kind: 'p', text: "“Reduce cognitive load” and “clear hierarchy” are obvious to us and abstract to everyone else. So we cut the words only designers understand, like text hierarchy, cognitive load, condensing screens, or user flows, and chose language that was more compelling and made sense to anyone." },
+        ],
+      },
+      {
+        title: 'It clicked when we told the story behind each fix',
+        nav: 'The moment it clicked',
+        blocks: [
+          { kind: 'p', text: "The direction clicked once we presented the work with stronger explanations and clear context: why we made each fix, framed so a non-technical founder could absorb it. We walked him through the one-pager's design choices and the fixes on the application screens for both flows, bit by bit. We kept pushing passes along until everyone felt the design was right, and telling the story behind each choice was what moved every pass forward." },
+        ],
+      },
+      {
+        title: 'The founder knew the users. We knew the language.',
+        nav: 'Users and language',
+        blocks: [
+          { kind: 'p', text: "Many Cosign users have already been declined for an apartment, and the founder understood that better than we did. Our job was turning what he knew into plain copy, a calm palette, and trust signals up front." },
           { kind: 'feature', src: img('9hSes9fVwMjoVkUM5UA5k6tp0'), title: "A landing page for people who've been declined before", text: 'Plain language over clever copy, a calm palette, and a four-step overview that makes co-signing feel manageable before anyone signs up.' },
         ],
       },
       {
-        title: 'Beyond the screens',
+        title: 'How we worked',
+        nav: 'How we worked',
         blocks: [
-          { kind: 'lead', text: 'Conversions also happen off the website, so we designed the sales material too.' },
-          { kind: 'p', text: "Cosign sells to property managers and partners as much as to renters. Alongside the product work, we designed print and sales collateral: desk flyers and handouts for leasing offices, a partner revenue-share flyer, a landlord one-pager, a customer case study, and a pitch deck (confidential, so not shown here)." },
+          { kind: 'p', text: "Vu and I co-worked the design process from start to finish. We had weekly syncs, plus extra meetings during busier weeks, to feed concepts to each other, brainstorm, and bounce ideas around, with a running thread in Figma comments in between. Vu led the conversations with the founder, and I learned a lot from how he works." },
+          { kind: 'p', text: "With a small engineering team, we also weighed how easy each idea would be to build." },
+        ],
+      },
+      {
+        title: 'Conversions happen off the website too',
+        nav: 'Beyond the screens',
+        blocks: [
+          { kind: 'p', text: "Cosign sells to leasing offices as much as to renters, so we designed the landlord one-pager, desk flyers, and partner flyer too." },
           { kind: 'gallery', columns: 3, images: ['/work/cosign/landlord-onepager.jpg', '/work/cosign/how-it-works.jpg', '/work/cosign/partner-flyer.jpg'], caption: 'Landlord one-pager, leasing-office handout, and partner revenue-share flyer' },
         ],
       },
       {
-        title: 'Working together',
+        title: 'Did it work?',
+        nav: 'Did it work?',
         blocks: [
-          { kind: 'lead', text: "The founder wasn't sold on our first ideas, so we earned trust one pass at a time." },
-          { kind: 'p', text: "Vu and I checked in twice a week and kept a running conversation in Figma comments. Vu synced weekly with the founder on direction, and after each round the two of us sat down to plan the next pass. The founder isn't a designer and didn't have a clear picture yet, so early directions met a lot of hesitation. Instead of arguing in the abstract, we answered with iterations, each one showing the reasoning behind a choice, like why splitting the two paths up front cuts confusion." },
-          { kind: 'p', text: "With a small engineering team, we also weighed how easy each idea would be to build. Nothing was technically hard, but simpler was always worth considering." },
+          { kind: 'p', text: "After launch, site analytics showed conversions up 17% and traffic up 22%." },
         ],
       },
       {
-        title: 'What I learned',
-        blocks: [{
-          kind: 'cards', items: [
-            { title: 'Show the why', body: "Design principles don't land with a non-technical founder until you show them. Every iteration was a chance to make the reasoning visible." },
-            { title: 'Small changes compound', body: 'Clearer headlines, better grouping, and fewer steps added up to double-digit gains.' },
-            { title: 'Trust is the product', body: "For someone who's been declined before, plain language and clear trust signals matter as much as fewer steps." },
-          ],
-        }],
+        title: "What I'd tell another designer",
+        nav: 'What I learned',
+        blocks: [
+          { kind: 'lead', text: "A non-technical founder isn't an obstacle. They usually know the users better than you. Give them something concrete to react to, tell the story behind it in terms they care about, and they'll tell you what's right." },
+        ],
       },
     ],
   },
@@ -281,91 +275,68 @@ export const caseStudies: Record<string, CaseStudy> = {
     scope: ['AI assistant', 'Event setup tool', 'Usability testing'],
     date: 'Fall 2025',
     type: 'AI-powered enterprise tools',
-    headline: 'Designing an AI assistant that turns meeting notes into action',
     hero: img('XKHJwFkDB4kDxYxSEONjAoi0'),
-    highlights: [
-      { value: '50+ → 12', label: 'support conversations distilled into AI scenarios' },
-      { value: '37% → 64%', label: 'task completion across 8 usability tests' },
-      { value: '< 5 min', label: 'event demo setup in internal testing' },
-    ],
+    headline: 'Starting with fragments: finding direction when no one hands it to you',
     overview: [
-      "Backtrack helps teams capture and act on meeting insights. As the only designer, working directly with the founder, I owned two projects end to end: Ask Backtrack AI, a conversational assistant that turns notes into follow-ups, summaries, and action items, and an event tool that made setting up live demos at sales events faster.",
+      "I didn't get a spec at Backtrack. I got fragments: a rough idea for an AI assistant, a problem with users not acting on their meeting notes, and a founder too busy to hold my hand. Figuring out the rest was the job.",
     ],
     sections: [
       {
-        title: 'In brief',
-        blocks: [{
-          kind: 'cards', numbered: true, items: [
-            { title: 'Ownership', body: 'Owned Ask Backtrack AI and the event tool end to end, deciding what to research, explore, and build next.' },
-            { title: 'Collaboration', body: 'Presented passes to the founder in weekly standups and on Slack, and worked with the lead engineer and the sales team running live demos.' },
-            { title: 'Impact', body: 'Task completion rose from 37% to 64% across 8 usability tests, and demo setup took under 5 minutes in internal testing.' },
-          ],
-        }],
-      },
-      {
-        title: 'The problem',
+        title: "First, find who's already solved a piece of it",
+        nav: 'Find who solved it',
         blocks: [
-          { kind: 'lead', text: 'Users had the notes but not the time to act on them, and a blank chat box made it hard to know what to ask.' },
-          { kind: 'p', text: "I pulled from recorded transcripts and support conversations, and distilled 50+ of them into 12 interaction scenarios on my own, drafting with Claude and writing much of the copy myself. That gave every design decision a real request behind it." },
-        ],
-      },
-      {
-        title: 'Learning from the best',
-        blocks: [
-          { kind: 'lead', text: "The founder's advice was simple: find who's doing it well and build from there." },
-          { kind: 'p', text: "Teams like Notion and Granola have already tested what works for AI and meeting notes, so I studied their interaction patterns and UX writing closely before designing anything." },
+          { kind: 'p', text: "My founder's advice was simple: find who's doing it well and build from there. So I went deep on competitive analysis and moodboards. Notion showed me AI actions that live in context. Granola showed me one-tap prompts instead of a blank box." },
+          { kind: 'p', text: "The reference that stuck most was Notion's own writing on how they built their AI note taker: how closely it could work with people in tech, or any industry, to shape what it picked up, and how it made the possibilities easy to find with a list of commands you could run on your transcripts. It changed how I thought about the work. Design choices should feel native and natural to work with, especially for a tool that's supposed to be like a third hand." },
           { kind: 'video', src: video('1QddOeE35EtR2Qa05oLSMwrNtc'), caption: 'Notion: AI actions appear in context, with progress shown while it works' },
           { kind: 'image', src: img('09QLXGndgYI0c30SZosmFBEaQ'), caption: 'Granola: one-tap prompts instead of a blank box' },
-          {
-            kind: 'cards', items: [
-              { title: 'Clarity with flexibility', body: 'Users want structured starting points they can edit, not decisions made for them.' },
-              { title: 'Tone builds trust', body: "AI has to match the user's voice. Robotic output hurts credibility." },
-              { title: 'Blank states create friction', body: 'Starting from nothing raises cognitive load. Contextual prompts reduce hesitation.' },
-              { title: 'AI supports judgment', body: 'People want tools that speed up their thinking, not replace it.' },
-            ],
-          },
         ],
       },
       {
-        title: 'Iteration',
+        title: 'Then, ground it in what people actually ask for',
+        nav: 'Real requests',
         blocks: [
+          { kind: 'p', text: "Inspiration gave me options. Real requests told me which ones mattered. I went through 50+ support conversations and transcripts and boiled them down to 12 scenarios people kept running into." },
+        ],
+      },
+      {
+        title: 'The direction: get rid of the blank box',
+        nav: 'The direction',
+        blocks: [
+          { kind: 'p', text: "A blank chat box makes users do all the work. The next pass added prompt starters, so the question became “which do I need?” instead of “what do I type?” The last pass added inline refinements like “make this more casual.”" },
           { kind: 'image', src: img('hB1L8qYWkMRkiyEWudGnNYoT8Mc') },
           { kind: 'image', src: img('9jY6fcfvX4vnsP1zFCzZqJiFFQ'), caption: 'From a blank input to guided, refinable prompts' },
-          {
-            kind: 'cards', numbered: true, items: [
-              { title: 'Minimal entry point', body: 'A single input with a neutral greeting. Clean, but users had to decide what to ask before getting any value.' },
-              { title: 'Guided prompts', body: 'Prompt starters for common tasks changed the question from "What should I type?" to "Which action do I need?"' },
-              { title: 'Conversational refinement', body: 'Inline refinements like "make this more casual" let users adjust tone instead of starting over.' },
-            ],
-          },
-          { kind: 'p', text: "I tested each pass with coworkers and with friends who had no stake in the product, 8 rounds in all. Task completion climbed from 37% to 64%." },
+          { kind: 'image', src: img('gY8uoiMxW7YpvWuX0wOIhBHiB0M'), caption: 'The final design' },
         ],
       },
       {
-        title: 'Event tool',
+        title: 'Go wide before you narrow',
+        nav: 'Go wide',
         blocks: [
-          { kind: 'lead', text: 'At big sales events, the team ran live demos on a bunch of phones at once, in crowded, chaotic rooms.' },
-          { kind: 'p', text: "Each phone had to show which sponsor or company it was for, and setting them all up was a pain for the sales team running demos. Working with them and the lead engineer, I designed a tool for quickly building template wallpapers and setting up the screens for each sponsor, keeping it simple both for the team and for the people dropping by to try the demo. In internal testing, setup for a sponsor took under 5 minutes." },
+          { kind: 'p', text: "The founder's one big push was to explore lots of passes, even weird ones, before committing. The rule of thumb I was taught: make at least four different design directions before narrowing down." },
+          { kind: 'p', text: "Some of my most abstract passes were the complete opposite of my first design choices. Others weren't UI at all: what if this lived in an email chain, an SMS, or a template instead of a dashboard or an app? Those didn't ship as they were, but they shaped the final design. I kept comparing them in the back of my head to find what would feel most native, with the least friction and the best outcome." },
+          { kind: 'p', text: "Going wide felt uncomfortable. I was used to making one thing and polishing it to perfection. But exploring early is also a feasibility call: changing direction is cheap at the start and expensive at the end, once you've narrowed down too soon." },
         ],
       },
       {
-        title: 'Working together',
+        title: 'Same approach, second problem',
+        nav: 'Event tool',
         blocks: [
-          { kind: 'lead', text: "My boss was too busy to hold my hand, so I owned the direction." },
-          { kind: 'p', text: "As a design intern and the only designer, I decided what to work on next, did the research, and found the direction we needed to go. In weekly standups on Slack, I walked the founder through what I'd made and the thinking behind it, and through the day I sent passes and left comments in Figma to get quick feedback." },
-          { kind: 'p', text: "His biggest push was to go wide: explore lots of passes, even abstract ones, instead of narrowing down early, then decide with research and feedback. I also worked with the lead engineer and the sales team, since they were the ones using the software hands-on at events." },
+          { kind: 'p', text: "The sales team ran live demos on a pile of phones at crowded events, and setting each one up for the right sponsor was a pain. Starting from that complaint, I worked with them and the lead engineer on a setup tool. In internal testing, setup for one sponsor took under 5 minutes." },
         ],
       },
-      { title: 'Final design', blocks: [{ kind: 'image', src: img('gY8uoiMxW7YpvWuX0wOIhBHiB0M') }] },
       {
-        title: 'What I learned',
-        blocks: [{
-          kind: 'cards', items: [
-            { title: 'Ambiguity is the job', body: "No one will hold your hand forever. Owning the research and the next decision is what moves the work forward." },
-            { title: 'Go wide before you narrow', body: 'First iterations are never the final thing. Throwing out lots of ideas, failing fast, and rebuilding is how the good one shows up.' },
-            { title: 'Everyone is a collaborator', body: 'Engineers, the founder, and even sales shaped this work. The people demoing it every day knew things I never would have guessed.' },
-          ],
-        }],
+        title: 'Did it work?',
+        nav: 'Did it work?',
+        blocks: [
+          { kind: 'p', text: "Across 8 rounds of testing with coworkers and outside friends, task completion went from 37% to 64%." },
+        ],
+      },
+      {
+        title: "What I'd tell another designer",
+        nav: 'What I learned',
+        blocks: [
+          { kind: 'lead', text: "Ambiguity isn't a blocker. It's the brief. Find who's solved a piece of it, ground it in real requests, and go wide before you decide." },
+        ],
       },
     ],
   },
@@ -489,51 +460,41 @@ export const caseStudies: Record<string, CaseStudy> = {
     scope: ['Direction', 'Gesture system', 'MVP prototype'],
     date: '2026',
     type: 'FigBuild 2026 · Figma plugin · Hackathon',
-    headline: 'Designing with your hands: a Figma plugin for people with taste but no tools',
     hero: `${T}tactile-cover.webp`,
-    highlights: [
-      { value: '8', label: 'hand gestures that drive the whole canvas' },
-      { value: '4', label: 'full rewrites of the gesture map before it felt right' },
-      { value: '60s', label: 'the bar we set for a first-timer to pick it up' },
-      { value: '60', label: 'likes and 20 comments on Devpost' },
-    ],
+    headline: 'Build fast, fail faster, and still make something thoughtful',
     overview: [
-      "Tactile is a Figma plugin you control with hand gestures and plain language. Describe a feeling (warm, bold, academic) and it becomes a real design, with no hex codes or type scales in the way. Our team built it at FigBuild 2026 around one belief: plenty of people have taste, they've just never had a tool that speaks their language.",
+      "At FigBuild, I had a rough version of Tactile running within hours, a Figma plugin you control with your hands, before the team had even agreed on the idea. Building that fast meant we failed fast too, and everything thoughtful about the final project came from having something real to argue about that early.",
     ],
     sections: [
       {
-        title: 'Taste without the tools',
+        title: 'Some people have taste but no tools',
+        nav: 'Taste, no tools',
         blocks: [
-          { kind: 'lead', text: "FigBuild asked for interfaces that resonate with real people, not just ones that work. We pointed that at Figma itself: it's powerful, but it assumes you already think like a designer." },
+          { kind: 'p', text: "Easy tools feel dumbed down; pro tools shut non-designers out. Tactile lets you describe a feeling, like warm or bold, and turns it into a real design." },
           { kind: 'image', src: `${T}slide-brief.webp`, caption: 'The brief: bridging the gap between ideas and execution' },
-          { kind: 'p', text: 'Most people who care about design can\'t build what they imagine. So the question we aligned the team on was simple: what if the interface spoke human?' },
-        ],
-      },
-      {
-        title: 'Listening where designers talk',
-        blocks: [
-          { kind: 'image', src: `${T}slide-research.webp` },
-          { kind: 'p', text: "I dug through past Figma Makeathon submissions to find where the ceiling was, then spent time on X hearing how designers actually talk about their tools. The same tension showed up everywhere: accessible tools feel dumbed down, and serious tools shut non-designers out. That gap became our target, something a non-designer can pick up in a minute that a designer still respects." },
         ],
       },
       {
         title: 'Soul before features',
+        nav: 'Soul before features',
         blocks: [
+          { kind: 'p', text: "We studied the past submissions we loved and asked why they stuck. The best ones had a point of view, and that became the filter for every idea." },
           { kind: 'image', src: `${T}slide-ideation.webp` },
-          { kind: 'p', text: "Instead of starting from a feature list, we mapped the submissions we genuinely loved in FigJam and asked why they stuck. The best ones had a point of view, not just clever tech. That became the filter I held every idea to: it had to have soul before it earned a feature." },
-          { kind: 'p', text: "Seeing how abstract the Makeathon ideas had gotten, I pushed for something that felt unique and fun to use: a computer-vision Figma plugin you drive with your hands. That became the core of our first MVP." },
-          { kind: 'p', text: "I took the brand in the same direction. We built the identity around clouds and open sky to say what the product promises: the ceiling on what you can make is gone." },
         ],
       },
       {
         title: 'Figma, code, break it, repeat',
+        nav: 'Figma, code, repeat',
         blocks: [
           { kind: 'image', src: `${T}slide-prototyping-hd.webp` },
-          { kind: 'p', text: "With a weekend on the clock, I built the first MVP myself in HTML and CSS, using Cursor and Claude Code to get the first computer-vision gesture prototype working, the version the team built on. From there I kept design and engineering in one tight loop: rough frames in Figma, fed straight into Claude and Cursor as context, working code within hours, then back to Figma once it broke. Design decisions showed up in the build the same day, so we could lock the right features early instead of polishing the wrong ones." },
+          { kind: 'p', text: "Rough Figma frames went straight into Claude and Cursor, and working code came back fast: anywhere from a few minutes to an hour per loop. We had something running from almost the first brainstorm." },
+          { kind: 'p', text: "That mattered because the core of Tactile was computer vision, and there's no way to prototype a camera reading your hands in Figma. In the mockups, every gesture worked perfectly. In code, the model misfired and read gestures as the wrong ones. We fixed the recognition in Cursor, while the design work was the polish and the direction behind it." },
+          { kind: 'p', text: "Having working code that early let us chase the details that would have been a pain to solve down the road: how gestures registered, and how people interact with a camera and their hands instead of a cursor." },
         ],
       },
       {
         title: 'Four rewrites of a hand',
+        nav: 'Four rewrites of a hand',
         blocks: [
           { kind: 'image', src: `${T}slide-iteration-hd.webp` },
           { kind: 'p', text: "The gesture map was the hardest design problem in the project. Open palms collided with natural movement, and finger counting was too fiddly on camera. After four full rewrites we landed on distinct shapes that are easy to make and hard to trigger by accident. The question I kept asking the team: does this feel like Tactile, or does it feel like a tool?" },
@@ -554,41 +515,31 @@ export const caseStudies: Record<string, CaseStudy> = {
         ],
       },
       {
-        title: 'Under the hood',
+        title: 'The team clicked when we cut things',
+        nav: 'What we cut',
         blocks: [
-          { kind: 'image', src: `${T}slide-stack.webp` },
-          { kind: 'p', text: "MediaPipe reads hand gestures in the browser, React drives the plugin UI, and a FastAPI and LangChain backend turns plain-language prompts into design decisions, with MongoDB storing them and Vercel hosting it all. My job was making sure every one of those pieces still felt like one product from the user's side." },
+          { kind: 'p', text: "Because the rough MVP was up within the first hours, everyone had something real to build on and argue about, instead of debating ideas in the abstract. The team really clicked once we talked about the purpose and the impact we wanted, then cut everything that didn't serve it." },
+          { kind: 'p', text: "The biggest cut was in our first concept, where every gesture created a different type of card or component. Instead of polishing how many kinds of UI you could make, we narrowed it down: your hands customize one basic card." },
         ],
       },
       {
-        title: 'Working together',
-        blocks: [
-          { kind: 'lead', text: 'On a team of four, I was the main designer and set the direction early.' },
-          { kind: 'p', text: "One teammate split front end and design with me, and two back-end engineers built out the full stack. Because I had a rough working MVP up within the first hours, everyone had something real to build on and argue about, instead of debating ideas in the abstract. The team really clicked once we stopped and talked about the purpose and the impact we wanted, then cut everything that didn't serve it." },
-        ],
-      },
-      {
-        title: 'What it proved',
+        title: 'How it went',
+        nav: 'How it went',
         blocks: [
           { kind: 'image', src: `${T}slide-outcome.webp` },
-          { kind: 'lead', text: "Tactile proved that abstract language can drive real design decisions. The hardest part wasn't the tech, it was deciding what to cut." },
-          { kind: 'p', text: "Coordinating frontend, backend, design, and integration in a weekend only worked once we had a real conversation about purpose and the impact we wanted. Everything fell into place after that. Design isn't about the tools; it's about giving people the confidence to decide." },
-          { kind: 'p', text: "I also built our final pitch deck and helped write the script we presented to the judges, so the story landed as clearly as the demo." },
+          { kind: 'p', text: "We didn't place. Tactile still drew 60 likes and 20 comments on Devpost, and I'd build it the same way again." },
           { kind: 'link', href: 'https://www.youtube.com/watch?v=ZS_jWvac8cY', label: 'Watch the demo' },
-          { kind: 'p', text: "We didn't place, but Tactile drew 60 likes and 20 comments on Devpost." },
           { kind: 'link', href: 'https://devpost.com/software/tactile-tyoilq', label: 'See it on Devpost' },
         ],
       },
       {
-        title: 'What I learned',
-        blocks: [{
-          kind: 'cards', numbered: true, items: [
-            { title: 'Iterate early', body: "Big changes are cheap at the start. Later on, core features get much harder to change, so the important pivots need to happen early." },
-            { title: 'Ship during ideation', body: "Students build full apps in 24 hours now. Getting an MVP out during ideation leaves room to break things, fail, and pivot in better directions." },
-            { title: 'Purpose aligns the team', body: "The work came together once we agreed on the impact we wanted, which made it obvious what to cut." },
-          ],
-        }],
+        title: "What I'd tell another designer",
+        nav: 'What I learned',
+        blocks: [
+          { kind: 'lead', text: "Some things can't be prototyped in Figma. Get to real code before you trust the mockup." },
+        ],
       },
     ],
   },
+
 }

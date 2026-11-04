@@ -137,7 +137,7 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
   const project = projects.find(p => p.id === id)!
 
   // Sections listed in the sticky "on this page" nav
-  const toc = ['Overview', ...study.sections.map(s => s.title), 'Want to learn more?'].map(t => ({ title: t, id: slug(t) }))
+  const toc = ['Overview', ...study.sections.map(s => s.nav ?? s.title), 'Want to learn more?'].map(t => ({ title: t, id: slug(t) }))
   const [active, setActive] = useState(toc[0].id)
 
   // Highlight whichever section is crossing the upper part of the screen
@@ -178,7 +178,6 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
         <section className="cs-highlights" style={{ '--n': study.highlights.length } as CSSProperties}>
           {study.highlights.map(h => (
             <div key={h.label} className="cs-highlight reveal">
-              <span className="cs-label">Highlight</span>
               <strong>{h.value}</strong>
               <p>{h.label}</p>
             </div>
@@ -208,8 +207,8 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
       </section>
 
       {study.sections.map(s => (
-        <section key={s.title} id={slug(s.title)} className="cs-section">
-          <h3 className="cs-section-title">{s.title}</h3>
+        <section key={s.title} id={slug(s.nav ?? s.title)} className="cs-section">
+          <h3 className={`cs-section-title${s.nav ? ' is-statement' : ''}`}>{s.title}</h3>
           <div className="cs-body">{s.blocks.map((b, i) => <BlockView key={i} b={b} />)}</div>
         </section>
       ))}
