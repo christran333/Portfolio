@@ -8,8 +8,9 @@ export const profile = {
   status: 'Looking for Summer 2027 product design internships.',
   // The About page's intro: the personal side (the home hero covers the work side)
   aboutIntro: [
-    "When I'm not designing, I'm usually making something. I play in a band called Hearth and design our flyers, screen print shirts, make short films, and take photos, a lot of it through my creative collective @centeredbyvoid. I also collect a lot of CDs and physical media.",
-    "To get outside, I boulder with my friends, hike, and cycle.",
+    "I grew up surrounded by creativity. My older brothers introduced me to music when I was very young, and some of my earliest memories are of dancing for as long as my little legs could handle. From there I grew up playing music, drawing, and making my own little YouTube videos, and that creative spark never dulled. It turned into something I wanted to pursue for the rest of my life. When my oldest brother introduced me to design, I saw the beauty in creating polished work that could impact billions of people, and that’s what made me want to work in tech.",
+    "I love all forms of art, and I’m always making something, even when it isn’t design. I play in a hardcore band called Hearth, design flyers for other bands, screen print shirts, dabble in analog photography, and make short films for @centeredbyvoid. I also love physical media, so I collect a lot of CDs from archive bands.",
+    "Outside of making things, I’m big on fitness and the outdoors. I was an All-American collegiate powerlifter: I placed 7th at nationals my sophomore year, and at one point I was the strongest 67.5 kg collegiate powerlifter in the nation. These days I spend more time outside, hiking, bouldering, and cycling.",
   ],
   // Resume-style timeline on the About page, newest first. `work` lists project ids from `projects` below.
   experience: [

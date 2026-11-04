@@ -75,9 +75,6 @@ ul { list-style: none; }
 .underline { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; transition: text-decoration-color .2s; }
 .underline:hover { text-decoration-color: var(--fg); }
 
-/* Theme switch: the new theme grows as a circle from the toggle (see ThemeToggle.tsx) */
-.theme-switching::view-transition-old(root), .theme-switching::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
-
 /* Load-in and scroll-in motion */
 .rise { display: inline-block; animation: rise 1.8s var(--ease) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); filter: blur(6px); } }
@@ -200,6 +197,11 @@ ul { list-style: none; }
 @media (max-width: 860px) { .intro-about { grid-template-columns: 1fr; } .polaroid { max-width: 340px; justify-self: start; } }
 .intro-hello { font-family: var(--sans); font-weight: 500; font-size: clamp(36px, 4.2vw, 64px); line-height: 1.05; letter-spacing: -.04em; margin-bottom: clamp(20px, 2.4vw, 32px); }
 .intro-para { display: block; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.6; letter-spacing: -.01em; max-width: 62ch; text-wrap: pretty; }
+/* Brand marks in front of a link in the hero copy: about cap height, sitting on the baseline */
+.inline-logo { display: inline-block; height: .78em; width: auto; vertical-align: -.06em; margin: 0 .32em 0 .18em; }
+/* The full logo: sized so the wordmark's letters match the text, its baseline on the text's baseline, and
+   negative top/bottom margins so the swoosh above doesn't push the lines apart */
+.inline-logo.is-capital-one { height: .78em; } /* same height as the Figma mark */
 .intro-para + .intro-para { margin-top: 1.1em; }
 .intro-status { color: var(--muted); }
 .intro-status { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
@@ -481,17 +483,7 @@ ul { list-style: none; }
 }
 .cursor-dot.is-grow i { scale: 3.4; }
 /* Theme toggle: a bare sun/moon icon */
-.theme-toggle { display: grid; place-items: center; width: 24px; height: 24px; color: var(--muted); transition: color .25s; }
-.theme-toggle:hover { color: var(--fg); }
-.theme-toggle svg { width: 18px; height: 18px; overflow: visible; transition: rotate .6s var(--ease); }
 /* Sun by default; its rays retract and the disc gets bitten into a crescent for the moon */
-.theme-toggle .disc { transition: r .5s var(--ease); }
-.theme-toggle .bite { transition: cx .5s var(--ease), cy .5s var(--ease); }
-.theme-toggle .rays { transition: opacity .3s, scale .5s var(--ease); transform-origin: 12px 12px; }
-.theme-toggle svg.is-moon { rotate: 360deg; }
-.theme-toggle svg.is-moon .disc { r: 8.5px; }
-.theme-toggle svg.is-moon .bite { cx: 17px; cy: 7px; }
-.theme-toggle svg.is-moon .rays { opacity: 0; scale: .5; }
 
 /* ───────── Floating previews: a small window that trails the cursor ─────────
    Used for the hero video (hover the headline) and company site screenshots (hover a project's name) */

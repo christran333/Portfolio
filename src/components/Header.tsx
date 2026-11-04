@@ -1,4 +1,3 @@
-import ThemeToggle from './ThemeToggle'
 import { profile } from '../data'
 
 export type Tab = 'work' | 'exploration' | 'info'
@@ -14,7 +13,6 @@ export default function Header({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => vo
         <button aria-current={tab === 'work' ? 'page' : undefined} onClick={() => onTab('work')}>Work</button>
         <button aria-current={tab === 'exploration' ? 'page' : undefined} onClick={() => onTab('exploration')}>Exploration</button>
         <button aria-current={tab === 'info' ? 'page' : undefined} onClick={() => onTab('info')}>About</button>
-        <ThemeToggle />
       </nav>
     </header>
   )
