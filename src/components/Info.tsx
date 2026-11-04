@@ -2,6 +2,50 @@ import type { CSSProperties } from 'react'
 import { useReveal } from '../useReveal'
 import { distribute, useColumnCount } from '../layout'
 import { linkProps, profile, projects } from '../data'
+import { caseStudies } from '../caseStudies'
+
+type Entry = { when: string; role: string; org: string; href?: string; work?: string[] }
+
+const project = (id: string) => projects.find(p => p.id === id)!
+// When a project started: the case study's date, else the one on its tile ("Spring 2025 → Fall 2025" shows as "Spring 2025")
+const projectWhen = (id: string) => (caseStudies[id]?.date ?? project(id).when ?? '').split('→')[0].trim()
+const ProjectName = ({ id }: { id: string }) => {
+  const p = project(id)
+  return p.href && !p.soon ? <a className="underline" {...linkProps(p.href)}>{p.title}</a> : <span>{p.title}</span>
+}
+
+// Resume-style list: dates on the left, role and company. A place with `work` lists
+// each project as its own row nested underneath.
+function Timeline({ title, entries, delay }: { title: string; entries: Entry[]; delay: number }) {
+  return (
+    <>
+      <h2 className="label rise">{title}</h2>
+      <ol className="timeline">
+        {entries.map((e, i) => (
+          <li key={e.org} className="timeline-entry rise" style={{ animationDelay: `${delay + i * 0.05}s` }}>
+            <div className="timeline-row">
+              <span className="timeline-when">{e.when}</span>
+              <p className="timeline-role">
+                {e.role}, {e.href ? <a className="underline" {...linkProps(e.href)}>{e.org}</a> : e.org}
+              </p>
+            </div>
+            {e.work && (
+              <ul className="timeline-projects">
+                {e.work.map(id => (
+                  <li key={id} className="timeline-row is-project">
+                    <span className="timeline-when">{projectWhen(id)}</span>
+                    <p className="timeline-project"><ProjectName id={id} /></p>
+                    <span className="timeline-tag">{project(id).tags[0]}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ol>
+    </>
+  )
+}
 
 export default function Info() {
   const root = useReveal<HTMLDivElement>()
@@ -13,19 +57,11 @@ export default function Info() {
       <div className="info">
         <section className="info-col info-about">
           <h2 className="label rise">About</h2>
-          {profile.about.map((para, i) => (
+          {profile.aboutIntro.map((para, i) => (
             <p key={i} className="info-text rise" style={{ animationDelay: `${0.06 + i * 0.07}s` }}>{para}</p>
           ))}
 
-          <h2 className="label rise">What I do in my free time</h2>
-          <div className="interests">
-            {profile.interests.map((group, i) => (
-              <div key={group.label} className="rise" style={{ animationDelay: `${0.2 + i * 0.06}s` }}>
-                <h3>{group.label}</h3>
-                <ul>{group.items.map(item => <li key={item}>{item}</li>)}</ul>
-              </div>
-            ))}
-          </div>
+          <Timeline title="Experience" entries={profile.experience} delay={0.2} />
         </section>
 
         <section className="info-col">
@@ -39,18 +75,6 @@ export default function Info() {
             ))}
           </ul>
 
-          <h2 className="label rise">Selected work</h2>
-          <ul className="info-list">
-            {projects.map((p, i) => (
-              <li key={p.id} className="rise" style={{ animationDelay: `${0.15 + i * 0.03}s` }}>
-                {p.href ? <a {...linkProps(p.href)}>{p.title}</a> : <span>{p.title}</span>}
-                <span className="muted">{p.soon ? 'Coming soon' : p.tags[0]}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="info-col">
           <h2 className="label rise">Elsewhere</h2>
           <ul className="info-list">
             {profile.links.map((l, i) => (

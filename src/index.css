@@ -1,20 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Libre+Baskerville:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Rock+Salt&family=Libre+Baskerville:ital@0;1&display=swap');
 
 
 /* Dark is the default theme (the script in index.html sets data-theme before first paint) */
 :root {
-  --bg: #0a0a0a;
+  --bg: #171717; /* soft charcoal, not pure black */
   --fg: #ededeb;
   --muted: #8a8a85;
-  --line: #222221;
-  --surface: #141414;
-  --raised: #1b1b1b;
+  --line: #2a2a29;
+  --surface: #1e1e1e;
+  --raised: #242424;
   /* Accent: change these two lines (and the light-mode pair below) to recolor the whole site */
   --accent: #a98bff;
   --accent-ink: #0a0a0a; /* text on top of the accent */
   --sans: 'Geist', system-ui, sans-serif;
   --serif: 'Libre Baskerville', Georgia, serif; /* headlines only; everything else stays in Geist */
-  --gutter: clamp(20px, 2vw, 32px); /* side margin shared by every section */
+  /* Content never gets wider than --page-max; on big screens the side margin grows to center it.
+     Set --page-max to something huge (e.g. 9999px) to go back to edge-to-edge. */
+  --page-max: 1200px;
+  --gutter: max(clamp(20px, 2vw, 32px), (100vw - var(--page-max)) / 2); /* side margin shared by every section */
   --ease: cubic-bezier(.2, .7, .2, 1);
   color-scheme: dark;
 }
@@ -44,8 +47,11 @@ body {
 
 /* Film-grain texture on the page background. Tweak --grain-opacity to taste (0 turns it off).
    baseFrequency in the SVG: higher = finer grain, lower = blotchier paper look. */
-:root { --grain-opacity: .16; --grain-blend: screen; --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-:root[data-theme='light'] { --grain-opacity: .2; --grain-blend: multiply; }
+:root { --grain-opacity: .07; --grain-size: 240px; --grain-blend: screen; --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+:root[data-theme='light'] { --grain-opacity: .09; --grain-blend: multiply; }
+/* Sharp screens (phones, retina): squeeze the tile so each speck is finer instead of a blotchy pixel, and fade it further on phones */
+@media (min-resolution: 2dppx) { :root { --grain-size: 120px; } }
+@media (max-width: 640px) { :root { --grain-opacity: .05; } :root[data-theme='light'] { --grain-opacity: .06; } }
 body::before {
   content: '';
   position: fixed;
@@ -55,7 +61,7 @@ body::before {
   opacity: var(--grain-opacity);
   mix-blend-mode: var(--grain-blend);
   background-image: var(--grain);
-  background-size: 240px 240px;
+  background-size: var(--grain-size) var(--grain-size);
   background-attachment: fixed;
 }
 a { color: inherit; text-decoration: none; }
@@ -89,7 +95,7 @@ ul { list-style: none; }
 .header::before {
   content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   opacity: var(--grain-opacity); mix-blend-mode: var(--grain-blend);
-  background-image: var(--grain); background-size: 240px 240px; background-attachment: fixed;
+  background-image: var(--grain); background-size: var(--grain-size) var(--grain-size); background-attachment: fixed;
 }
 .brand { white-space: nowrap; text-align: left; }
 .brand-short { display: none; }
@@ -109,6 +115,99 @@ ul { list-style: none; }
 }
 .intro-lead { font-family: var(--serif); font-size: clamp(30px, 3.9vw, 64px); line-height: 1.16; letter-spacing: -.03em; font-weight: 400; max-width: 46ch; text-wrap: balance; }
 .nowrap { white-space: nowrap; }
+/* About-style hero: a few plain paragraphs instead of the headline, sitting near the top */
+.intro-about { min-height: 0; justify-content: flex-start; padding-top: clamp(64px, 14vh, 160px); padding-bottom: clamp(56px, 10vh, 120px); user-select: text; -webkit-user-select: text; }
+/* Text on the left, photo on the right; the photo drops below the text on narrow screens */
+.intro-about { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
+.polaroid.rise { display: block; }
+
+/* ───────── Instant-film print (hero photo) ───────── */
+/* The button is just the slot in the layout (and the 3D stage); .polaroid-card is the paper */
+.polaroid { display: block; max-width: 380px; width: 100%; justify-self: end; perspective: 900px; cursor: pointer; text-align: left; }
+/* Thick paper border with the wide bottom edge, sized in % so it scales with the print */
+.polaroid-card {
+  position: relative; display: block; padding: 6% 6% 24%;
+  background: #f1eee6; /* warm off-white paper, the same in both themes */
+  border-radius: 2px;
+  box-shadow: 0 1px 1px rgb(0 0 0 / .12), 0 10px 30px -8px rgb(0 0 0 / .45);
+  /* --tilt-x / --tilt-y come from the pointer position (Polaroid.tsx) */
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform .6s var(--ease), box-shadow .6s var(--ease);
+  will-change: transform;
+}
+:root[data-theme='light'] .polaroid-card { box-shadow: 0 1px 1px rgb(0 0 0 / .08), 0 12px 28px -10px rgb(0 0 0 / .25); }
+/* Hover: picked up off the page, turned a little to the side, with the shadow falling further away */
+.polaroid:hover .polaroid-card {
+  transform: translateY(-10px) rotate(-3deg) scale(1.03) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  box-shadow: 0 2px 4px rgb(0 0 0 / .12), 0 34px 60px -18px rgb(0 0 0 / .6);
+  transition: transform .25s ease-out, box-shadow .6s var(--ease);
+}
+.polaroid:active .polaroid-card { transform: translateY(-4px) rotate(-2deg) scale(1.01); transition-duration: .12s; }
+.polaroid:focus-visible { outline: none; }
+.polaroid:focus-visible .polaroid-card { outline: 2px solid var(--accent); outline-offset: 4px; }
+/* "GO EXPLORE" scrawled in sharpie on the bottom strip. Sizes use the print's width (cqw) so it scales with it */
+.polaroid-card { container-type: inline-size; }
+/* Fills the bottom strip (it's 24cqw tall: the card's bottom padding) and centres the note in it,
+   nudged up a touch since the eye reads the true centre as low */
+.polaroid-note {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 24cqw; padding-bottom: 2cqw;
+  display: flex; align-items: center; justify-content: center; white-space: pre;
+  font: 8.6cqw/1.4 'Rock Salt', 'Marker Felt', cursive;
+  /* Marker ink, not printer black: a worn charcoal with a hint of blue */
+  --ink: #23242b; color: var(--ink);
+  /* Sharpie weight: Rock Salt's line is pen-thin, so trace every stroke with an outline in the same ink
+     (in em, so it thickens with the text) */
+  -webkit-text-stroke: .045em var(--ink); paint-order: stroke fill;
+  mix-blend-mode: multiply; /* soaks into the paper instead of sitting on top */
+  rotate: -3deg; pointer-events: none;
+}
+.polaroid-note > span {
+  display: inline-block; rotate: var(--r); translate: 0 var(--y);
+  /* Padded out (and pulled back with margin) so the box covers Rock Salt's overhanging strokes:
+     the ink mask below only paints inside the box */
+  padding: .35em .3em; margin: -.35em -.3em;
+  /* Uneven ink: each letter a slightly different strength, and fading toward one end of its stroke
+     the way a marker runs dry as it lifts off */
+  opacity: 0;
+  mask: linear-gradient(var(--f), #000 40%, rgb(0 0 0 / .55));
+  /* Hidden behind a curtain that pulls back to the right, so the letter appears in the direction it's written.
+     Starts with zero width, so no overhanging stroke can peek out early */
+  clip-path: inset(0 100% 0 0);
+}
+.polaroid-note > .is-space { width: .45em; padding: 0; margin: 0; }
+.polaroid.is-written .polaroid-note > span { animation: polaroid-pen var(--t) linear var(--d) forwards; }
+@keyframes polaroid-pen {
+  from { opacity: var(--o); }
+  to { opacity: var(--o); clip-path: inset(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .polaroid-card, .polaroid:hover .polaroid-card { transform: none; transition: box-shadow .3s; }
+  .polaroid.is-written .polaroid-note > span { animation: none; clip-path: none; opacity: var(--o); }
+}
+/* The photo sits in a square window, like real instant film */
+.polaroid-photo { display: block; position: relative; aspect-ratio: 1 / 1; overflow: hidden; background: #1a1714; }
+.polaroid-photo img {
+  display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%;
+}
+/* Film texture only (the photo keeps its real colour): a soft vignette plus fine grain */
+.polaroid-photo::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(ellipse at center, transparent 58%, rgb(30 18 10 / .32) 100%), var(--grain);
+  background-size: 100% 100%, 140px 140px;
+  mix-blend-mode: multiply; opacity: .75;
+}
+/* Narrow screens: the print drops under the text, a bit smaller and left-aligned */
+@media (max-width: 860px) { .intro-about { grid-template-columns: 1fr; } .polaroid { max-width: 340px; justify-self: start; } }
+.intro-hello { font-family: var(--sans); font-weight: 500; font-size: clamp(36px, 4.2vw, 64px); line-height: 1.05; letter-spacing: -.04em; margin-bottom: clamp(20px, 2.4vw, 32px); }
+.intro-para { display: block; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.6; letter-spacing: -.01em; max-width: 62ch; text-wrap: pretty; }
+.intro-para + .intro-para { margin-top: 1.1em; }
+.intro-status { color: var(--muted); }
+.intro-status { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.intro-icons { display: inline-flex; gap: 10px; align-items: center; }
+.intro-icons a { display: grid; place-items: center; width: 28px; height: 28px; color: var(--muted); transition: color .2s; }
+.intro-icons a:hover { color: var(--fg); }
+.intro-icons svg { width: 19px; height: 19px; display: block; }
+.intro-icons svg.is-solid { width: 17px; height: 17px; }
 .intro-lead .rise { display: inline; }
 .intro-sub {
   display: block; margin-top: 28px; font-family: var(--sans); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.5;
@@ -150,7 +249,7 @@ ul { list-style: none; }
 
 /* ───────── Info ───────── */
 .info {
-  display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: clamp(32px, 4vw, 64px);
+  display: grid; grid-template-columns: 2fr 1fr; gap: clamp(32px, 5vw, 96px);
   padding: clamp(64px, 12vh, 140px) var(--gutter) 0; min-height: 70vh;
 }
 .label { display: block; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 18px; }
@@ -168,6 +267,25 @@ ul { list-style: none; }
 .interests h3 { font-size: 16px; font-weight: 500; margin-bottom: 10px; }
 .interests li { font: 14px/1.7 var(--sans); color: var(--muted); }
 .interests > div { display: block; }
+/* Resume-style timeline: dates | role, company, and the projects done there */
+.timeline, .timeline-projects { list-style: none; margin: 0; padding: 0; }
+.timeline { max-width: 760px; }
+.timeline-entry { display: block; padding: 4px 0 14px; border-bottom: 1px solid var(--line); }
+.timeline-entry.rise { display: block; }
+.timeline-row { display: grid; grid-template-columns: 150px 1fr; gap: 16px; align-items: baseline; padding-top: 10px; }
+/* Projects nested under a company: one compact line each (start date | name | type), lined up with the role */
+.timeline-projects { margin-top: 8px; }
+.timeline-row.is-project { grid-template-columns: 150px 1fr auto; padding: 7px 0; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.timeline-row.is-project .timeline-when { font-size: 13px; }
+.timeline-project { font-size: 15px; line-height: 1.4; }
+.timeline-tag { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.timeline-when { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.timeline-role { font-size: 17px; line-height: 1.4; }
+@media (max-width: 560px) {
+  .timeline-row { grid-template-columns: 1fr; gap: 4px; }
+  .timeline-row.is-project { grid-template-columns: 1fr auto; }
+  .timeline-row.is-project .timeline-when { grid-column: 1 / -1; }
+}
 /* Photos reuse the work grid; only the spacing differs */
 .info-photos { padding-top: clamp(64px, 10vh, 120px); }
 .info-photos figure { margin: 0; }
@@ -177,7 +295,7 @@ ul { list-style: none; }
 /* ───────── Footer ───────── */
 .footer {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: clamp(120px, 18vh, 220px);
-  padding: 24px var(--gutter) 32px; border-top: 1px solid var(--line); font-size: 14px;
+  padding: 24px var(--gutter) 32px; font-size: 14px;
 }
 .footer-links { display: flex; flex-wrap: wrap; gap: 6px 24px; }
 .footer > :nth-child(2) { text-align: center; }
@@ -457,3 +575,53 @@ div.tile-cover { cursor: default; }
 .tile-label-cta { color: #ffffffb3; }
 /* Touch screens: only unfinished projects keep their label showing */
 @media (pointer: coarse) { .tile.is-soon .tile-label { opacity: 1; translate: -50% -50%; } }
+
+/* ───────── More work: same tiles as the case studies, but the cover opens a quick view (Peek.tsx) ───────── */
+button.tile-cover { display: block; width: 100%; text-align: left; }
+button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-duration: 1s; }
+.tile-title-btn { font: inherit; letter-spacing: inherit; transition: opacity .2s; }
+.tile-title-btn:hover { opacity: .6; }
+
+/* ───────── Quick view (Peek.tsx): square-cornered panel over a dimmed page ───────── */
+.peek { position: fixed; inset: 0; z-index: 50; background: color-mix(in srgb, #000 72%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: peek-fade .35s var(--ease) both; }
+.peek-scroll { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; padding: clamp(24px, 6vh, 72px) clamp(16px, 6vw, 96px); }
+.peek-panel {
+  position: relative; max-width: 960px; margin: 0 auto; background: var(--bg); border: 1px solid var(--line); cursor: auto;
+  animation: peek-rise .6s var(--ease) both;
+}
+/* Same grain as the page, so the panel doesn't read as a flat card */
+.peek-panel::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: var(--grain-opacity); mix-blend-mode: var(--grain-blend);
+  background-image: var(--grain); background-size: var(--grain-size) var(--grain-size);
+}
+.peek-panel > * { position: relative; }
+@keyframes peek-fade { from { opacity: 0; } }
+@keyframes peek-rise { from { opacity: 0; transform: translateY(32px); } }
+.peek-panel:focus { outline: none; }
+/* Plain ✕ in the panel's top-left corner; it scrolls away with the content. Clicking outside the panel or Esc also closes */
+.peek-close {
+  position: absolute; top: clamp(16px, 2.4vw, 28px); left: clamp(16px, 2.4vw, 28px); z-index: 2;
+  display: grid; place-items: center; width: 44px; height: 44px; color: var(--muted); transition: color .2s;
+}
+.peek-close:hover { color: var(--fg); }
+.peek-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.peek-kicker { font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); margin-bottom: 18px; }
+.peek-head { padding: clamp(88px, 12vh, 120px) clamp(20px, 4vw, 56px) clamp(28px, 4vh, 44px); }
+.peek-title { font-family: var(--serif); font-size: clamp(34px, 4.6vw, 64px); line-height: 1.08; letter-spacing: -.03em; font-weight: 400; }
+.peek-site { display: inline-block; margin-top: 12px; font-size: 14px; color: var(--muted); transition: color .2s; }
+.peek-site:hover { color: var(--accent); }
+.peek-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 24px; margin: 32px 0 0; padding: 24px 0; border-block: 1px solid var(--line); }
+.peek-facts dt { font: 12px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
+.peek-facts dd { margin: 0; font-size: 14px; line-height: 1.7; }
+.peek-about { margin-top: 28px; font-size: clamp(16px, 1.3vw, 19px); line-height: 1.6; max-width: 62ch; }
+.peek-media { display: flex; flex-direction: column; gap: 12px; padding: 0 clamp(20px, 4vw, 56px) clamp(32px, 5vh, 56px); }
+.peek-media :is(img, video) { display: block; width: 100%; height: auto; background: var(--surface); }
+.peek-next {
+  width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  padding: 28px clamp(20px, 4vw, 56px); border-top: 1px solid var(--line);
+  font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); transition: background-color .25s;
+}
+.peek-next-title { font-family: var(--serif); font-size: clamp(22px, 2.4vw, 34px); letter-spacing: -.03em; text-transform: none; color: var(--fg); transition: color .2s; }
+.peek-next:hover { background: var(--surface); }
+.peek-next:hover .peek-next-title { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .peek, .peek-panel { animation: none; } }
