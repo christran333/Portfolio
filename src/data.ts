@@ -8,8 +8,8 @@ export const profile = {
   status: 'Looking for Summer 2027 product design internships.',
   // The About page's intro: the personal side (the home hero covers the work side)
   aboutIntro: [
-    "When I'm not designing, I'm usually making something. I play in a band called Hearth and design our flyers, screen print shirts, make short films, and take photos, a lot of it through my creative collective @centeredbyvoid. I also collect CDs and physical media.",
-    "To get outside, I boulder with the UTD climbing club, hike, and cycle.",
+    "When I'm not designing, I'm usually making something. I play in a band called Hearth and design our flyers, screen print shirts, make short films, and take photos, a lot of it through my creative collective @centeredbyvoid. I also collect a lot of CDs and physical media.",
+    "To get outside, I boulder with my friends, hike, and cycle.",
   ],
   // Resume-style timeline on the About page, newest first. `work` lists project ids from `projects` below.
   experience: [
