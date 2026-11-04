@@ -440,7 +440,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     role: ['Product Design Intern', 'Francois Labs'],
     team: ['Vu Francois', 'Taylor Nguyen'],
     scope: ['One-pagers', 'Pitch deck', 'Application UI'],
-    date: '2026',
+    date: 'Summer 2026',
     type: 'Logistics startup · Branding · Visual design',
     headline: 'Brand and product marketing for a freight finance platform',
     hero: img('UtCoo42KbgxyNsiJbJ4LdzBpcE'),

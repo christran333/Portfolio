@@ -68,7 +68,7 @@ const siteOf = (id: string) => projects.find(p => p.id === id)!.site!
 
 // The intro paragraphs, with links (only shown here; the About page no longer repeats them)
 const heroParas = [
-  <>I'm a product designer based in Dallas. I care about research, solving ambiguous problems, and getting the visual details right. Right now I'm a Product Design Intern at <L href="https://www.francoislabs.com/">Francois Labs</L>, designing for early-stage startups in <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, and <L href="/work/scout">B2B</L>.</>,
+  <>I care about research, solving ambiguous problems, and getting the visual details right. Right now I'm a Product Design Intern at <L href="https://www.francoislabs.com/">Francois Labs</L>, designing for early-stage startups in <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, and <L href="/work/scout">B2B</L>.</>,
   <>I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design &amp; Research. I'm also a <L href="https://www.instagram.com/figmacampusleaders/"><span className="nowrap"><FigmaMark />Figma</span> Campus Leader</L> and a <L href="https://bass.utdallas.edu/news/capital-one-expands-student-opportunities-with-new-scholarship/"><span className="nowrap"><CapitalOneLogo />2x</span> Capital One Design &amp; Research Scholar</L>.</>,
   <>Outside of school and client work, I play in a band, screen print shirts, and run my creative collective <L href="https://www.instagram.com/centeredbyvoid/">@centeredbyvoid</L>.</>,
 ]
@@ -135,12 +135,13 @@ export default function Work() {
               onPointerEnter={e => e.pointerType === 'mouse' && setPreviewing(true)}
               onPointerLeave={() => setPreviewing(false)}
             >Hey, I'm Christopher.</span>
+            <span className="intro-hello-sub rise" style={{ animationDelay: '.08s' }}>A product designer based in Dallas.</span>
           </h1>
           {heroParas.map((para, i) => (
             <p key={i} className="intro-para rise" style={{ animationDelay: `${0.1 + i * 0.12}s` }}>{para}</p>
           ))}
           <p className="intro-para intro-status rise" style={{ animationDelay: `${0.1 + heroParas.length * 0.12}s` }}>
-            Let's build something.
+            {profile.status}
             <span className="intro-icons">
               <a href={profile.links.find(l => l.label === 'X')!.href} target="_blank" rel="noreferrer" aria-label="X (Twitter)">
                 <svg viewBox="0 0 24 24" aria-hidden><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
