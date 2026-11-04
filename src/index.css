@@ -204,7 +204,6 @@ ul { list-style: none; }
 .inline-logo { display: inline-block; height: .78em; width: auto; vertical-align: -.06em; margin: 0 .32em 0 .18em; }
 /* The full logo: sized so the wordmark's letters match the text, its baseline on the text's baseline, and
    negative top/bottom margins so the swoosh above doesn't push the lines apart */
-.inline-logo.is-capital-one { height: .78em; } /* same height as the Figma mark */
 .intro-para + .intro-para { margin-top: 1.1em; }
 .intro-status { color: var(--muted); }
 .intro-status { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
