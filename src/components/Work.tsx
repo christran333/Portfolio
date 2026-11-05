@@ -68,7 +68,7 @@ const siteOf = (id: string) => projects.find(p => p.id === id)!.site!
 
 // The intro paragraphs, with links (only shown here; the About page no longer repeats them)
 const heroParas = [
-  <>I care about research, solving ambiguous problems, and getting the visual details right. Right now I'm a Product Design Intern at <L href="https://www.francoislabs.com/">Francois Labs</L>, designing for early-stage startups in <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, and <L href="/work/scout">B2B</L>.</>,
+  <>Right now I'm the founding designer at Mesa, building AI tools for a super niche and overlooked corner of tech: upstream oil &amp; gas. I own design, brand, and product, and I ship it in code. I also still do client work at <L href="https://www.francoislabs.com/">Francois Labs</L>, a design studio for early-stage startups in <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, and <L href="/work/scout">B2B</L>.</>,
   <>I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design &amp; Research. I'm also a <L href="https://www.instagram.com/figmacampusleaders/"><span className="nowrap"><FigmaMark />Figma</span> Campus Leader</L> and a <L href="https://bass.utdallas.edu/news/capital-one-expands-student-opportunities-with-new-scholarship/"><span className="nowrap"><CapitalOneLogo />2x Capital One</span> Design &amp; Research Scholar</L>.</>,
 ]
 

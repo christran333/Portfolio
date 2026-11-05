@@ -5,15 +5,16 @@ export const profile = {
   location: 'Dallas, TX',
   email: 'christophertran2005@gmail.com',
   resume: 'https://drive.google.com/file/d/1HsIvZXTdCg23kK9ESxY5pnEG8CAijosg/view?usp=sharing',
-  status: 'Looking for Summer 2027 product design internships.',
+  status: 'Open to full-time roles after I graduate in December 2027.',
   // The About page's intro: the personal side (the home hero covers the work side)
   aboutIntro: [
-    "I grew up surrounded by creativity. My older brothers introduced me to music when I was very young, and some of my earliest memories are of dancing for as long as my little legs could handle. From there I grew up playing music, drawing, and making my own little YouTube videos, and that creative spark never dulled. It turned into something I wanted to pursue for the rest of my life. When my oldest brother introduced me to design, I saw the beauty in creating polished work that could impact billions of people, and that’s what made me want to work in tech.",
+    "I grew up surrounded by creativity. My older brothers introduced me to music when I was very young, and some of my earliest memories are of dancing for as long as my little legs could handle. From there I grew up playing music, drawing, and making my own little YouTube videos, and that creative spark never dulled. When my oldest brother introduced me to design, my worlds collided: my love for computers and technology blended with art and creativity. I saw the beauty in creating polished work that could impact billions of people, and that’s what made me want to work in tech.",
     "I love all forms of art, and I’m always making something, even when it isn’t design. I play in a hardcore band called Hearth, design flyers for other bands, screen print shirts, dabble in analog photography, and make short films for @centeredbyvoid. I also love physical media, so I collect a lot of CDs from archive bands.",
     "Outside of making things, I’m big on fitness and the outdoors. I was an All-American collegiate powerlifter: I placed 7th at nationals my sophomore year, and at one point I was the strongest 67.5 kg collegiate powerlifter in the nation. These days I spend more time outside, hiking, bouldering, and cycling.",
   ],
   // Resume-style timeline on the About page, newest first. `work` lists project ids from `projects` below.
   experience: [
+    { when: 'Nov 2026 – Now', role: 'Founding Designer', org: 'Mesa' },
     { when: 'Fall 2024 – Now', role: 'Product Design Intern', org: 'Francois Labs', href: 'https://www.francoislabs.com/', work: ['scout', 'act-one', 'janus', 'priority', 'cosign', 'tennr', 'arist'] },
     { when: 'Fall 2025', role: 'Product Design Intern', org: 'Backtrack', href: '/work/backtrack' },
   ],
@@ -74,9 +75,9 @@ export const projects: Project[] = [
   { id: 'cosign', featured: true, title: 'Cosign', tags: ['Product Design'], summary: "What working with a non-technical founder taught me about selling a design.", when: 'Spring 2025', href: '/work/cosign', img: framer('5pvYzGg5sCSysJdt9R5xFw0zvw'), aspect: '1 / 1', site: 'https://rentwithcosign.com' },
   { id: 'scout', featured: true, title: 'Scout', tags: ['Product Design'], summary: "AI can find a hundred UX problems. Picking the five that matter is still the job.", when: 'Summer 2026', href: '/work/scout', img: '/work/scout/thumbnail.webp', aspect: '2000 / 1125' },
   { id: 'backtrack', featured: true, title: 'Backtrack', tags: ['Product Design'], summary: "Given a fragment of a concept and no hand-holding, here's how I found the direction.", when: 'Fall 2025', href: '/work/backtrack', img: framer('XKHJwFkDB4kDxYxSEONjAoi0'), aspect: '1 / 1', site: 'https://www.usebacktrack.com' },
-  { id: 'meteormate', hidden: true, title: 'MeteorMate', tags: ['Product Design'], summary: 'Designing a roommate-matching app from scratch for 20,000+ UT Dallas students.', when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
   { id: 'tactile', featured: true, title: 'Tactile', tags: ['Product Design'], summary: "Building fast, failing faster, and still making something thoughtful.", when: '2026', href: '/work/tactile', img: '/work/tactile/tactile-cover.webp', aspect: '2800 / 1991', site: 'https://devpost.com/software/tactile-tyoilq', siteLabel: 'View on Devpost' },
   { id: 'toolkit', featured: true, title: 'Toolkit', tags: ['Product Design'], summary: 'An app for collecting the design tools you hear about and building workflows to actually use them, made for the SVSD Design Competition.', when: '2026', href: 'https://youtu.be/JbNiQUGHzNo', soon: true, img: '/work/toolkit/poster.jpg', video: '/work/toolkit/thumbnail.mp4', aspect: '16 / 9', site: 'https://svsd-ten.vercel.app', siteLabel: 'View live app' },
+  { id: 'meteormate', hidden: true, title: 'MeteorMate', tags: ['Product Design'], summary: "Joining a student design team six months in, and moving it forward without bulldozing it.", when: 'Summer 2025', href: '/work/meteormate', img: framer('7agbU5LMHCSPcfO7YHuy97L5PaQ'), aspect: '1 / 1' },
   { id: 'act-one', title: 'Act One Ventures', tags: ['Brand Design'], summary: 'A first-pass rebrand for a venture capital firm backing AI-native founders.', when: 'Summer 2026', href: '/work/act-one', img: '/work/act-one/thumbnail.webp', aspect: '1123 / 920', site: 'https://actoneventures.com' },
   { id: 'arist', title: 'Arist', tags: ['Visual Design'], summary: 'Scaling the visual system of an AI microlearning platform.', when: '2025', href: '/work/arist', img: framer('m2dJpbsJveZCEiAWVrCpBELUX0'), aspect: '1 / 1', site: 'https://arist.co' },
   { id: 'tennr', title: 'Tennr', tags: ['Visual Design'], summary: 'Refreshing the brand and marketing of a healthcare AI startup.', when: '2025', href: '/work/tennr', img: framer('bPD5Y8PqndjPdKUVdovvOTugaw'), aspect: '16 / 9', site: 'https://www.tennr.com' },
