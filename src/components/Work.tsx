@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useReveal } from '../useReveal'
-import { distribute, useColumnCount } from '../layout'
+import { useColumnCount } from '../layout'
 import { imgAt, linkProps, profile, projects, type Project } from '../data'
 import { caseStudies } from '../caseStudies'
 import Peek from './Peek'
@@ -33,7 +33,7 @@ function CoverLabel({ p }: { p: Project }) {
   if (p.soon && p.href) return <span className="tile-label is-two">Full case study coming soon<span className="tile-label-cta">Watch the demo ↗</span></span>
   if (p.soon) return <span className="tile-label">Coming soon</span>
   if (p.href.startsWith('http')) return <span className="tile-label">View project ↗</span>
-  return <span className="tile-label">View case study</span>
+  return <span className="tile-label">Case study</span>
 }
 
 const domain = (url: string) => new URL(url).hostname.replace(/^www\./, '')
@@ -105,9 +105,12 @@ export default function Work() {
       target.x = e.clientX
       target.y = e.clientY
     }
+    // Scrolling away closes the floating previews too (the pointer never "leaves" when the page moves instead)
+    const scrolled = () => { setPreviewing(false); setSite(null) }
     raf = requestAnimationFrame(loop)
     window.addEventListener('pointermove', move)
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('pointermove', move) }
+    window.addEventListener('scroll', scrolled, { passive: true })
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('pointermove', move); window.removeEventListener('scroll', scrolled) }
   }, [])
 
   useEffect(() => {
@@ -118,7 +121,6 @@ export default function Work() {
   }, [previewing])
 
   const n = useColumnCount()
-  const columns = distribute(featured, n)
   const showSite = site && !missing.has(site.id)
 
   return (
@@ -191,12 +193,11 @@ export default function Work() {
       </section>
       )}
 
-      <section className="grid" aria-label="Selected work" style={{ '--cols': n } as CSSProperties}>
-        {columns.map((col, c) => (
-          <div key={c} className="grid-col">
-            {col.map(p => {
+      {/* All the work in one grid: full case studies first, then studio work (quick looks) */}
+      <section className="grid is-uniform" aria-label="Work" style={{ '--cols': n } as CSSProperties}>
+        {featured.map(p => {
               const media = (
-                <div className="tile-media" style={{ aspectRatio: p.aspect }}>
+                <div className="tile-media">
                   <Cover p={p} />
                   <CoverLabel p={p} />
                 </div>
@@ -230,23 +231,11 @@ export default function Work() {
                   <p className="tile-summary">{p.summary}</p>
                 </article>
               )
-            })}
-          </div>
-        ))}
-      </section>
-
-      <section aria-labelledby="more-h">
-        <header className="section-label">
-          <h2 id="more-h">More work</h2>
-          <p className="muted">Brand, visual, and product work for early-stage startups.</p>
-        </header>
-        <div className="grid" style={{ '--cols': n } as CSSProperties}>
-          {distribute(more, n).map((col, c) => (
-            <div key={c} className="grid-col">
-              {col.map(p => {
+        })}
+          {more.map(p => {
                 const at = peekable.indexOf(p)
                 const media = (
-                  <div className="tile-media" style={{ aspectRatio: p.aspect }}>
+                  <div className="tile-media">
                     <Cover p={p} />
                     <span className="tile-label">{at >= 0 ? 'Quick look' : 'Coming soon'}</span>
                   </div>
@@ -279,10 +268,7 @@ export default function Work() {
                     <p className="tile-summary">{p.summary}</p>
                   </article>
                 )
-              })}
-            </div>
-          ))}
-        </div>
+          })}
       </section>
 
       {peek !== null && (

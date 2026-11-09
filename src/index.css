@@ -232,6 +232,10 @@ ul { list-style: none; }
 /* ───────── Work: staggered full-width grid ───────── */
 .grid { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: clamp(16px, 1.2vw, 20px); padding: 0 var(--gutter); align-items: start; }
 .grid-col { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
+/* Work grids: every cover the same shape, cards in even rows (the About photos keep the staggered columns) */
+.grid.is-uniform { row-gap: clamp(40px, 4vw, 56px); }
+.grid.is-uniform .tile { min-width: 0; }
+.grid.is-uniform .tile-media { aspect-ratio: 1 / 1; }
 .tile { display: block; }
 .tile-cover { display: block; }
 .tile-media { position: relative; overflow: hidden; background: var(--surface); }
@@ -249,7 +253,7 @@ ul { list-style: none; }
 .tile-site { display: inline-flex; align-items: baseline; gap: 8px; }
 .tile-site-arrow { color: var(--muted); transition: color .2s, translate .35s var(--ease); }
 .tile-site-cta {
-  font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--accent);
+  font: 14px var(--sans); color: var(--accent);
   opacity: 0; translate: -6px 0; transition: opacity .25s, translate .4s var(--ease);
 }
 .tile-site:is(:hover, :focus-visible) .tile-site-arrow { color: var(--accent); translate: 2px -2px; }
@@ -257,7 +261,7 @@ ul { list-style: none; }
 /* Touch screens can't hover: the arrow alone says it's a link */
 @media (pointer: coarse) { .tile-site-cta { display: none; } }
 
-.tile-tags { margin-top: 16px; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+.tile-tags { margin-top: 16px; font: 14px var(--sans); color: var(--muted); }
 .tile-summary { margin-top: 6px; font-size: 15px; line-height: 1.45; color: var(--muted); max-width: 44ch; }
 
 /* ───────── Info ───────── */
@@ -265,14 +269,17 @@ ul { list-style: none; }
   display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 96px); align-items: start;
   padding: clamp(64px, 12vh, 140px) var(--gutter) 0; min-height: 70vh;
 }
-.label { display: block; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 18px; }
+.label { display: block; font: 14px var(--sans); color: var(--muted); margin-bottom: 18px; }
 .info-col .label:not(:first-child) { margin-top: 48px; }
 .info-text { display: block; font-size: clamp(19px, 1.6vw, 23px); line-height: 1.45; letter-spacing: -.02em; max-width: 40ch; }
 .info-text + .info-text { margin-top: 1em; }
 .info-list li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .info-list li.rise { display: flex; }
-.info-list a { transition: opacity .2s; }
-.info-list a:hover { opacity: .6; }
+.info-list li { position: relative; }
+.info-list li > * { transition: opacity .25s var(--ease); }
+/* Same spotlight as the timeline: the list dims as a whole, the row under the cursor stays bright */
+.info-list:hover li:not(:hover) > * { opacity: .35; }
+.info-list a::before { content: ''; position: absolute; inset: 0; }
 .info-col sup { font-size: .7em; margin-left: 2px; color: var(--muted); }
 .info-col > p.rise { display: block; }
 /* Off the clock: three small groups under About */
@@ -287,17 +294,34 @@ ul { list-style: none; }
 .timeline-entry.rise { display: block; }
 .timeline-row { display: grid; grid-template-columns: 150px 1fr; gap: 16px; align-items: baseline; padding-top: 10px; }
 /* Projects nested under a company: one compact line each (start date | name | type), lined up with the role */
-.timeline-projects { margin-top: 8px; }
-.timeline-row.is-project { grid-template-columns: 150px 1fr auto; padding: 7px 0; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.timeline-row.is-project { padding: 10px 0; }
+/* Like a writing list: a rule under the role and under each project, starting at the name column (the date
+   column stays clear). The last project has none, since the entry's full-width rule closes the group */
+.timeline-entry .timeline-row { position: relative; }
+.timeline-entry:has(.timeline-projects) > .timeline-row { padding-bottom: 10px; }
+.timeline-entry:has(.timeline-projects) > .timeline-row::after,
+.timeline-row.is-project:not(:last-child)::after {
+  content: ''; position: absolute; left: 166px; right: 0; bottom: 0; height: 1px; background: var(--line);
+}
 .timeline-row.is-project .timeline-when { font-size: 13px; }
 .timeline-project { font-size: 15px; line-height: 1.4; }
-.timeline-tag { font-size: 13px; color: var(--muted); white-space: nowrap; }
+/* Role lines and project names have no underline (the row rule already sits under them).
+   Spotlight hover: pointing at a link keeps its row bright and fades every other row back, so the
+   lines never dim, only the text in them does */
+/* Spotlight: hovering a row that links somewhere fades the other names back. Rows with no link yet
+   (Mesa) don't react. Dates are left alone. Coming back to full brightness waits a beat, so sliding past
+   the small gaps between entries doesn't flash the whole list */
+.timeline-role, .timeline-project { transition: opacity .25s var(--ease) .12s; }
+.timeline:has(.timeline-row:hover a) .timeline-row:not(:hover) :is(.timeline-role, .timeline-project) { opacity: .35; transition-delay: 0s; }
+.timeline-row:hover :is(.timeline-role, .timeline-project) { transition-delay: 0s; }
+/* The link stretches over its whole row, so the row you're lit up on is also what you click */
+.timeline-row a::before { content: ''; position: absolute; inset: 0; }
 .timeline-when { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 2px; }
 .timeline-role { font-size: 17px; line-height: 1.4; }
 @media (max-width: 560px) {
   .timeline-row { grid-template-columns: 1fr; gap: 4px; }
-  .timeline-row.is-project { grid-template-columns: 1fr auto; }
   .timeline-row.is-project .timeline-when { grid-column: 1 / -1; }
+  .timeline-entry:has(.timeline-projects) > .timeline-row::after, .timeline-row.is-project:not(:last-child)::after { left: 0; }
 }
 /* Photos reuse the work grid; only the spacing differs */
 .info-photos { padding-top: clamp(64px, 10vh, 120px); }
@@ -371,23 +395,23 @@ ul { list-style: none; }
 /* ───────── Case study ───────── */
 .cs { padding: 0 var(--gutter); }
 .cs-head { padding: clamp(56px, 12vh, 140px) 0 clamp(40px, 7vh, 80px); max-width: 1100px; }
-.cs-meta { display: block; font: 13px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.cs-meta { display: block; font: 15px var(--sans); color: var(--muted); }
 .cs-meta { display: flex; flex-wrap: wrap; gap: 4px 0; }
 .cs-meta span { white-space: nowrap; }
 .cs-meta span:not(:last-child)::after { content: '·'; margin: 0 .6em; }
 .cs-title { display: block; margin-top: 18px; font-family: var(--sans); font-size: clamp(32px, 3.8vw, 56px); line-height: 1.08; letter-spacing: -.04em; font-weight: 500; text-wrap: balance; }
 .cs-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: 28px 24px; margin: 0; padding: 36px 0; border-bottom: 1px solid var(--line); }
-.cs-facts dt { font: 12px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
+.cs-facts dt { font: 14px var(--sans); color: var(--muted); margin-bottom: 8px; }
 .cs-facts dd { margin: 0; font-size: 17px; line-height: 1.75; }
 .cs-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 16px; padding-top: 56px; }
 .cs-highlight { padding: 28px; background: var(--surface); border: 1px solid var(--line); }
-.cs-label { display: block; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--accent); }
+.cs-label { display: block; font: 14px var(--sans); color: var(--accent); }
 .cs-highlight strong { display: block; margin: 0 0 10px; font-size: clamp(40px, 4.5vw, 64px); font-weight: 500; letter-spacing: -.05em; line-height: 1; }
 .cs-highlight p { color: var(--muted); font-size: 16px; max-width: 26ch; }
 
 /* Sticky "on this page" nav on the left, sections on the right */
 .cs-main { display: grid; grid-template-columns: minmax(160px, 1fr) 3fr; gap: clamp(24px, 4vw, 64px); }
-.cs-toc { position: sticky; top: 104px; align-self: start; margin-top: clamp(80px, 12vh, 140px); }
+.cs-toc { position: sticky; top: 104px; align-self: start; margin-top: clamp(40px, 6vh, 64px); }
 .cs-toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .cs-toc a { position: relative; display: inline-block; padding-left: 16px; font-size: 15px; line-height: 1.35; color: var(--muted); transition: color .2s; }
 .cs-toc a::before {
@@ -398,7 +422,9 @@ ul { list-style: none; }
 .cs-toc a.is-active::before { opacity: 1; scale: 1; }
 .cs-sections { min-width: 0; }
 .cs-section { padding-top: clamp(80px, 12vh, 140px); scroll-margin-top: 24px; }
-.cs-section-title { margin: 0 0 28px; font: 13px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 400; }
+/* The overview follows straight on from the facts row, so the story starts right away (the side nav lines up with it) */
+.cs-sections > .cs-section:first-child { padding-top: clamp(40px, 6vh, 64px); }
+.cs-section-title { margin: 0 0 28px; font: 15px var(--sans); color: var(--muted); font-weight: 400; }
 /* A section title written as a statement reads as a real heading, not a label */
 .cs-section-title.is-statement { font-size: clamp(22px, 2vw, 30px); line-height: 1.2; text-transform: none; letter-spacing: -.025em; color: var(--fg); font-weight: 500; text-wrap: balance; max-width: 30ch; }
 .cs-body { display: flex; flex-direction: column; gap: 28px; min-width: 0; }
@@ -431,7 +457,7 @@ ul { list-style: none; }
 .cs-finding.no-image { grid-template-columns: 1fr; }
 .cs-finding h4 { font-size: clamp(20px, 1.8vw, 26px); font-weight: 500; letter-spacing: -.02em; line-height: 1.2; margin: 12px 0 18px; }
 .cs-finding dl { margin: 0; }
-.cs-finding dt { font: 11px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-top: 14px; }
+.cs-finding dt { font: 13px var(--sans); color: var(--muted); margin-top: 14px; }
 .cs-finding dd { margin: 6px 0 0; font: 14px/1.65 var(--sans); color: var(--fg); }
 .cs-link { align-self: flex-start; font-size: 17px; padding-bottom: 2px; border-bottom: 1px solid var(--accent); transition: color .2s; }
 .cs-link:hover { color: var(--accent); }
@@ -444,7 +470,7 @@ ul { list-style: none; }
 .cs-media figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); }
 .cs-table { overflow-x: auto; border: 1px solid var(--line); }
 .cs-table table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 620px; }
-.cs-table th { text-align: left; font: 12px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 400; padding: 16px 20px; background: var(--surface); }
+.cs-table th { text-align: left; font: 14px var(--sans); color: var(--muted); font-weight: 400; padding: 16px 20px; background: var(--surface); }
 .cs-table td { padding: 16px 20px; border-top: 1px solid var(--line); vertical-align: top; }
 .cs-table td:first-child { font-weight: 500; }
 .cs-table td:last-child { color: var(--fg); }
@@ -477,7 +503,7 @@ ul { list-style: none; }
   .cs-table td { padding: 6px 0; border: 0; }
   .cs-table td:first-child { font-size: 18px; padding-bottom: 10px; }
   .cs-table td:not(:first-child)::before {
-    content: attr(data-label); display: block; font: 11px var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 2px;
+    content: attr(data-label); display: block; font: 13px var(--sans); color: var(--muted); margin-bottom: 2px;
   }
 }
 
@@ -565,11 +591,11 @@ ul { list-style: none; }
 .info-photo:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .info-photo.has-caption { cursor: help; }
 
-/* Hovering a cover: a pill fades in over it saying where it goes ("View case study", "Coming soon", ...) */
+/* Hovering a cover: a pill fades in over it saying where it goes ("Case study", "Quick look", "Coming soon", ...) */
 div.tile-cover { cursor: default; }
 .tile-label {
   position: absolute; left: 50%; top: 50%; translate: -50% calc(-50% + 6px); padding: 8px 14px;
-  font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: #fff;
+  font: 14px var(--sans); color: #fff;
   background: #1a1a1acc; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   opacity: 0; transition: opacity .3s, translate .5s var(--ease); pointer-events: none;
 }
@@ -577,6 +603,22 @@ div.tile-cover { cursor: default; }
 .tile-cover:hover .tile-label { opacity: 1; translate: -50% -50%; }
 .tile-cover .tile-media :is(img, video) { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
 .tile-cover:hover .tile-media :is(img, video) { filter: brightness(.84); }
+/* Spotlight (on the card's contents, so the scroll-in reveal on .tile is untouched): hovering a card fades every other card back, so the one you're on stands out (same idea as
+   the About timeline). Coming back to full strength waits a beat, so sliding across the gaps between cards
+   doesn't flash the whole grid */
+.grid.is-uniform .tile > * { transition: opacity .3s var(--ease) .12s; }
+.grid.is-uniform:has(.tile:hover) .tile:not(:hover) > * { opacity: .3; transition-delay: 0s; }
+.grid.is-uniform .tile:hover > * { transition-delay: 0s; }
+@media (pointer: coarse) { .grid.is-uniform:has(.tile:hover) .tile:not(:hover) > * { opacity: 1; } }
+/* No hover anything while scrolling (see main.tsx): nothing under the cursor reacts until the mouse moves */
+html.is-scrolling :is(.grid, .timeline, .info-list, .cs-toc) { pointer-events: none; }
+/* Browsers keep whatever was hovered when scrolling began until the mouse moves, so undo every hover look
+   explicitly: the card you scroll away from lets go immediately */
+html.is-scrolling .tile .tile-label { opacity: 0; translate: -50% calc(-50% + 6px); }
+html.is-scrolling .tile.is-in .tile-media :is(img, video) { scale: 1; filter: none; }
+html.is-scrolling .grid.is-uniform .tile > *,
+html.is-scrolling .timeline .timeline-row :is(.timeline-role, .timeline-project),
+html.is-scrolling .info-list li > * { opacity: 1 !important; }
 /* Soon, but with a demo to watch: second line under the label */
 .tile-label.is-two { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 16px; }
 .tile-label-cta { color: #ffffffb3; }
@@ -612,13 +654,13 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 }
 .peek-close:hover { color: var(--fg); }
 .peek-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; }
-.peek-kicker { font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); margin-bottom: 18px; }
+.peek-kicker { font: 14px var(--sans); color: var(--muted); margin-bottom: 18px; }
 .peek-head { padding: clamp(88px, 12vh, 120px) clamp(20px, 4vw, 56px) clamp(28px, 4vh, 44px); }
 .peek-title { font-family: var(--sans); font-size: clamp(32px, 4.2vw, 56px); line-height: 1.08; letter-spacing: -.04em; font-weight: 500; }
 .peek-site { display: inline-block; margin-top: 12px; font-size: 14px; color: var(--muted); transition: color .2s; }
 .peek-site:hover { color: var(--accent); }
 .peek-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 24px; margin: 32px 0 0; padding: 24px 0; border-block: 1px solid var(--line); }
-.peek-facts dt { font: 12px var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 8px; }
+.peek-facts dt { font: 14px var(--sans); color: var(--muted); margin-bottom: 8px; }
 .peek-facts dd { margin: 0; font-size: 14px; line-height: 1.7; }
 .peek-about { margin-top: 28px; font-size: clamp(16px, 1.3vw, 19px); line-height: 1.6; max-width: 62ch; }
 .peek-media { display: flex; flex-direction: column; gap: 12px; padding: 0 clamp(20px, 4vw, 56px) clamp(32px, 5vh, 56px); }
@@ -626,7 +668,7 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .peek-next {
   width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
   padding: 28px clamp(20px, 4vw, 56px); border-top: 1px solid var(--line);
-  font: 12px var(--sans); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); transition: background-color .25s;
+  font: 14px var(--sans); color: var(--muted); transition: background-color .25s;
 }
 .peek-next-title { font-family: var(--sans); font-size: clamp(22px, 2.4vw, 34px); font-weight: 500; letter-spacing: -.035em; text-transform: none; color: var(--fg); transition: color .2s; }
 .peek-next:hover { background: var(--surface); }

@@ -11,7 +11,7 @@ const project = (id: string) => projects.find(p => p.id === id)!
 const projectWhen = (id: string) => (caseStudies[id]?.date ?? project(id).when ?? '').split('→')[0].trim()
 const ProjectName = ({ id }: { id: string }) => {
   const p = project(id)
-  return p.href && !p.soon ? <a className="underline" {...linkProps(p.href)}>{p.title}</a> : <span>{p.title}</span>
+  return p.href && !p.soon ? <a {...linkProps(p.href)}>{p.title}</a> : <span>{p.title}</span>
 }
 
 // Resume-style list: dates on the left, role and company. A place with `work` lists
@@ -26,7 +26,8 @@ function Timeline({ title, entries, delay }: { title: string; entries: Entry[]; 
             <div className="timeline-row">
               <span className="timeline-when">{e.when}</span>
               <p className="timeline-role">
-                {e.role}, {e.href ? <a className="underline" {...linkProps(e.href)}>{e.org}</a> : e.org}
+                {/* The whole line is the link (no underline), so it dims as one on hover like the project names */}
+                {e.href ? <a {...linkProps(e.href)}>{e.role}, {e.org}</a> : <>{e.role}, {e.org}</>}
               </p>
             </div>
             {e.work && (
@@ -35,7 +36,6 @@ function Timeline({ title, entries, delay }: { title: string; entries: Entry[]; 
                   <li key={id} className="timeline-row is-project">
                     <span className="timeline-when">{projectWhen(id)}</span>
                     <p className="timeline-project"><ProjectName id={id} /></p>
-                    <span className="timeline-tag">{project(id).tags[0]}</span>
                   </li>
                 ))}
               </ul>
