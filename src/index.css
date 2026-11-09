@@ -591,39 +591,49 @@ ul { list-style: none; }
 .info-photo:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .info-photo.has-caption { cursor: help; }
 
-/* Hovering a cover: a pill fades in over it saying where it goes ("Case study", "Quick look", "Coming soon", ...) */
 div.tile-cover { cursor: default; }
-.tile-label {
-  position: absolute; left: 50%; top: 50%; translate: -50% calc(-50% + 6px); padding: 8px 14px;
-  font: 14px var(--sans); color: #fff;
-  background: #1a1a1acc; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  opacity: 0; transition: opacity .3s, translate .5s var(--ease); pointer-events: none;
+/* Bar along the bottom of every cover: the date, right-aligned on a soft gradient so it reads on any
+   image. On hover the gradient deepens, the cover darkens, and the date swaps for what the cover opens */
+.tile-bar {
+  position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: flex-end; align-items: baseline;
+  gap: 12px; padding: 64px 18px 16px; color: #fff; pointer-events: none; isolation: isolate;
+  background: linear-gradient(to top, rgb(0 0 0 / .62), rgb(0 0 0 / .28) 50%, transparent);
 }
-.tile-label { white-space: nowrap; }
-.tile-cover:hover .tile-label { opacity: 1; translate: -50% -50%; }
+.tile-bar::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .35s;
+  background: linear-gradient(to top, rgb(0 0 0 / .45), transparent 70%);
+}
+.tile-bar-title { font-size: 18px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; text-shadow: 0 1px 12px rgb(0 0 0 / .35); }
+.tile-bar-meta { position: relative; flex-shrink: 0; font-size: 18px; letter-spacing: -.02em; color: #ffffffb8; white-space: nowrap; }
+.tile-bar-meta > * { display: block; transition: opacity .25s, translate .35s var(--ease); }
+.tile-bar-meta .is-hover { position: absolute; right: 0; bottom: 0; opacity: 0; translate: 0 6px; color: #fff; }
+.tile-cover:hover .tile-bar::before { opacity: 1; }
+.tile-cover:hover .tile-bar-meta .is-rest { opacity: 0; translate: 0 -6px; }
+.tile-cover:hover .tile-bar-meta .is-hover { opacity: 1; translate: 0 0; }
+/* Under the cover: the whole text block links to the company's site, so hovering any of it lights up
+   "View site" (and the screenshot preview follows the cursor) */
+.tile-info { display: block; }
+/* The project name leads the line under the cover: same size, but white and medium weight so it's what you scan for */
+.tile-name { color: var(--fg); font-weight: 500; font-size: 16px; letter-spacing: -.01em; }
+.tile-visit { transition: color .2s; }
+.tile-visit-arrow { display: inline-block; transition: translate .35s var(--ease); }
+a.tile-info:hover .tile-visit { color: var(--fg); }
+/* Spotlight, like the About lists: while the link is hovered, everything else in the block fades back */
+a.tile-info :is(.tile-name, .tile-meta, .tile-summary) { transition: opacity .25s var(--ease); }
+a.tile-info:hover :is(.tile-name, .tile-meta, .tile-summary) { opacity: .35; }
+a.tile-info:hover .tile-visit-arrow { translate: 2px -2px; }
 .tile-cover .tile-media :is(img, video) { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
-.tile-cover:hover .tile-media :is(img, video) { filter: brightness(.84); }
-/* Spotlight (on the card's contents, so the scroll-in reveal on .tile is untouched): hovering a card fades every other card back, so the one you're on stands out (same idea as
-   the About timeline). Coming back to full strength waits a beat, so sliding across the gaps between cards
-   doesn't flash the whole grid */
-.grid.is-uniform .tile > * { transition: opacity .3s var(--ease) .12s; }
-.grid.is-uniform:has(.tile:hover) .tile:not(:hover) > * { opacity: .3; transition-delay: 0s; }
-.grid.is-uniform .tile:hover > * { transition-delay: 0s; }
-@media (pointer: coarse) { .grid.is-uniform:has(.tile:hover) .tile:not(:hover) > * { opacity: 1; } }
+.tile-cover:hover .tile-media :is(img, video) { filter: brightness(.68); }
 /* No hover anything while scrolling (see main.tsx): nothing under the cursor reacts until the mouse moves */
 html.is-scrolling :is(.grid, .timeline, .info-list, .cs-toc) { pointer-events: none; }
 /* Browsers keep whatever was hovered when scrolling began until the mouse moves, so undo every hover look
    explicitly: the card you scroll away from lets go immediately */
-html.is-scrolling .tile .tile-label { opacity: 0; translate: -50% calc(-50% + 6px); }
+html.is-scrolling .tile .tile-bar::before, html.is-scrolling .tile .tile-bar-meta .is-hover { opacity: 0; }
+html.is-scrolling .tile .tile-bar-meta .is-rest { opacity: 1; translate: 0 0; }
 html.is-scrolling .tile.is-in .tile-media :is(img, video) { scale: 1; filter: none; }
-html.is-scrolling .grid.is-uniform .tile > *,
 html.is-scrolling .timeline .timeline-row :is(.timeline-role, .timeline-project),
-html.is-scrolling .info-list li > * { opacity: 1 !important; }
-/* Soon, but with a demo to watch: second line under the label */
-.tile-label.is-two { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 16px; }
-.tile-label-cta { color: #ffffffb3; }
-/* Touch screens: only unfinished projects keep their label showing */
-@media (pointer: coarse) { .tile.is-soon .tile-label { opacity: 1; translate: -50% -50%; } }
+html.is-scrolling .info-list li > *,
+html.is-scrolling a.tile-info :is(.tile-name, .tile-meta, .tile-summary) { opacity: 1 !important; }
 
 /* ───────── More work: same tiles as the case studies, but the cover opens a quick view (Peek.tsx) ───────── */
 button.tile-cover { display: block; width: 100%; text-align: left; }

@@ -28,12 +28,13 @@ function Cover({ p }: { p: Project }) {
     : <img src={imgAt(p.img, 1600)} alt={`${p.title} preview`} loading="lazy" />
 }
 
-// What the pill over the cover says on hover
-function CoverLabel({ p }: { p: Project }) {
-  if (p.soon && p.href) return <span className="tile-label is-two">Full case study coming soon<span className="tile-label-cta">Watch the demo ↗</span></span>
-  if (p.soon) return <span className="tile-label">Coming soon</span>
-  if (p.href.startsWith('http')) return <span className="tile-label">View project ↗</span>
-  return <span className="tile-label">Case study</span>
+// What a cover opens, shown in its bottom bar on hover
+function kind(p: Project, quick: boolean) {
+  if (quick) return 'Quick look'
+  if (p.soon && p.href) return 'Watch the demo ↗'
+  if (p.soon) return 'Coming soon'
+  if (p.href.startsWith('http')) return 'View project ↗'
+  return 'Case study'
 }
 
 const domain = (url: string) => new URL(url).hostname.replace(/^www\./, '')
@@ -195,80 +196,56 @@ export default function Work() {
 
       {/* All the work in one grid: full case studies first, then studio work (quick looks) */}
       <section className="grid is-uniform" aria-label="Work" style={{ '--cols': n } as CSSProperties}>
-        {featured.map(p => {
-              const media = (
-                <div className="tile-media">
-                  <Cover p={p} />
-                  <CoverLabel p={p} />
-                </div>
-              )
-              // The cover opens the case study; the company name opens the company's own site
-              const title = p.site
+        {[...featured, ...more].map(p => {
+          const at = peekable.indexOf(p) // >= 0: studio work that opens a quick look
+          const quick = at >= 0
+          const opens = quick || (!!p.href && featured.includes(p))
+          // The cover carries a small bar along its bottom: the date, swapped on hover for what the cover
+          // opens ("Case study", "Quick look", ...). The project name sits in the text under the cover
+          const media = (
+            <div className="tile-media">
+              <Cover p={p} />
+              <span className="tile-bar">
+                <span className="tile-bar-meta">
+                  {p.when && <span className="is-rest">{p.when}</span>}
+                  <span className="is-hover">{kind(p, quick)}</span>
+                </span>
+              </span>
+            </div>
+          )
+          return (
+            <article key={p.id} className={`tile reveal${opens && !p.soon ? '' : ' is-soon'}`}>
+              {quick
+                ? <button type="button" className="tile-cover" onClick={() => setPeek(at)} aria-haspopup="dialog" aria-label={`${p.title}: quick look`}>{media}</button>
+                : opens
+                  ? <a {...linkProps(p.href)} className="tile-cover" aria-label={`${p.title}: ${p.soon ? 'watch the demo' : 'view case study'}`}>{media}</a>
+                  : <div className="tile-cover">{media}</div>}
+              {/* Under the cover: the kind of work and the summary. When the company has its own site, this whole
+                  block is the link to it: hovering anywhere here lights up "View site" and shows the site's screenshot */}
+              {p.site
                 ? (
                   <a
-                    className="tile-site"
+                    className="tile-info"
                     href={p.site}
                     target="_blank"
                     rel="noreferrer"
                     onPointerEnter={e => e.pointerType === 'mouse' && setSite(p)}
                     onPointerLeave={() => setSite(null)}
                   >
-                    {p.title}
-                    {/* Same ↗ as the Exploration titles: always there so it reads as a link, lights up on hover */}
-                    <span className="tile-site-arrow" aria-hidden>↗</span>
-                    <span className="tile-site-cta" aria-hidden>{p.siteLabel ?? 'View site'}</span>
+                    <p className="tile-tags"><span className="tile-name" role="heading" aria-level={2}>{p.title}</span><span className="tile-meta"> · {p.tags[0]} · </span><span className="tile-visit">{p.siteLabel ?? 'View site'} <span className="tile-visit-arrow" aria-hidden>↗</span></span></p>
+                    <p className="tile-summary">{p.summary}</p>
                     <span className="sr-only"> (opens {domain(p.site)})</span>
                   </a>
                 )
-                : p.href ? <a {...linkProps(p.href)}>{p.title}</a> : p.title
-              return (
-                <article key={p.id} className={`tile reveal${p.soon ? ' is-soon' : ''}`}>
-                  {p.href
-                    ? <a {...linkProps(p.href)} className="tile-cover" aria-label={`${p.title}: ${p.soon ? 'watch the demo' : 'view case study'}`}>{media}</a>
-                    : <div className="tile-cover">{media}</div>}
-                  <p className="tile-tags">{[p.tags[0], p.when].filter(Boolean).join(' · ')}</p>
-                  <h2 className="tile-title">{title}</h2>
-                  <p className="tile-summary">{p.summary}</p>
-                </article>
-              )
-        })}
-          {more.map(p => {
-                const at = peekable.indexOf(p)
-                const media = (
-                  <div className="tile-media">
-                    <Cover p={p} />
-                    <span className="tile-label">{at >= 0 ? 'Quick look' : 'Coming soon'}</span>
-                  </div>
-                )
-                return (
-                  <article key={p.id} className={`tile reveal${at < 0 ? ' is-soon' : ''}`}>
-                    {at >= 0
-                      ? <button type="button" className="tile-cover" onClick={() => setPeek(at)} aria-haspopup="dialog" aria-label={`${p.title}: quick look`}>{media}</button>
-                      : <div className="tile-cover">{media}</div>}
-                    <p className="tile-tags">{[p.tags[0], p.when].filter(Boolean).join(' · ')}</p>
-                    <h2 className="tile-title">
-                      {p.site
-                        ? (
-                          <a
-                            className="tile-site"
-                            href={p.site}
-                            target="_blank"
-                            rel="noreferrer"
-                            onPointerEnter={e => e.pointerType === 'mouse' && setSite(p)}
-                            onPointerLeave={() => setSite(null)}
-                          >
-                            {p.title}
-                            <span className="tile-site-arrow" aria-hidden>↗</span>
-                            <span className="tile-site-cta" aria-hidden>{p.siteLabel ?? 'View site'}</span>
-                            <span className="sr-only"> (opens {domain(p.site)})</span>
-                          </a>
-                        )
-                        : at >= 0 ? <button type="button" className="tile-title-btn" onClick={() => setPeek(at)}>{p.title}</button> : p.title}
-                    </h2>
+                : (
+                  <div className="tile-info">
+                    <p className="tile-tags"><span className="tile-name" role="heading" aria-level={2}>{p.title}</span> · {p.tags[0]}</p>
                     <p className="tile-summary">{p.summary}</p>
-                  </article>
-                )
-          })}
+                  </div>
+                )}
+            </article>
+          )
+        })}
       </section>
 
       {peek !== null && (

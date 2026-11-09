@@ -445,7 +445,7 @@ export const caseStudies: Record<string, CaseStudy> = {
     role: ['Lead Designer'],
     team: ['Front-end & design teammate', '2 back-end engineers'],
     scope: ['Direction', 'Gesture system', 'MVP prototype'],
-    date: '2026',
+    date: 'Spring 2026',
     type: 'FigBuild 2026 · Figma plugin · Hackathon',
     hero: `${T}tactile-cover.webp`,
     headline: 'Build fast, fail faster, and still make something thoughtful',
