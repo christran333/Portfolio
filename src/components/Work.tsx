@@ -87,7 +87,7 @@ export default function Work() {
   // Near the right edge it flips to the left of the cursor so it never runs off screen; the site
   // preview sits above the cursor (so the name you're hovering stays visible) unless there's no room.
   useEffect(() => {
-    const boxes = [heroBox.current!, siteBox.current!]
+    const boxes = [heroBox.current, siteBox.current].filter((b): b is HTMLDivElement => !!b)
     const target = { x: 0, y: 0 }
     const pos = { x: 0, y: 0 }
     let raf = 0
@@ -115,7 +115,8 @@ export default function Work() {
   }, [])
 
   useEffect(() => {
-    const v = video.current!
+    const v = video.current
+    if (!v) return // the film preview only lives in the tagline hero
     v.muted = true // React doesn't reliably set this, and browsers only autoplay muted video
     if (previewing) v.play().catch(() => {})
     else v.pause()
@@ -130,13 +131,7 @@ export default function Work() {
         <section className="intro intro-about">
           <div className="intro-text">
           <h1 className="intro-lead intro-hello">
-            {/* Hovering the words plays the film in a small window that trails the cursor, like the tagline did */}
-            <span
-              className="rise"
-              data-cursor-grow
-              onPointerEnter={e => e.pointerType === 'mouse' && setPreviewing(true)}
-              onPointerLeave={() => setPreviewing(false)}
-            >Hey, I'm Christopher.</span>
+            <span className="rise">Hey, I'm Christopher.</span>
             <span className="intro-hello-sub rise" style={{ animationDelay: '.08s' }}>A product designer based in Dallas.</span>
           </h1>
           {heroParas.map((para, i) => (
@@ -166,11 +161,6 @@ export default function Work() {
             width={1033}
             height={1300}
           />
-          <div ref={heroBox} className={`float-preview ${previewing ? 'is-open' : ''}`} aria-hidden>
-            <div className="float-preview-frame">
-              <video ref={video} src="/hero.mp4" muted loop playsInline preload="auto" />
-            </div>
-          </div>
         </section>
       ) : (
       <section className="intro">

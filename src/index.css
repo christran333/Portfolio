@@ -618,9 +618,6 @@ div.tile-cover { cursor: default; }
 .tile-visit { transition: color .2s; }
 .tile-visit-arrow { display: inline-block; transition: translate .35s var(--ease); }
 a.tile-info:hover .tile-visit { color: var(--fg); }
-/* Spotlight, like the About lists: while the link is hovered, everything else in the block fades back */
-a.tile-info :is(.tile-name, .tile-meta, .tile-summary) { transition: opacity .25s var(--ease); }
-a.tile-info:hover :is(.tile-name, .tile-meta, .tile-summary) { opacity: .35; }
 a.tile-info:hover .tile-visit-arrow { translate: 2px -2px; }
 .tile-cover .tile-media :is(img, video) { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
 .tile-cover:hover .tile-media :is(img, video) { filter: brightness(.68); }
@@ -632,8 +629,7 @@ html.is-scrolling .tile .tile-bar::before, html.is-scrolling .tile .tile-bar-met
 html.is-scrolling .tile .tile-bar-meta .is-rest { opacity: 1; translate: 0 0; }
 html.is-scrolling .tile.is-in .tile-media :is(img, video) { scale: 1; filter: none; }
 html.is-scrolling .timeline .timeline-row :is(.timeline-role, .timeline-project),
-html.is-scrolling .info-list li > *,
-html.is-scrolling a.tile-info :is(.tile-name, .tile-meta, .tile-summary) { opacity: 1 !important; }
+html.is-scrolling .info-list li > * { opacity: 1 !important; }
 
 /* ───────── More work: same tiles as the case studies, but the cover opens a quick view (Peek.tsx) ───────── */
 button.tile-cover { display: block; width: 100%; text-align: left; }
