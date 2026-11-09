@@ -97,7 +97,7 @@ export const caseStudies: Record<string, CaseStudy> = {
         title: 'Where it is now',
         nav: 'Where it is now',
         blocks: [
-          { kind: 'p', text: "Every MVP screen is designed, and engineering is building it now, aiming to launch around the end of this year or early next year." },
+          { kind: 'p', text: "Every MVP screen is designed, and engineering is building it now." },
         ],
       },
       {
