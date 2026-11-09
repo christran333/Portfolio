@@ -35,7 +35,7 @@ export default function Exploration() {
                     {!s.src && !s.youtube && import.meta.env.DEV && <span className="shot-empty">public/playground/ → set src in data.ts</span>}
                   </div>
                   <div className="shot-caption">
-                    <h3 className="tile-title">{s.title}{s.href && <span className="shot-arrow" aria-hidden> ↗</span>}</h3>
+                    <h3 className="tile-title">{s.title}{s.href && <>{" "}<span className="shot-arrow" aria-hidden>↗</span></>}</h3>
                     <p className="tile-tags">{s.caption}</p>
                   </div>
                 </>
