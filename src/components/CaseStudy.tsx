@@ -167,6 +167,8 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
     return () => { removeEventListener('scroll', update); removeEventListener('resize', update) }
   }, [id])
 
+  const activeIndex = toc.findIndex(t => t.id === active)
+
   const jump = (e: React.MouseEvent, to: string) => {
     e.preventDefault()
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -206,9 +208,13 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
 
       <div className="cs-main">
       <nav className="cs-toc" aria-label="On this page">
+        {/* Way back to all the work, above the contents (the home page remembers where you were) */}
+        <a href="/" className="cs-back"><span aria-hidden>←</span> Work</a>
         <ul>
-          {toc.map(t => (
-            <li key={t.id}>
+          {toc.map((t, i) => (
+            // Progress line: sections you've passed are checked off, the one you're in is checked and bright,
+            // the rest wait as empty rings. The line between markers fills in up to where you are
+            <li key={t.id} className={i < activeIndex ? 'is-done' : i === activeIndex ? 'is-current' : ''}>
               <a href={`#${t.id}`} className={active === t.id ? 'is-active' : ''} aria-current={active === t.id ? 'location' : undefined} onClick={e => jump(e, t.id)}>
                 {t.title}
               </a>

@@ -281,13 +281,17 @@ export default function Work() {
       <div className={`work-groups${SIDE ? ' is-side' : ''}`}>
         <nav className={`work-toc${tocShown ? ' is-shown' : ''}`} aria-label="Kinds of work">
           <ul>
-            {GROUPS.map((g, i) => (
-              <li key={g.id} style={{ '--i': i } as CSSProperties}>
+            {GROUPS.map((g, i) => {
+              const at = GROUPS.findIndex(x => x.id === group)
+              return (
+              // Same progress line as the case-study contents: passed groups checked off, current one bright
+              <li key={g.id} className={i < at ? 'is-done' : i === at ? 'is-current' : ''} style={{ '--i': i } as CSSProperties}>
                 <a href={`#${g.id}`} className={group === g.id ? 'is-active' : ''} aria-current={group === g.id ? 'location' : undefined} onClick={e => jumpTo(e, g.id)}>
                   {g.label}
                 </a>
               </li>
-            ))}
+              )
+            })}
           </ul>
         </nav>
         {GROUPS.map(g => (
