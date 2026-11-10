@@ -247,7 +247,7 @@ ul { list-style: none; }
 .grid { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: clamp(16px, 1.2vw, 20px); padding: 0 var(--gutter); align-items: start; }
 .grid-col { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
 /* Work grids: every cover the same shape, cards in even rows (the About photos keep the staggered columns) */
-.grid.is-uniform { row-gap: clamp(40px, 4vw, 56px); }
+.grid.is-uniform { row-gap: clamp(28px, 2.6vw, 40px); }
 .grid.is-uniform .tile { min-width: 0; }
 .grid.is-uniform .tile-media { aspect-ratio: 1 / 1; }
 .tile { display: block; }
@@ -619,24 +619,9 @@ ul { list-style: none; }
 .info-photo.has-caption { cursor: help; }
 
 div.tile-cover { cursor: default; }
-/* Bar along the bottom of every cover: the date, right-aligned on a soft gradient so it reads on any
-   image. On hover the gradient deepens, the cover darkens, and the date swaps for what the cover opens */
-.tile-bar {
-  position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: flex-end; align-items: baseline;
-  gap: 12px; padding: 64px 18px 16px; color: #fff; pointer-events: none; isolation: isolate;
-  background: linear-gradient(to top, rgb(0 0 0 / .62), rgb(0 0 0 / .28) 50%, transparent);
-}
-.tile-bar::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .35s;
-  background: linear-gradient(to top, rgb(0 0 0 / .45), transparent 70%);
-}
-.tile-bar-title { font-size: 18px; font-weight: 500; letter-spacing: -.02em; line-height: 1.2; text-shadow: 0 1px 12px rgb(0 0 0 / .35); }
-.tile-bar-meta { position: relative; flex-shrink: 0; font-size: 18px; letter-spacing: -.02em; color: #ffffffb8; white-space: nowrap; }
-.tile-bar-meta > * { display: block; transition: opacity .25s, translate .35s var(--ease); }
-.tile-bar-meta .is-hover { position: absolute; right: 0; bottom: 0; opacity: 0; translate: 0 6px; color: #fff; }
-.tile-cover:hover .tile-bar::before { opacity: 1; }
-.tile-cover:hover .tile-bar-meta .is-rest { opacity: 0; translate: 0 -6px; }
-.tile-cover:hover .tile-bar-meta .is-hover { opacity: 1; translate: 0 0; }
+/* The line under each cover: name (and "View site") on the left, the kind of work and its date on the right */
+.tile-tags { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.tile-kind { font: 350 14px/1.4 var(--sans); color: var(--muted); white-space: nowrap; }
 /* Under the cover: the whole text block links to the company's site, so hovering any of it lights up
    "View site" (and the screenshot preview follows the cursor) */
 .tile-info { display: block; }
@@ -651,15 +636,11 @@ div.tile-cover { cursor: default; }
 .tile { position: relative; }
 .tile :is(a, button).tile-cover::after { content: ''; position: absolute; inset: 0; z-index: 1; }
 .tile-visit { position: relative; z-index: 2; }
-.tile-cover .tile-media :is(img, video) { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
-.tile-cover:hover .tile-media :is(img, video) { filter: brightness(.68); }
 /* No hover anything while scrolling (see main.tsx): nothing under the cursor reacts until the mouse moves */
 html.is-scrolling :is(.grid, .timeline, .info-list, .cs-toc) { pointer-events: none; }
 /* Browsers keep whatever was hovered when scrolling began until the mouse moves, so undo every hover look
    explicitly: the card you scroll away from lets go immediately */
-html.is-scrolling .tile .tile-bar::before, html.is-scrolling .tile .tile-bar-meta .is-hover { opacity: 0; }
-html.is-scrolling .tile .tile-bar-meta .is-rest { opacity: 1; translate: 0 0; }
-html.is-scrolling .tile.is-in .tile-media :is(img, video) { scale: 1; filter: none; }
+html.is-scrolling .tile.is-in .tile-media :is(img, video) { scale: 1; }
 html.is-scrolling .timeline .timeline-row :is(.timeline-role, .timeline-project),
 html.is-scrolling .info-list li > * { opacity: 1 !important; }
 
@@ -753,7 +734,7 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
    empty left margin beside the grid, so the cards keep their full size, and stays in view while you scroll the
    work. Only on screens with a margin wide enough to hold it; elsewhere the two groups just read as one grid */
 .work-groups { position: relative; }
-.work-group + .work-group { margin-top: clamp(40px, 4vw, 56px); } /* same as the gap between rows */
+.work-group + .work-group { margin-top: clamp(28px, 2.6vw, 40px); } /* same as the gap between rows */
 .work-toc { display: none; }
 @media (min-width: 1400px) {
   .work-toc { display: block; position: absolute; top: 0; bottom: 0; left: 0; width: var(--gutter); }
@@ -771,8 +752,8 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 
 /* The home page in the case-study layout (the default; /?layout=grid shows the old full-width grid). Contents list in a left column inside the page
    width, lined up with the name in the nav; the cards in two columns to its right */
-.work-groups.is-side { display: grid; grid-template-columns: var(--side-col) minmax(0, 1fr); column-gap: var(--side-gap); padding: 0 var(--gutter); }
-.work-groups.is-side .grid { padding: 0; grid-column: 2; }
+.work-groups.is-side { display: block; }
+.work-groups.is-side .grid { padding: 0 var(--gutter); }
 .work-groups.is-side .work-toc { display: block; position: relative; width: auto; grid-column: 1; grid-row: 1 / span 3; }
 .work-groups.is-side .work-toc ul { position: sticky; top: 104px; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .work-toc a { position: relative; display: inline-block; font-size: 15px; line-height: 1.35; color: var(--muted); transition: color .2s; }
