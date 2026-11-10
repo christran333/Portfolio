@@ -103,6 +103,9 @@ export default function Work() {
         const el = document.getElementById(g.id)
         if (el && el.getBoundingClientRect().top < innerHeight * 0.4) cur = g.id
       }
+      // at the bottom of the work, the last group wins even if its top never reached the line
+      const end = document.querySelector('.work-groups')?.getBoundingClientRect().bottom ?? Infinity
+      if (end <= innerHeight) cur = GROUPS[GROUPS.length - 1].id
       setGroup(cur)
       // The list starts hidden, comes in the first time you scroll down into the work, then stays (like the cards)
       const top = document.querySelector('.work-groups')?.getBoundingClientRect().top ?? 0

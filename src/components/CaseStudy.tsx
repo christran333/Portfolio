@@ -149,13 +149,22 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
   const toc = ['Overview', ...study.sections.map(s => s.nav ?? s.title), 'Want to learn more?'].map(t => ({ title: t, id: slug(t) }))
   const [active, setActive] = useState(toc[0].id)
 
-  // Highlight whichever section is crossing the upper part of the screen
+  // Highlight the last section whose top has passed the upper third of the screen. Once you hit the bottom of
+  // the page, the last section wins: "Want to learn more?" is too short to ever reach that line on its own
   useEffect(() => {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) })
-    }, { rootMargin: '-25% 0px -65% 0px' })
-    toc.forEach(t => { const el = document.getElementById(t.id); if (el) io.observe(el) })
-    return () => io.disconnect()
+    const update = () => {
+      let cur = toc[0].id
+      for (const t of toc) {
+        const el = document.getElementById(t.id)
+        if (el && el.getBoundingClientRect().top < innerHeight * 0.3) cur = t.id
+      }
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = toc[toc.length - 1].id
+      setActive(cur)
+    }
+    update()
+    addEventListener('scroll', update, { passive: true })
+    addEventListener('resize', update)
+    return () => { removeEventListener('scroll', update); removeEventListener('resize', update) }
   }, [id])
 
   const jump = (e: React.MouseEvent, to: string) => {
