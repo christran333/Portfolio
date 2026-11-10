@@ -202,11 +202,12 @@ function Print({ slot, mode, setMode, ink, onReady }: { slot: RefObject<HTMLElem
       px = THREE.MathUtils.clamp(((state.pointer.x + 1) / 2 * size.width - (r.left + r.width / 2)) / (r.width / 2), -1, 1)
       py = THREE.MathUtils.clamp(-((1 - state.pointer.y) / 2 * size.height - (r.top + r.height / 2)) / (r.height / 2), -1, 1)
     }
-    st.tx += ((lean ? -py * 0.16 : 0) - st.tx) * ease(8)
+    st.tx += ((lean ? -py * 0.1 : 0) - st.tx) * ease(8)
     st.ty += ((lean ? px * 0.22 : 0) - st.ty) * ease(8)
     spin.current.rotation.set(st.pitch + st.tx, st.yaw + st.ty, 0)
 
-    const y = writing ? 0 : Math.sin(t * 1.1) * 0.012 + (st.hover || st.dragging ? 0.03 : 0)
+    // hovering settles it slightly lower rather than lifting it, so it never crowds the nav bar above
+    const y = writing ? 0 : Math.sin(t * 1.1) * 0.012 - (st.hover || st.dragging ? 0.02 : 0)
     root.current.position.y += (y - root.current.position.y) * ease(5)
     const z = writing ? 0 : Math.sin(t * 0.7) * 0.022 - 0.035
     root.current.rotation.z += (z - root.current.rotation.z) * ease(5)
