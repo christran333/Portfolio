@@ -9,9 +9,10 @@ type Entry = { when: string; role: string; org: string; href?: string; work?: st
 const project = (id: string) => projects.find(p => p.id === id)!
 // When a project started: the case study's date, else the one on its tile ("Spring 2025 → Fall 2025" shows as "Spring 2025")
 const projectWhen = (id: string) => (caseStudies[id]?.date ?? project(id).when ?? '').split('→')[0].trim()
+// On the timeline, a project name links to the company's own website (the case studies live on the home page)
 const ProjectName = ({ id }: { id: string }) => {
   const p = project(id)
-  return p.href && !p.soon ? <a {...linkProps(p.href)}>{p.title}</a> : <span>{p.title}</span>
+  return p.site ? <a {...linkProps(p.site)}>{p.title}</a> : <span>{p.title}</span>
 }
 
 // Resume-style list: dates on the left, role and company. A place with `work` lists

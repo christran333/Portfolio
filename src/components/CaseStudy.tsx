@@ -1,7 +1,8 @@
-import { useEffect, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react'
 import { useReveal } from '../useReveal'
 import { imgAt, profile, projects } from '../data'
 import type { Block, CaseStudy as Study } from '../caseStudies'
+import Zoom from './Zoom'
 
 // Framer serves jpg/png at any size; anything else (like video) is used as-is
 const sized = (src: string, w: number) => (src.includes('/images/') ? imgAt(src, w) : src)
@@ -84,7 +85,6 @@ function BlockView({ b }: { b: Block }) {
         <div className={`cs-finding reveal ${b.src ? '' : 'no-image'}`}>
           {b.src && <img src={sized(b.src, 1600)} alt="" loading="lazy" />}
           <div>
-            <span className="cs-label">{b.theme}</span>
             <h4>{b.title}</h4>
             <dl>
               <dt>Problem</dt><dd>{b.problem}</dd>
@@ -134,6 +134,15 @@ const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(
 
 export default function CaseStudy({ id, study }: { id: string; study: Study }) {
   const root = useReveal<HTMLElement>()
+  // Click any image in the case study to see it full screen (handled once here, for every block type)
+  const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null)
+  const closeZoom = useCallback(() => setZoom(null), [])
+  const openZoom = (e: ReactMouseEvent) => {
+    const img = (e.target as HTMLElement).closest('img')
+    if (!img || !img.closest('.cs-sections')) return
+    // the page shows a scaled-down copy of Framer images; the zoom loads the original
+    setZoom({ src: img.currentSrc.replace(/\?scale-down-to=\d+$/, ''), alt: img.alt })
+  }
   const project = projects.find(p => p.id === id)!
 
   // Sections listed in the sticky "on this page" nav
@@ -158,10 +167,11 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
   }
 
   return (
-    <article ref={root} className="cs">
+    <article ref={root} className="cs" onClick={openZoom}>
       <header className="cs-head">
         <p className="cs-meta rise">
-          <span>{project.title}</span>{study.type.split(' · ').map(t => <span key={t}>{t}</span>)}
+          {/* Just the project and what it is. The rest of the old label ("UX audit · Design system") repeated Scope below */}
+          <span>{project.title}</span><span>{study.type.split(' · ')[0]}</span>
         </p>
         <h1 className="cs-title rise" style={{ animationDelay: '.08s' }}>{study.headline}</h1>
       </header>
@@ -200,7 +210,8 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
 
       <div className="cs-sections">
       <section id={toc[0].id} className="cs-section">
-        <h3 className="cs-section-title">Overview</h3>
+        {/* Kept for screen readers and the contents list. On screen it was just an eyebrow over the first paragraph */}
+        <h3 className="cs-section-title sr-only">Overview</h3>
         <div className="cs-body">
           {study.overview.map(t => <p key={t} className="cs-lead reveal">{t}</p>)}
         </div>
@@ -224,6 +235,7 @@ export default function CaseStudy({ id, study }: { id: string; study: Study }) {
       </section>
       </div>
       </div>
+      {zoom && <Zoom src={zoom.src} alt={zoom.alt} onClose={closeZoom} />}
     </article>
   )
 }

@@ -78,7 +78,7 @@ ul { list-style: none; }
 /* Load-in and scroll-in motion */
 .rise { display: inline-block; animation: rise 1.8s var(--ease) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); filter: blur(6px); } }
-.reveal { opacity: 0; transform: translateY(40px); transition: opacity 1.4s var(--ease), transform 1.5s var(--ease); }
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease), transform .8s var(--ease); }
 .reveal.is-in { opacity: 1; transform: none; }
 
 /* ───────── Header: name on the left, plain text links on the right ───────── */
@@ -113,7 +113,7 @@ ul { list-style: none; }
 .intro-lead { font-family: var(--serif); font-size: clamp(30px, 3.9vw, 64px); line-height: 1.16; letter-spacing: -.03em; font-weight: 400; max-width: 46ch; text-wrap: balance; }
 .nowrap { white-space: nowrap; }
 /* About-style hero: a few plain paragraphs instead of the headline, sitting near the top */
-.intro-about { min-height: 0; justify-content: flex-start; padding-top: clamp(64px, 14vh, 160px); padding-bottom: clamp(56px, 10vh, 120px); user-select: text; -webkit-user-select: text; }
+.intro-about { min-height: 0; justify-content: flex-start; padding-top: clamp(40px, 8vh, 96px); padding-bottom: clamp(40px, 6vh, 72px); user-select: text; -webkit-user-select: text; }
 /* Text on the left, photo on the right; the photo drops below the text on narrow screens */
 .intro-about { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
 .polaroid.rise { display: block; }
@@ -186,9 +186,19 @@ ul { list-style: none; }
   from { opacity: var(--o); }
   to { opacity: var(--o); clip-path: inset(0); }
 }
+/* Erasing: the finished note stays on, and an eraser rubs it away left to right. A soft-edged mask sweeps across
+   (--e is the eraser's position); only the letters it has reached fade, the rest of the note stays still */
+@property --e { syntax: '<percentage>'; inherits: false; initial-value: -30%; }
+.polaroid.is-erasing .polaroid-note > span { animation: none; opacity: var(--o); clip-path: inset(0); }
+.polaroid.is-erasing .polaroid-note {
+  mask: linear-gradient(90deg, transparent var(--e), rgb(0 0 0 / .45) calc(var(--e) + 10%), #000 calc(var(--e) + 24%));
+  animation: polaroid-erase 2.2s cubic-bezier(.4, 0, .6, 1) forwards;
+}
+@keyframes polaroid-erase { from { --e: -30%; } to { --e: 105%; } }
 @media (prefers-reduced-motion: reduce) {
   .polaroid-card, .polaroid:hover .polaroid-card { transform: none; transition: box-shadow .3s; }
   .polaroid.is-written .polaroid-note > span { animation: none; clip-path: none; opacity: var(--o); }
+  .polaroid.is-erasing .polaroid-note { animation: none; opacity: 0; }
 }
 /* The photo sits in a square window, like real instant film */
 .polaroid-photo { display: block; position: relative; aspect-ratio: 1 / 1; overflow: hidden; background: #1a1714; }
@@ -204,7 +214,7 @@ ul { list-style: none; }
 }
 /* Narrow screens: the print drops under the text, a bit smaller and left-aligned */
 @media (max-width: 860px) { .intro-about { grid-template-columns: 1fr; } .polaroid { max-width: 340px; justify-self: start; } }
-.intro-hello { font-family: var(--sans); font-weight: 500; font-size: clamp(36px, 4.2vw, 64px); line-height: 1.05; letter-spacing: -.04em; margin-bottom: clamp(20px, 2.4vw, 32px); }
+.intro-hello { font-family: var(--sans); font-weight: 500; font-size: clamp(36px, 3.8vw, 58px); line-height: 1.05; letter-spacing: -.04em; margin-bottom: clamp(18px, 2vw, 28px); }
 /* Second line of the headline: same size, quieter colour, on its own line */
 .intro-hello-sub { display: block; color: var(--muted); }
 .intro-lead .intro-hello-sub.rise { display: block; }
@@ -239,7 +249,7 @@ ul { list-style: none; }
 .tile { display: block; }
 .tile-cover { display: block; }
 .tile-media { position: relative; overflow: hidden; background: var(--surface); }
-.tile-media :is(img, video) { width: 100%; height: 100%; object-fit: cover; display: block; scale: 1.08; transition: scale 1.6s var(--ease), opacity .4s; }
+.tile-media :is(img, video) { width: 100%; height: 100%; object-fit: cover; display: block; scale: 1.08; transition: scale 1s var(--ease), opacity .4s; }
 .tile.is-in .tile-media :is(img, video) { scale: 1; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* Only covers that go somewhere react to hover; display-only pieces stay still.
@@ -405,7 +415,6 @@ ul { list-style: none; }
 .cs-facts dd { margin: 0; font-size: 17px; line-height: 1.75; }
 .cs-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 16px; padding-top: 56px; }
 .cs-highlight { padding: 28px; background: var(--surface); border: 1px solid var(--line); }
-.cs-label { display: block; font: 14px var(--sans); color: var(--accent); }
 .cs-highlight strong { display: block; margin: 0 0 10px; font-size: clamp(40px, 4.5vw, 64px); font-weight: 500; letter-spacing: -.05em; line-height: 1; }
 .cs-highlight p { color: var(--muted); font-size: 16px; max-width: 26ch; }
 
@@ -617,8 +626,13 @@ div.tile-cover { cursor: default; }
 .tile-name { color: var(--fg); font-weight: 500; font-size: 16px; letter-spacing: -.01em; }
 .tile-visit { transition: color .2s; }
 .tile-visit-arrow { display: inline-block; transition: translate .35s var(--ease); }
-a.tile-info:hover .tile-visit { color: var(--fg); }
-a.tile-info:hover .tile-visit-arrow { translate: 2px -2px; }
+.tile-visit:hover { color: var(--fg); }
+.tile-visit:hover .tile-visit-arrow { translate: 2px -2px; }
+/* One card, one destination: the cover's link/button stretches over the text below it, so clicking the name or
+   summary opens the same thing as the cover (and lights the cover up). Only "View site" sits above it */
+.tile { position: relative; }
+.tile :is(a, button).tile-cover::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+.tile-visit { position: relative; z-index: 2; }
 .tile-cover .tile-media :is(img, video) { transition: scale 1.6s var(--ease), opacity .4s, filter .4s; }
 .tile-cover:hover .tile-media :is(img, video) { filter: brightness(.68); }
 /* No hover anything while scrolling (see main.tsx): nothing under the cursor reacts until the mouse moves */
@@ -660,7 +674,6 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 }
 .peek-close:hover { color: var(--fg); }
 .peek-close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; }
-.peek-kicker { font: 14px var(--sans); color: var(--muted); margin-bottom: 18px; }
 .peek-head { padding: clamp(88px, 12vh, 120px) clamp(20px, 4vw, 56px) clamp(28px, 4vh, 44px); }
 .peek-title { font-family: var(--sans); font-size: clamp(32px, 4.2vw, 56px); line-height: 1.08; letter-spacing: -.04em; font-weight: 500; }
 .peek-site { display: inline-block; margin-top: 12px; font-size: 14px; color: var(--muted); transition: color .2s; }
@@ -672,3 +685,48 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .peek-media { display: flex; flex-direction: column; gap: 12px; padding: 0 clamp(20px, 4vw, 56px) clamp(32px, 5vh, 56px); }
 .peek-media :is(img, video) { display: block; width: 100%; height: auto; background: var(--surface); }
 @media (prefers-reduced-motion: reduce) { .peek, .peek-panel { animation: none; } }
+
+/* Case-study image zoom: images show a zoom cursor; clicking one opens it full screen */
+@media (hover: hover) and (pointer: fine) {
+  .cs-sections :is(.cs-media, .cs-gallery, .cs-finding, .cs-feature-media) img { cursor: zoom-in; }
+}
+.zoom { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 3vh 3vw; background: rgb(10 10 10 / .94); cursor: zoom-out; animation: zoom-in .25s var(--ease); overflow: auto; overscroll-behavior: contain; }
+.zoom img { max-width: 94vw; max-height: 90vh; width: auto; height: auto; object-fit: contain; display: block; cursor: default; }
+.zoom img.can-actual { cursor: zoom-in; }
+.zoom.is-actual { place-items: start; }
+.zoom.is-actual img { max-width: none; max-height: none; margin: auto; cursor: zoom-out; }
+.zoom-close { position: fixed; top: 20px; right: 20px; z-index: 1; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgb(255 255 255 / .1); color: #fff; transition: background .2s; }
+.zoom-close:hover { background: rgb(255 255 255 / .2); }
+.zoom-close svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+@keyframes zoom-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .zoom { animation: none; } }
+
+/* ---------- Case-study type system ----------
+   One scale for every case study, so the hierarchy reads the same everywhere:
+     Headline   page h1 (cs-title)
+     Section    every section heading, statement or not          28px / 500 / white
+     Subhead    titles inside findings, features, lists, cards   20px / 500 / white
+     Lead       the opening paragraph and pull-quotes            22px / 400 / white
+     Body       paragraphs, list items, card + feature text      18px / 400 / body gray
+     Small      captions, labels, table headers                  14px / 400 / muted
+   All text runs the full width of the content column, the same as the images, so every right edge lines up */
+.cs-section-title, .cs-section-title.is-statement {
+  font: 500 clamp(22px, 2vw, 28px)/1.2 var(--sans); letter-spacing: -.025em; color: var(--fg);
+  max-width: none; margin: 0 0 24px; text-wrap: balance;
+}
+.cs-list h4, .cs-card h4, .cs-feature h4, .cs-finding h4 {
+  font: 500 20px/1.3 var(--sans); letter-spacing: -.015em; color: var(--fg); margin: 0 0 10px;
+}
+.cs-finding h4 { margin-top: 0; }
+.cs-lead { font-size: clamp(19px, 1.5vw, 22px); line-height: 1.55; color: var(--fg); max-width: none; }
+.cs-p, .cs-list li, .cs-card p, .cs-card li, .cs-feature p, .cs-finding dd {
+  font: 400 18px/1.65 var(--sans); letter-spacing: 0; color: var(--body); max-width: none;
+}
+.cs-finding dd { margin-top: 4px; }
+.cs-media figcaption, .cs-finding dt, .cs-table th { font: 400 14px/1.5 var(--sans); color: var(--muted); }
+.cs-table td, .cs-table td:first-child { font-size: 15px; }
+.cs-link { font-size: 18px; }
+@media (max-width: 640px) {
+  .cs-p, .cs-list li, .cs-card p, .cs-card li, .cs-feature p, .cs-finding dd { font-size: 17px; }
+  .cs-list h4, .cs-card h4, .cs-feature h4, .cs-finding h4 { font-size: 18px; }
+}

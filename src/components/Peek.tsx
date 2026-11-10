@@ -82,7 +82,6 @@ export default function Peek({ project: p, onNext, onPrev, onClose }: Props) {
           </button>
 
           <div className="peek-head">
-            <p className="peek-kicker">{[p.tags[0], s?.type.split(' · ')[0]].filter(Boolean).join(' · ')}</p>
             <h2 id="peek-title" className="peek-title">{p.title}</h2>
             {p.site && <a className="peek-site" href={p.site} target="_blank" rel="noreferrer">{new URL(p.site).hostname.replace(/^www\./, '')} ↗</a>}
             <dl className="peek-facts">

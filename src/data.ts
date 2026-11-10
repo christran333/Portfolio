@@ -15,8 +15,8 @@ export const profile = {
   // Resume-style timeline on the About page, newest first. `work` lists project ids from `projects` below.
   experience: [
     { when: 'Nov 2026 – Now', role: 'Founding Designer', org: 'Mesa' },
-    { when: 'Fall 2024 – Now', role: 'Product Design Intern', org: 'Francois Labs', href: 'https://www.francoislabs.com/', work: ['scout', 'act-one', 'janus', 'priority', 'cosign', 'tennr', 'arist'] },
-    { when: 'Fall 2025', role: 'Product Design Intern', org: 'Backtrack', href: '/work/backtrack' },
+    { when: 'Fall 2024 – Now', role: 'Product Design Intern', org: 'Francois Labs', href: 'https://www.francoislabs.com/', work: ['scout', 'act-one', 'janus', 'priority', 'oro', 'cosign', 'tennr', 'arist'] },
+    { when: 'Fall 2025', role: 'Product Design Intern', org: 'Backtrack', href: 'https://www.usebacktrack.com' },
   ],
   // Outside of work (no longer shown; the About intro covers it)
   interests: [
@@ -83,7 +83,7 @@ export const projects: Project[] = [
   { id: 'tennr', title: 'Tennr', tags: ['Visual Design'], summary: 'Refreshing the brand and marketing of a healthcare AI startup.', when: 'Spring 2025', href: '/work/tennr', img: framer('bPD5Y8PqndjPdKUVdovvOTugaw'), aspect: '16 / 9', site: 'https://www.tennr.com' },
   { id: 'janus', title: 'Janus', tags: ['Brand Design'], summary: 'Brand and product marketing for a freight finance platform.', when: 'Summer 2026', href: '/work/janus', img: framer('EkeLjhylkYOjeDEBOhf5IiWJac'), aspect: '16 / 9' },
   { id: 'priority', title: 'Priority', tags: ['Visual Design'], summary: 'Sales sheets for a point-of-sale system, tailored to 13 industries.', when: 'Fall 2025', href: '/work/priority', img: '/work/priority/cover.jpg', aspect: '1 / 1', site: 'https://prioritycommerce.com' },
-  { id: 'oro', title: 'Oro', tags: ['Product Design'], summary: 'Brand and platform UI for a fintech startup.', when: 'Fall 2025', href: '', soon: true, img: framer('LvAj1YZLb6lAVoXA7poLmqsEeEo'), aspect: '1 / 1', site: 'https://orogold.app' },
+  { id: 'oro', hidden: true, title: 'Oro', tags: ['Product Design'], summary: 'Brand and platform UI for a fintech startup.', when: 'Fall 2025', href: '', soon: true, img: framer('LvAj1YZLb6lAVoXA7poLmqsEeEo'), aspect: '1 / 1', site: 'https://orogold.app' },
 ]
 
 // Visual design, graphics, small projects and screens — shown on the Exploration page (/exploration).

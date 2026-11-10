@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type PointerEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 
 // The note, one letter at a time, so it can be written left to right like a real pen.
 // Small fixed wobbles keep it looking hand-done instead of typeset:
@@ -22,12 +22,24 @@ const LETTERS = [...NOTE].map((ch, i) => {
 
 // The hero photo as an instant-film print.
 // Hover: it lifts off the page and tilts toward the cursor, turning a little to the side.
-// Click: "GO EXPLORE" gets written along the bottom of the frame in marker; click again to wipe it.
+// Click: "GO EXPLORE" gets written along the bottom of the frame in marker; click again and it gets rubbed out like an eraser.
 export default function Polaroid({ src, alt, width, height, style }: {
   src: string; alt: string; width: number; height: number; style?: CSSProperties
 }) {
   const ref = useRef<HTMLButtonElement>(null)
   const [written, setWritten] = useState(false)
+  // Un-signing doesn't just vanish: the ink gets rubbed out, left to right, like an eraser going over it
+  const [erasing, setErasing] = useState(false)
+  const eraseTimer = useRef<number | undefined>(undefined)
+  useEffect(() => () => clearTimeout(eraseTimer.current), [])
+  const toggle = () => {
+    clearTimeout(eraseTimer.current)
+    if (written) {
+      setErasing(true)
+      eraseTimer.current = window.setTimeout(() => setErasing(false), 2250)
+    } else setErasing(false)
+    setWritten(w => !w)
+  }
 
   // Tilt toward the pointer: -1..1 across the print, turned into a few degrees each way
   const move = (e: PointerEvent) => {
@@ -48,11 +60,11 @@ export default function Polaroid({ src, alt, width, height, style }: {
     <button
       ref={ref}
       type="button"
-      className={`polaroid rise${written ? ' is-written' : ''}`}
+      className={`polaroid rise${written ? ' is-written' : ''}${erasing ? ' is-erasing' : ''}`}
       style={style}
       onPointerMove={move}
       onPointerLeave={leave}
-      onClick={() => setWritten(w => !w)}
+      onClick={toggle}
       aria-pressed={written}
       aria-label={written ? 'Photo of Christopher, signed “Go explore”' : 'Photo of Christopher. Click to sign it'}
     >

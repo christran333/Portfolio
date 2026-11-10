@@ -210,29 +210,30 @@ export default function Work() {
                 : opens
                   ? <a {...linkProps(p.href)} className="tile-cover" aria-label={`${p.title}: ${p.soon ? 'watch the demo' : 'view case study'}`}>{media}</a>
                   : <div className="tile-cover">{media}</div>}
-              {/* Under the cover: the kind of work and the summary. When the company has its own site, this whole
-                  block is the link to it: hovering anywhere here lights up "View site" and shows the site's screenshot */}
-              {p.site
-                ? (
-                  <a
-                    className="tile-info"
-                    href={p.site}
-                    target="_blank"
-                    rel="noreferrer"
-                    onPointerEnter={e => e.pointerType === 'mouse' && setSite(p)}
-                    onPointerLeave={() => setSite(null)}
-                  >
-                    <p className="tile-tags"><span className="tile-name" role="heading" aria-level={2}>{p.title}</span><span className="tile-meta"> · {p.tags[0]} · </span><span className="tile-visit">{p.siteLabel ?? 'View site'} <span className="tile-visit-arrow" aria-hidden>↗</span></span></p>
-                    <p className="tile-summary">{p.summary}</p>
-                    <span className="sr-only"> (opens {domain(p.site)})</span>
-                  </a>
-                )
-                : (
-                  <div className="tile-info">
-                    <p className="tile-tags"><span className="tile-name" role="heading" aria-level={2}>{p.title}</span> · {p.tags[0]}</p>
-                    <p className="tile-summary">{p.summary}</p>
-                  </div>
-                )}
+              {/* Under the cover: the name and summary. The cover's link stretches over this text too, so the whole
+                  card opens one thing. "View site" is the only separate target, and hovering it shows the site's screenshot */}
+              <div className="tile-info">
+                <p className="tile-tags">
+                  <span className="tile-name" role="heading" aria-level={2}>{p.title}</span>
+                  {p.site && (
+                    <>
+                      <span className="tile-meta" aria-hidden> · </span>
+                      <a
+                        className="tile-visit"
+                        href={p.site}
+                        target="_blank"
+                        rel="noreferrer"
+                        onPointerEnter={e => e.pointerType === 'mouse' && setSite(p)}
+                        onPointerLeave={() => setSite(null)}
+                      >
+                        {p.siteLabel ?? 'View site'} <span className="tile-visit-arrow" aria-hidden>↗</span>
+                        <span className="sr-only"> (opens {domain(p.site)})</span>
+                      </a>
+                    </>
+                  )}
+                </p>
+                <p className="tile-summary">{p.summary}</p>
+              </div>
             </article>
           )
         })}
