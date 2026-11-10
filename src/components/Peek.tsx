@@ -25,9 +25,9 @@ function visuals(id: string) {
   return out.filter(v => (seen.has(v.src) ? false : (seen.add(v.src), true)))
 }
 
-type Props = { project: Project; next: Project; onNext: () => void; onPrev: () => void; onClose: () => void }
+type Props = { project: Project; onNext: () => void; onPrev: () => void; onClose: () => void }
 
-export default function Peek({ project: p, next, onNext, onPrev, onClose }: Props) {
+export default function Peek({ project: p, onNext, onPrev, onClose }: Props) {
   const s = caseStudies[p.id]
   const panel = useRef<HTMLDivElement>(null)
   const scroller = useRef<HTMLDivElement>(null)
@@ -103,11 +103,6 @@ export default function Peek({ project: p, next, onNext, onPrev, onClose }: Prop
                 : <img key={v.src} src={sized(v.src)} alt="" loading="lazy" />,
             )}
           </div>
-
-          <button type="button" className="peek-next" onClick={onNext}>
-            <span>Next</span>
-            <span className="peek-next-title">{next.title} →</span>
-          </button>
         </div>
       </div>
     </div>,

@@ -241,7 +241,6 @@ export default function Work() {
       {peek !== null && (
         <Peek
           project={peekable[peek]}
-          next={peekable[(peek + 1) % peekable.length]}
           onNext={() => setPeek((peek + 1) % peekable.length)}
           onPrev={() => setPeek((peek - 1 + peekable.length) % peekable.length)}
           onClose={() => setPeek(null)}
