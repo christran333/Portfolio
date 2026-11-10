@@ -215,10 +215,10 @@ export default function Work() {
           {/* Instant-film print: thick paper border with the wide bottom edge, and a film look on the photo (all CSS) */}
           <Polaroid
             style={{ animationDelay: '.25s' }}
-            src="/about/hero-portrait.jpg"
-            alt="Christopher laughing behind his laptop, mid-conversation"
-            width={1033}
-            height={1300}
+            src="/about/hero-night.jpg"
+            alt="Christopher standing on a street at night, lit by a camera flash, with signs glowing behind"
+            width={1400}
+            height={1400}
           />
         </section>
       ) : (

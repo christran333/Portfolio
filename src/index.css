@@ -207,7 +207,7 @@ ul { list-style: none; }
 /* The photo sits in a square window, like real instant film */
 .polaroid-photo { display: block; position: relative; aspect-ratio: 1 / 1; overflow: hidden; background: #1a1714; }
 .polaroid-photo img {
-  display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%;
+  display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%;
 }
 /* Film texture only (the photo keeps its real colour): a soft vignette plus fine grain */
 .polaroid-photo::after {
