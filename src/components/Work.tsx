@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react'
 import { useReveal } from '../useReveal'
 import { useColumnCount } from '../layout'
 import { imgAt, linkProps, profile, projects, type Project } from '../data'
@@ -36,6 +36,18 @@ function kind(p: Project, quick: boolean) {
   if (p.href.startsWith('http')) return 'View project ↗'
   return 'Case study'
 }
+
+// The work is laid out like a case study: the Product / Visual list in a left column, the cards in two columns
+// on the right, lined up with the case-study pages. /?layout=grid shows the old full-width three-column grid
+const SIDE = typeof location === 'undefined' || new URLSearchParams(location.search).get('layout') !== 'grid'
+
+// Design-competition projects get their own group between the product work and the visual work
+const COMPETITION = ['tactile', 'toolkit']
+const GROUPS = [
+  { id: 'product', label: 'Product', aria: 'Product work', items: featured.filter(p => !COMPETITION.includes(p.id)) },
+  { id: 'competition', label: 'Competition', aria: 'Competition work', items: featured.filter(p => COMPETITION.includes(p.id)) },
+  { id: 'visual', label: 'Visual', aria: 'Brand and visual work', items: more },
+]
 
 const domain = (url: string) => new URL(url).hostname.replace(/^www\./, '')
 
@@ -81,6 +93,31 @@ export default function Work() {
   const [previewing, setPreviewing] = useState(false)
   const [site, setSite] = useState<Project | null>(null) // project whose site screenshot is showing
   const [missing, setMissing] = useState<Set<string>>(new Set()) // screenshots that haven't been made yet
+  // Which group of work is on screen, for the side list: the last group whose top has passed 40% of the window
+  const [group, setGroup] = useState<string>(GROUPS[0].id)
+  const [tocShown, setTocShown] = useState(false)
+  useEffect(() => {
+    const update = () => {
+      let cur = GROUPS[0].id
+      for (const g of GROUPS) {
+        const el = document.getElementById(g.id)
+        if (el && el.getBoundingClientRect().top < innerHeight * 0.4) cur = g.id
+      }
+      setGroup(cur)
+      // The list starts hidden, comes in the first time you scroll down into the work, then stays (like the cards)
+      const top = document.querySelector('.work-groups')?.getBoundingClientRect().top ?? 0
+      if (scrollY > 40 && top < innerHeight * 0.6) setTocShown(true)
+    }
+    update()
+    addEventListener('scroll', update, { passive: true })
+    return () => removeEventListener('scroll', update)
+  }, [])
+  const jumpTo = (e: ReactMouseEvent, id: string) => {
+    e.preventDefault()
+    const el = document.getElementById(id)
+    if (!el) return
+    scrollTo({ top: el.getBoundingClientRect().top + scrollY - 96, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+  }
   const [peek, setPeek] = useState<number | null>(null) // index into `peekable` of the open quick view
 
   // Hovering the headline (or a company name) pops up a small window that trails the cursor.
@@ -124,6 +161,58 @@ export default function Work() {
 
   const n = useColumnCount()
   const showSite = site && !missing.has(site.id)
+
+  const renderCard = (p: Project) => {
+          const at = peekable.indexOf(p) // >= 0: studio work that opens a quick look
+          const quick = at >= 0
+          const opens = quick || (!!p.href && featured.includes(p))
+          // The cover carries a small bar along its bottom: the date, swapped on hover for what the cover
+          // opens ("Case study", "Quick look", ...). The project name sits in the text under the cover
+          const media = (
+            <div className="tile-media">
+              <Cover p={p} />
+              <span className="tile-bar">
+                <span className="tile-bar-meta">
+                  {p.when && <span className="is-rest">{p.when}</span>}
+                  <span className="is-hover">{kind(p, quick)}</span>
+                </span>
+              </span>
+            </div>
+          )
+          return (
+            <article key={p.id} className={`tile reveal${opens && !p.soon ? '' : ' is-soon'}`}>
+              {quick
+                ? <button type="button" className="tile-cover" onClick={() => setPeek(at)} aria-haspopup="dialog" aria-label={`${p.title}: quick look`}>{media}</button>
+                : opens
+                  ? <a {...linkProps(p.href)} className="tile-cover" aria-label={`${p.title}: ${p.soon ? 'watch the demo' : 'view case study'}`}>{media}</a>
+                  : <div className="tile-cover">{media}</div>}
+              {/* Under the cover: the name and summary. The cover's link stretches over this text too, so the whole
+                  card opens one thing. "View site" is the only separate target, and hovering it shows the site's screenshot */}
+              <div className="tile-info">
+                <p className="tile-tags">
+                  <span className="tile-name" role="heading" aria-level={2}>{p.title}</span>
+                  {p.site && (
+                    <>
+                      <span className="tile-meta" aria-hidden> · </span>
+                      <a
+                        className="tile-visit"
+                        href={p.site}
+                        target="_blank"
+                        rel="noreferrer"
+                        onPointerEnter={e => e.pointerType === 'mouse' && setSite(p)}
+                        onPointerLeave={() => setSite(null)}
+                      >
+                        {p.siteLabel ?? 'View site'} <span className="tile-visit-arrow" aria-hidden>↗</span>
+                        <span className="sr-only"> (opens {domain(p.site)})</span>
+                      </a>
+                    </>
+                  )}
+                </p>
+                <p className="tile-summary">{p.summary}</p>
+              </div>
+            </article>
+          )
+  }
 
   return (
     <div ref={root}>
@@ -184,60 +273,26 @@ export default function Work() {
       </section>
       )}
 
-      {/* All the work in one grid: full case studies first, then studio work (quick looks) */}
-      <section className="grid is-uniform" aria-label="Work" style={{ '--cols': n } as CSSProperties}>
-        {[...featured, ...more].map(p => {
-          const at = peekable.indexOf(p) // >= 0: studio work that opens a quick look
-          const quick = at >= 0
-          const opens = quick || (!!p.href && featured.includes(p))
-          // The cover carries a small bar along its bottom: the date, swapped on hover for what the cover
-          // opens ("Case study", "Quick look", ...). The project name sits in the text under the cover
-          const media = (
-            <div className="tile-media">
-              <Cover p={p} />
-              <span className="tile-bar">
-                <span className="tile-bar-meta">
-                  {p.when && <span className="is-rest">{p.when}</span>}
-                  <span className="is-hover">{kind(p, quick)}</span>
-                </span>
-              </span>
-            </div>
-          )
-          return (
-            <article key={p.id} className={`tile reveal${opens && !p.soon ? '' : ' is-soon'}`}>
-              {quick
-                ? <button type="button" className="tile-cover" onClick={() => setPeek(at)} aria-haspopup="dialog" aria-label={`${p.title}: quick look`}>{media}</button>
-                : opens
-                  ? <a {...linkProps(p.href)} className="tile-cover" aria-label={`${p.title}: ${p.soon ? 'watch the demo' : 'view case study'}`}>{media}</a>
-                  : <div className="tile-cover">{media}</div>}
-              {/* Under the cover: the name and summary. The cover's link stretches over this text too, so the whole
-                  card opens one thing. "View site" is the only separate target, and hovering it shows the site's screenshot */}
-              <div className="tile-info">
-                <p className="tile-tags">
-                  <span className="tile-name" role="heading" aria-level={2}>{p.title}</span>
-                  {p.site && (
-                    <>
-                      <span className="tile-meta" aria-hidden> · </span>
-                      <a
-                        className="tile-visit"
-                        href={p.site}
-                        target="_blank"
-                        rel="noreferrer"
-                        onPointerEnter={e => e.pointerType === 'mouse' && setSite(p)}
-                        onPointerLeave={() => setSite(null)}
-                      >
-                        {p.siteLabel ?? 'View site'} <span className="tile-visit-arrow" aria-hidden>↗</span>
-                        <span className="sr-only"> (opens {domain(p.site)})</span>
-                      </a>
-                    </>
-                  )}
-                </p>
-                <p className="tile-summary">{p.summary}</p>
-              </div>
-            </article>
-          )
-        })}
-      </section>
+      {/* The work in two groups (product case studies, then brand and visual quick looks). They sit flush, so it
+          still reads as one grid; the side list in the left margin names the group you're in and jumps between them */}
+      <div className={`work-groups${SIDE ? ' is-side' : ''}`}>
+        <nav className={`work-toc${tocShown ? ' is-shown' : ''}`} aria-label="Kinds of work">
+          <ul>
+            {GROUPS.map((g, i) => (
+              <li key={g.id} style={{ '--i': i } as CSSProperties}>
+                <a href={`#${g.id}`} className={group === g.id ? 'is-active' : ''} aria-current={group === g.id ? 'location' : undefined} onClick={e => jumpTo(e, g.id)}>
+                  {g.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        {GROUPS.map(g => (
+          <section key={g.id} id={g.id} className="grid is-uniform work-group" aria-label={g.aria} style={{ '--cols': SIDE ? Math.min(n, 2) : n } as CSSProperties}>
+            {g.items.map(renderCard)}
+          </section>
+        ))}
+      </div>
 
       {peek !== null && (
         <Peek

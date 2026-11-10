@@ -17,6 +17,10 @@
   /* Content never gets wider than --page-max; on big screens the side margin grows to center it.
      Set --page-max to something huge (e.g. 9999px) to go back to edge-to-edge. */
   --page-max: 1200px;
+  /* Left column shared by the home page (Product / Visual) and the case studies (contents list): same width and gap on
+     both, so the work starts at the same spot and clicking into a case study doesn't shift anything. 170px fits the
+     longest contents label */
+  --side-col: 170px; --side-gap: clamp(48px, 5vw, 80px);
   --gutter: max(clamp(20px, 2vw, 32px), (100vw - var(--page-max)) / 2); /* side margin shared by every section */
   --ease: cubic-bezier(.2, .7, .2, 1);
   color-scheme: dark;
@@ -419,7 +423,7 @@ ul { list-style: none; }
 .cs-highlight p { color: var(--muted); font-size: 16px; max-width: 26ch; }
 
 /* Sticky "on this page" nav on the left, sections on the right */
-.cs-main { display: grid; grid-template-columns: minmax(160px, 1fr) 3fr; gap: clamp(24px, 4vw, 64px); }
+.cs-main { display: grid; grid-template-columns: var(--side-col) minmax(0, 1fr); gap: var(--side-gap); }
 .cs-toc { position: sticky; top: 104px; align-self: start; margin-top: clamp(40px, 6vh, 64px); }
 .cs-toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .cs-toc a { position: relative; display: inline-block; padding-left: 16px; font-size: 15px; line-height: 1.35; color: var(--muted); transition: color .2s; }
@@ -730,3 +734,44 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
   .cs-p, .cs-list li, .cs-card p, .cs-card li, .cs-feature p, .cs-finding dd { font-size: 17px; }
   .cs-list h4, .cs-card h4, .cs-feature h4, .cs-finding h4 { font-size: 18px; }
 }
+
+/* Home: side list of the kinds of work (Product / Visual), like a case study's contents list. It lives in the
+   empty left margin beside the grid, so the cards keep their full size, and stays in view while you scroll the
+   work. Only on screens with a margin wide enough to hold it; elsewhere the two groups just read as one grid */
+.work-groups { position: relative; }
+.work-group + .work-group { margin-top: clamp(40px, 4vw, 56px); } /* same as the gap between rows */
+.work-toc { display: none; }
+@media (min-width: 1400px) {
+  .work-toc { display: block; position: absolute; top: 0; bottom: 0; left: 0; width: var(--gutter); }
+  .work-toc ul {
+    position: sticky; top: 104px; list-style: none; margin: 0;
+    /* sits just left of the grid, ~120px wide, however wide the margin gets */
+    padding: 0 0 0 max(20px, var(--gutter) - 132px);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .work-toc a { position: relative; display: inline-block; padding-left: 16px; font-size: 15px; line-height: 1.35; color: var(--muted); transition: color .2s; }
+  .work-toc a::before { content: ''; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; background: var(--fg); opacity: 0; scale: .3; transition: opacity .25s, scale .3s var(--ease); }
+  .work-toc a:hover, .work-toc a.is-active { color: var(--fg); }
+  .work-toc a.is-active::before { opacity: 1; scale: 1; }
+}
+
+/* The home page in the case-study layout (the default; /?layout=grid shows the old full-width grid). Contents list in a left column inside the page
+   width, lined up with the name in the nav; the cards in two columns to its right */
+.work-groups.is-side { display: grid; grid-template-columns: var(--side-col) minmax(0, 1fr); column-gap: var(--side-gap); padding: 0 var(--gutter); }
+.work-groups.is-side .grid { padding: 0; grid-column: 2; }
+.work-groups.is-side .work-toc { display: block; position: relative; width: auto; grid-column: 1; grid-row: 1 / span 3; }
+.work-groups.is-side .work-toc ul { position: sticky; top: 104px; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.work-groups.is-side .work-toc a { position: relative; display: inline-block; padding-left: 16px; font-size: 15px; line-height: 1.35; color: var(--muted); transition: color .2s; }
+.work-groups.is-side .work-toc a::before { content: ''; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; background: var(--fg); opacity: 0; scale: .3; transition: opacity .25s, scale .3s var(--ease); }
+.work-groups.is-side .work-toc a:hover, .work-groups.is-side .work-toc a.is-active { color: var(--fg); }
+.work-groups.is-side .work-toc a.is-active::before { opacity: 1; scale: 1; }
+@media (max-width: 860px) {
+  .work-groups.is-side { display: block; }
+  .work-groups.is-side .work-toc { display: none; }
+}
+/* The home list is hidden over the hero and rises in, one label after another, once you scroll into the work
+   and then stays, the same way the cards appear */
+.work-toc li { opacity: 0; translate: 0 10px; transition: opacity .5s var(--ease), translate .6s var(--ease); transition-delay: calc(var(--i, 0) * 70ms); }
+.work-toc.is-shown li { opacity: 1; translate: 0 0; }
+.work-toc:not(.is-shown) { pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .work-toc li { translate: none; transition: opacity .2s; transition-delay: 0s; } }
