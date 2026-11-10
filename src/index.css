@@ -867,3 +867,19 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .cs-toc li a::after { transition: opacity .2s, scale .3s var(--ease); transition-delay: 0s; }
 .cs-toc :is(li.is-done, li.is-current) a::after { transition-delay: .18s; }
 @media (prefers-reduced-motion: reduce) { .cs-toc li a::before, .cs-toc li a::after { transition: none; } }
+
+/* ---------- Same three text styles outside the case studies (home, About, Exploration) ----------
+     Heading   project names, role lines            weight 500, white
+     Text      hero + About paragraphs, card summaries   weight 350, soft gray (links stay white)
+     Caption   dates, "View site", tags, labels, status  weight 350, muted, small
+   Sizes stay suited to each spot (the hero reads bigger than a card); weight and color follow the system */
+.tile-name, .shot .tile-title { font-size: 18px; font-weight: 500; letter-spacing: -.015em; color: var(--fg); }
+.timeline-role { font-weight: 500; }
+.intro-para, .info-text { font-weight: 350; color: var(--text); }
+.intro-para a, .info-text a { color: var(--fg); }
+.tile-summary { font: 350 16px/1.55 var(--sans); color: var(--text); max-width: none; margin-top: 6px; }
+.timeline-project { font-weight: 350; }
+.intro-status, .tile-tags, .tile-meta, .tile-visit, .timeline-when, .label { font-weight: 350; }
+.tile-visit:hover { color: var(--fg); }
+.intro-para.intro-status { color: var(--muted); }
+.intro-para .intro-icons a { color: var(--muted); } .intro-para .intro-icons a:hover { color: var(--fg); }
