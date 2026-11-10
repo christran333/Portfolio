@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Rock+Salt&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Permanent+Marker&family=Rock+Salt&display=swap');
 
 
 /* Dark is the default theme (the script in index.html sets data-theme before first paint) */
@@ -864,3 +864,22 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .tile-visit:hover { color: var(--fg); }
 .intro-para.intro-status { color: var(--muted); }
 .intro-para .intro-icons a { color: var(--muted); } .intro-para .intro-icons a:hover { color: var(--fg); }
+
+/* ---------- 3D Polaroid (Polaroid3D.tsx) ----------
+   One full-screen canvas over the page. It never takes clicks itself (events come from the page), so everything under
+   it still works; the print inside lines up with the flat Polaroid's spot in the hero. While writing, the canvas
+   lifts above the nav with a dim backdrop behind it */
+.polaroid.is-ghost .polaroid-card { visibility: hidden; }
+.polaroid.is-ghost { cursor: pointer; }
+.p3d-stage { position: fixed; inset: 0; z-index: 15; pointer-events: none; }
+.p3d-stage.is-open { z-index: 61; }
+.p3d-backdrop { position: fixed; inset: 0; z-index: 60; background: rgb(10 10 10 / .82); opacity: 0; pointer-events: none; transition: opacity .35s; }
+.p3d-backdrop.is-open { opacity: 1; pointer-events: auto; }
+.p3d-hud {
+  position: fixed; left: 50%; bottom: 28px; z-index: 62; transform: translateX(-50%); display: flex; align-items: center; gap: 12px;
+  padding: 8px 8px 8px 18px; border-radius: 999px; background: rgb(28 28 27 / .85); backdrop-filter: blur(8px);
+  font: 350 14px/1 var(--sans); color: var(--text); white-space: nowrap; animation: zoom-in .3s var(--ease);
+}
+.p3d-hud button { border-radius: 999px; padding: 8px 14px; background: #f2eee5; color: #1d1a18; font: 500 14px/1 var(--sans); }
+.p3d-hud button.is-ghost { background: transparent; color: var(--text); border: 1px solid rgb(255 255 255 / .2); }
+.p3d-hud button:hover { filter: brightness(1.08); }

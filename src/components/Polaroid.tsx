@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent, type Ref } from 'react'
 
 // The note, one letter at a time, so it can be written left to right like a real pen.
 // Small fixed wobbles keep it looking hand-done instead of typeset:
@@ -23,8 +23,10 @@ const LETTERS = [...NOTE].map((ch, i) => {
 // The hero photo as an instant-film print.
 // Hover: it lifts off the page and tilts toward the cursor, turning a little to the side.
 // Click: "GO EXPLORE" gets written along the bottom of the frame in marker; click again and it gets rubbed out like an eraser.
-export default function Polaroid({ src, alt, width, height, style }: {
-  src: string; alt: string; width: number; height: number; style?: CSSProperties
+// `ghost`: the 3D Polaroid has taken over. This one stays in place (it holds the spot in the layout, and the 3D print
+// reads `cardRef` to sit exactly on top of it) but its card is invisible and clicking it does nothing
+export default function Polaroid({ src, alt, width, height, style, ghost, cardRef }: {
+  src: string; alt: string; width: number; height: number; style?: CSSProperties; ghost?: boolean; cardRef?: Ref<HTMLSpanElement>
 }) {
   const ref = useRef<HTMLButtonElement>(null)
   const [written, setWritten] = useState(false)
@@ -60,11 +62,11 @@ export default function Polaroid({ src, alt, width, height, style }: {
     <button
       ref={ref}
       type="button"
-      className={`polaroid rise${written ? ' is-written' : ''}${erasing ? ' is-erasing' : ''}`}
+      className={`polaroid rise${written ? ' is-written' : ''}${erasing ? ' is-erasing' : ''}${ghost ? ' is-ghost' : ''}`}
       style={style}
       onPointerMove={move}
       onPointerLeave={leave}
-      onClick={toggle}
+      onClick={ghost ? undefined : toggle}
       aria-pressed={written}
       aria-label={written ? 'Photo of Christopher, signed “Go explore”' : 'Photo of Christopher. Click to sign it'}
     >
@@ -78,7 +80,7 @@ export default function Polaroid({ src, alt, width, height, style }: {
         </svg>
       </span>
       {/* The paper itself is an inner layer, so the tilt never fights the page's fade-in animation */}
-      <span className="polaroid-card">
+      <span className="polaroid-card" ref={cardRef}>
         <span className="polaroid-photo">
           <img src={src} alt={alt} width={width} height={height} />
         </span>

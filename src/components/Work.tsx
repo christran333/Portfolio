@@ -1,10 +1,18 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useReveal } from '../useReveal'
 import { useColumnCount } from '../layout'
 import { imgAt, linkProps, profile, projects, type Project } from '../data'
 import { caseStudies } from '../caseStudies'
 import Peek from './Peek'
 import Polaroid from './Polaroid'
+// The 3D Polaroid only loads on desktops with a mouse, WebGL, and motion allowed; everyone else keeps the flat one.
+// It's a separate download, fetched after the page is up, so it never slows the first paint
+const Polaroid3D = lazy(() => import('./Polaroid3D'))
+const can3D = (() => {
+  if (typeof window === 'undefined') return false
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return false
+  try { return !!document.createElement('canvas').getContext('webgl2') } catch { return false }
+})()
 
 // Home page: full case studies in the big grid, everything else in a compact list that opens a quick view
 const featured = projects.filter(p => p.featured)
@@ -89,6 +97,8 @@ export default function Work() {
   const siteBox = useRef<HTMLDivElement>(null)
   const video = useRef<HTMLVideoElement>(null)
   const [previewing, setPreviewing] = useState(false)
+  const polaroidCard = useRef<HTMLSpanElement>(null) // the flat Polaroid's card: where the 3D one sits
+  const [ready3D, setReady3D] = useState(false) // 3D print drawn: hide the flat card under it
   const [site, setSite] = useState<Project | null>(null) // project whose site screenshot is showing
   const [missing, setMissing] = useState<Set<string>>(new Set()) // screenshots that haven't been made yet
   const [peek, setPeek] = useState<number | null>(null) // index into `peekable` of the open quick view
@@ -214,12 +224,15 @@ export default function Work() {
           </div>
           {/* Instant-film print: thick paper border with the wide bottom edge, and a film look on the photo (all CSS) */}
           <Polaroid
+            ghost={ready3D}
+            cardRef={polaroidCard}
             style={{ animationDelay: '.25s' }}
             src="/about/hero-night.jpg"
             alt="Christopher standing on a street at night, lit by a camera flash, with signs glowing behind"
             width={1400}
             height={1400}
           />
+          {can3D && <Suspense fallback={null}><Polaroid3D slot={polaroidCard} onReady={() => setReady3D(true)} /></Suspense>}
         </section>
       ) : (
       <section className="intro">
