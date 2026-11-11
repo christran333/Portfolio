@@ -866,13 +866,13 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .intro-para .intro-icons a { color: var(--muted); } .intro-para .intro-icons a:hover { color: var(--fg); }
 
 /* ---------- 3D Polaroid (Polaroid3D.tsx) ----------
-   One full-screen canvas over the page. It never takes clicks itself (events come from the page), so everything under
+   At rest the canvas is a box in the page around the hero photo; while writing it covers the window. It never takes clicks itself (events come from the page), so everything under
    it still works; the print inside lines up with the flat Polaroid's spot in the hero. While writing, the canvas
    lifts above the nav with a dim backdrop behind it */
 .polaroid.is-ghost .polaroid-card { visibility: hidden; }
 .polaroid.is-ghost { cursor: pointer; }
-.p3d-stage { position: fixed; inset: 0; z-index: 15; pointer-events: none; }
-.p3d-stage.is-open { z-index: 61; }
+.p3d-stage { z-index: 15; pointer-events: none; } /* at rest: an absolute box in the page (set inline) */
+.p3d-stage.is-open { position: fixed; inset: 0; z-index: 61; }
 .p3d-backdrop { position: fixed; inset: 0; z-index: 60; background: rgb(10 10 10 / .82); opacity: 0; pointer-events: none; transition: opacity .35s; }
 .p3d-backdrop.is-open { opacity: 1; pointer-events: auto; }
 .p3d-hud {

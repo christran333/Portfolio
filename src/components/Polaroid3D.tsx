@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type RefObject } from 'react'
 import { createPortal } from 'react-dom'
 import * as THREE from 'three'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
@@ -100,7 +100,7 @@ function useInk() {
 
 type Ink = ReturnType<typeof useInk>
 
-function Print({ slot, mode, setMode, ink, onReady }: { slot: RefObject<HTMLElement | null>; mode: Mode; setMode: (m: Mode) => void; ink: Ink; onReady: () => void }) {
+function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObject<HTMLElement | null>; mode: Mode; setMode: (m: Mode) => void; ink: Ink; onReady: () => void; onClosed: () => void }) {
   const photo = useTexture('/about/hero-night.jpg')
   photo.colorSpace = THREE.SRGBColorSpace
   photo.anisotropy = 8
@@ -111,10 +111,17 @@ function Print({ slot, mode, setMode, ink, onReady }: { slot: RefObject<HTMLElem
   const place = useRef<THREE.Group>(null!) // where it sits on screen and how big
   const root = useRef<THREE.Group>(null!) // float and sway
   const spin = useRef<THREE.Group>(null!) // turning
-  const { size, camera } = useThree()
+  const { size, camera, gl } = useThree()
   const writing = mode === 'write'
   const ready = useRef(false)
+  const closing = useRef(false)
 
+  const mouse = useRef({ x: -1e4, y: -1e4 })
+  useEffect(() => {
+    const m = (e: PointerEvent) => { mouse.current.x = e.clientX; mouse.current.y = e.clientY }
+    addEventListener('pointermove', m, { passive: true })
+    return () => removeEventListener('pointermove', m)
+  }, [])
   const s = useRef({ yaw: 0, vel: 0, pitch: 0, dragging: false, moved: 0, lastX: 0, lastY: 0, lastT: 0, hover: false, tx: 0, ty: 0, open: 0 })
 
   const onDown = (e: ThreeEvent<PointerEvent>) => {
@@ -163,15 +170,18 @@ function Print({ slot, mode, setMode, ink, onReady }: { slot: RefObject<HTMLElem
     const st = s.current, t = state.clock.elapsedTime
     const ease = (k: number) => 1 - Math.exp(-k * dt)
     const v = state.viewport.getCurrentViewport(camera, tmp.set(0, 0, 0))
-    const u = v.height / size.height // world units per pixel at the card's depth
+    // Positions are measured against the canvas itself, wherever it is: at rest it's a box in the page around the
+    // hero photo (so it scrolls with the page natively, no lag), while writing it covers the window
+    const cr = gl.domElement.getBoundingClientRect()
+    const u = v.height / (cr.height || size.height) // world units per pixel at the card's depth
 
     // resting spot and size: the flat Polaroid's card in the hero
     const el = slot.current
     let restX = 0, restY = 0, restS = 1
     if (el) {
       const r = el.getBoundingClientRect()
-      restX = (r.left + r.width / 2 - size.width / 2) * u
-      restY = -(r.top + r.height / 2 - size.height / 2) * u
+      restX = (r.left + r.width / 2 - (cr.left + cr.width / 2)) * u
+      restY = -(r.top + r.height / 2 - (cr.top + cr.height / 2)) * u
       restS = Math.min(r.height / H, r.width / W) * u
     }
     const bigS = Math.min((v.height * 0.8) / H, (v.width * 0.9) / W)
@@ -199,8 +209,8 @@ function Print({ slot, mode, setMode, ink, onReady }: { slot: RefObject<HTMLElem
     let px = 0, py = 0
     if (lean) {
       const r = el.getBoundingClientRect()
-      px = THREE.MathUtils.clamp(((state.pointer.x + 1) / 2 * size.width - (r.left + r.width / 2)) / (r.width / 2), -1, 1)
-      py = THREE.MathUtils.clamp(-((1 - state.pointer.y) / 2 * size.height - (r.top + r.height / 2)) / (r.height / 2), -1, 1)
+      px = THREE.MathUtils.clamp((mouse.current.x - (r.left + r.width / 2)) / (r.width / 2), -1, 1)
+      py = THREE.MathUtils.clamp(-(mouse.current.y - (r.top + r.height / 2)) / (r.height / 2), -1, 1)
     }
     st.tx += ((lean ? -py * 0.1 : 0) - st.tx) * ease(8)
     st.ty += ((lean ? px * 0.22 : 0) - st.ty) * ease(8)
@@ -212,6 +222,9 @@ function Print({ slot, mode, setMode, ink, onReady }: { slot: RefObject<HTMLElem
     const z = writing ? 0 : Math.sin(t * 0.7) * 0.022 - 0.035
     root.current.rotation.z += (z - root.current.rotation.z) * ease(5)
 
+    // closing finished: hand the canvas back to the page
+    if (!writing && st.open < 0.004 && closing.current) { closing.current = false; onClosed() }
+    if (writing) closing.current = true
     if (!ready.current) { ready.current = true; onReady() } // first frame drawn: the flat one can step aside
   })
 
@@ -254,7 +267,31 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
   const [mode, setMode] = useState<Mode>('rest')
   const ink = useInk()
   const writing = mode === 'write'
+  const [full, setFull] = useState(false) // canvas covers the window (writing, and while it shrinks back)
+  const openedAt = useRef(0)
+  const open = useCallback((m: Mode) => { if (m === 'write') { setFull(true); openedAt.current = performance.now() } setMode(m) }, [])
   const close = useCallback(() => { ink.end(); setMode('rest') }, [ink])
+
+  // At rest the canvas is a box in the page around the photo, with room on every side for the spin, lean, and
+  // shadow. Being part of the page, it scrolls exactly with it
+  const [box, setBox] = useState<CSSProperties>({})
+  useLayoutEffect(() => {
+    const el = slot.current
+    if (!el) return
+    const measure = () => {
+      const r = el.getBoundingClientRect()
+      const m = r.height * 0.35
+      // kept inside the page's width, so it never adds sideways scrolling
+      const pageW = document.documentElement.clientWidth
+      const left = Math.max(0, r.left + scrollX - m), right = Math.min(pageW, r.right + scrollX + m)
+      setBox({ position: 'absolute', left, top: r.top + scrollY - m, width: right - left, height: r.height + m * 2 })
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el); ro.observe(document.body)
+    addEventListener('resize', measure)
+    return () => { ro.disconnect(); removeEventListener('resize', measure) }
+  }, [slot])
 
   // While writing: Esc closes, and the page behind can't scroll
   useEffect(() => {
@@ -279,16 +316,27 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
   return createPortal(
     <>
       <div className={`p3d-backdrop${writing ? ' is-open' : ''}`} aria-hidden />
-      <div className={`p3d-stage${writing ? ' is-open' : ''}`}>
+      <div className={`p3d-stage${full ? ' is-open' : ''}`} style={full ? undefined : box}>
         <Canvas
           camera={{ position: [0, 0, 6], fov: 24 }}
           dpr={[1, 2]}
           gl={{ antialias: true, alpha: true }}
-          frameloop={visible || writing ? 'always' : 'never'}
+          frameloop={visible || full ? 'always' : 'never'}
           eventSource={document.body}
-          eventPrefix="client"
+          // map the cursor using where the canvas actually is right now (it isn't always the whole window)
+          onCreated={state => { state.setEvents({
+            compute: (event, st) => {
+              const r = st.gl.domElement.getBoundingClientRect()
+              st.pointer.set(((event.clientX - r.left) / r.width) * 2 - 1, -((event.clientY - r.top) / r.height) * 2 + 1)
+              st.raycaster.setFromCamera(st.pointer, st.camera)
+            },
+          }) }}
           // a click that misses the print closes it (but not clicks on the Clear / Done bar)
-          onPointerMissed={e => { if (writing && !(e.target as Element | null)?.closest?.('.p3d-hud')) close() }}
+          onPointerMissed={e => {
+            // ignore the click that opened it (it lands while the canvas is resizing to full screen)
+            if (performance.now() - openedAt.current < 400) return
+            if (writing && !(e.target as Element | null)?.closest?.('.p3d-hud')) close()
+          }}
         >
           <ambientLight intensity={0.9} />
           <directionalLight position={[2.5, 3, 4]} intensity={1.6} />
@@ -297,7 +345,7 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
             <Lightformer intensity={0.8} position={[-3, 0, 1]} rotation-y={Math.PI / 2} scale={[3, 2, 1]} />
             <Lightformer intensity={0.6} position={[3, -1, 1]} rotation-y={-Math.PI / 2} scale={[3, 2, 1]} />
           </Environment>
-          <Print slot={slot} mode={mode} setMode={setMode} ink={ink} onReady={onReady} />
+          <Print slot={slot} mode={mode} setMode={open} ink={ink} onReady={onReady} onClosed={() => setFull(false)} />
         </Canvas>
       </div>
       {writing && (
