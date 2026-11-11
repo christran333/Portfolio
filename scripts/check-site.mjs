@@ -15,7 +15,9 @@ const BASE = (process.argv[2] || 'http://localhost:5173').replace(/\/$/, '')
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const PORT = 9400 + Math.floor(Math.random() * 400)
 const profile = mkdtempSync(join(tmpdir(), 'check-site-'))
-const chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`, '--hide-scrollbars', 'about:blank'], { stdio: 'ignore' })
+// --no-sandbox only when running as root (cloud containers), where Chrome refuses to start otherwise
+const flags = ['--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`, '--hide-scrollbars', ...(process.getuid?.() === 0 ? ['--no-sandbox'] : [])]
+const chrome = spawn(CHROME, [...flags, 'about:blank'], { stdio: 'ignore' })
 const wait = ms => new Promise(r => setTimeout(r, ms))
 
 let ws, id = 0
@@ -63,7 +65,11 @@ try {
   // keeps reporting a touch screen, and the site rightly skips 3D)
   await open('/', 1440, 900, false)
   await wait(2500)
-  check('3D Polaroid loads on desktop', await ev(`!!document.querySelector('.p3d-stage canvas') && !!document.querySelector('.polaroid.is-ghost')`))
+  // Some test browsers (cloud, no GPU) can't do 3D or don't report a mouse; then the site correctly shows the flat
+  // Polaroid, so the check is skipped rather than reported as a site failure
+  const env = await ev(`({ webgl2: !!document.createElement('canvas').getContext('webgl2'), mouse: matchMedia('(hover: hover) and (pointer: fine)').matches })`)
+  if (env?.webgl2 && env?.mouse) check('3D Polaroid loads on desktop', await ev(`!!document.querySelector('.p3d-stage canvas') && !!document.querySelector('.polaroid.is-ghost')`))
+  else console.log('SKIP  3D Polaroid loads on desktop  (this test browser has no 3D or mouse)')
 
   // 2. no sideways scroll
   for (const [w, h, phone] of [[390, 844, true], [820, 1180, true], [1280, 720, false], [1920, 1080, false]]) {
