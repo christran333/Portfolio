@@ -107,15 +107,6 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObjec
   const front = useMemo(() => paperTexture('#f2eee5'), [])
   const back = useMemo(() => paperTexture('#e6e1d6'), [])
   const date = useBackDate()
-  const shadow = useMemo(() => {
-    // a round blur on a square canvas; the wide, short plane it's drawn on squashes it into a soft oval
-    const c = document.createElement('canvas'); c.width = c.height = 256
-    const g = c.getContext('2d')!
-    const r = g.createRadialGradient(128, 128, 0, 128, 128, 128)
-    r.addColorStop(0, 'rgba(0,0,0,0.55)'); r.addColorStop(0.45, 'rgba(0,0,0,0.22)'); r.addColorStop(1, 'rgba(0,0,0,0)')
-    g.fillStyle = r; g.fillRect(0, 0, 256, 256)
-    const t = new THREE.CanvasTexture(c); return t
-  }, [])
 
   const place = useRef<THREE.Group>(null!) // where it sits on screen and how big
   const root = useRef<THREE.Group>(null!) // float and sway
@@ -239,12 +230,6 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObjec
 
   return (
     <group ref={place}>
-      {/* soft shadow under the print: a radial blur that fades to nothing at its edges (the old contact shadow's
-          square sheet got cut off by the canvas box and showed as a faint rectangle) */}
-      <mesh position={[0, -H / 2 - 0.05, -0.02]} rotation={[-Math.PI / 2.4, 0, 0]}>
-        <planeGeometry args={[W * 1.5, 0.5]} />
-        <meshBasicMaterial map={shadow} transparent depthWrite={false} opacity={writing ? 0 : 0.6} toneMapped={false} />
-      </mesh>
       <group ref={root}>
         <group
           ref={spin}
@@ -286,8 +271,8 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
   const open = useCallback((m: Mode) => { if (m === 'write') { setFull(true); openedAt.current = performance.now() } setMode(m) }, [])
   const close = useCallback(() => { ink.end(); setMode('rest') }, [ink])
 
-  // At rest the canvas is a box in the page around the photo, with room on every side for the spin, lean, and
-  // shadow. Being part of the page, it scrolls exactly with it
+  // At rest the canvas is a box in the page around the photo, with room on every side for the spin and lean.
+  // Being part of the page, it scrolls exactly with it
   const [box, setBox] = useState<CSSProperties>({})
   useLayoutEffect(() => {
     const el = slot.current
