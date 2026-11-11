@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import { createPortal } from 'react-dom'
 import * as THREE from 'three'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
-import { ContactShadows, Environment, Lightformer, RoundedBox, useTexture } from '@react-three/drei'
+import { Environment, Lightformer, RoundedBox, useTexture } from '@react-three/drei'
 
 // The hero Polaroid as a real 3D print (built in polaroid-lab, then moved here).
 // - Resting, it sits exactly where the flat Polaroid is in the hero (it reads that element's position every frame,
@@ -107,6 +107,15 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObjec
   const front = useMemo(() => paperTexture('#f2eee5'), [])
   const back = useMemo(() => paperTexture('#e6e1d6'), [])
   const date = useBackDate()
+  const shadow = useMemo(() => {
+    // a round blur on a square canvas; the wide, short plane it's drawn on squashes it into a soft oval
+    const c = document.createElement('canvas'); c.width = c.height = 256
+    const g = c.getContext('2d')!
+    const r = g.createRadialGradient(128, 128, 0, 128, 128, 128)
+    r.addColorStop(0, 'rgba(0,0,0,0.55)'); r.addColorStop(0.45, 'rgba(0,0,0,0.22)'); r.addColorStop(1, 'rgba(0,0,0,0)')
+    g.fillStyle = r; g.fillRect(0, 0, 256, 256)
+    const t = new THREE.CanvasTexture(c); return t
+  }, [])
 
   const place = useRef<THREE.Group>(null!) // where it sits on screen and how big
   const root = useRef<THREE.Group>(null!) // float and sway
@@ -230,7 +239,12 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObjec
 
   return (
     <group ref={place}>
-      <ContactShadows position={[0, -0.68, 0]} opacity={writing ? 0 : 0.5} scale={2.4} blur={2.4} far={1} />
+      {/* soft shadow under the print: a radial blur that fades to nothing at its edges (the old contact shadow's
+          square sheet got cut off by the canvas box and showed as a faint rectangle) */}
+      <mesh position={[0, -H / 2 - 0.05, -0.02]} rotation={[-Math.PI / 2.4, 0, 0]}>
+        <planeGeometry args={[W * 1.5, 0.5]} />
+        <meshBasicMaterial map={shadow} transparent depthWrite={false} opacity={writing ? 0 : 0.6} toneMapped={false} />
+      </mesh>
       <group ref={root}>
         <group
           ref={spin}
