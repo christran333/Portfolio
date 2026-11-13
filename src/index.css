@@ -220,7 +220,7 @@ ul { list-style: none; }
 @media (max-width: 860px) { .intro-about { grid-template-columns: 1fr; } .polaroid { max-width: 340px; justify-self: start; } }
 .intro-hello { font-family: var(--sans); font-weight: 500; font-size: clamp(36px, 3.8vw, 58px); line-height: 1.05; letter-spacing: -.04em; margin-bottom: clamp(18px, 2vw, 28px); }
 /* Second line of the headline: same size, quieter colour, on its own line */
-.intro-hello-sub { display: block; color: var(--muted); }
+.intro-hello-sub { display: block; }
 .intro-lead .intro-hello-sub.rise { display: block; }
 .intro-para { display: block; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.6; letter-spacing: -.01em; max-width: 62ch; text-wrap: pretty; }
 /* Brand marks in front of a link in the hero copy: about cap height, sitting on the baseline */
