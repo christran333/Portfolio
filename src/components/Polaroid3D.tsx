@@ -35,7 +35,7 @@ const note = (date: string, ...lines: string[]): Line[] => [
 const PRINTS: { src: string; back?: Line[] }[] = [
   { src: '/about/hero-night.jpg', back: note('10/24/2026', 'McAllen, Texas', 'On tour with my band, Hearth') },
   // Film scans, cropped square for the print's window
-  { src: '/about/film/pizza.jpg', back: note('10/25/2026', 'Shredders Pizza', 'Houston, Texas') },
+  { src: '/about/film/pizza.jpg', back: note('10/25/2026', 'Joel & Kaden', 'Shredders Pizza', 'Houston, Texas') },
   { src: '/about/film/show-floor.jpg', back: note('10/25/2026', 'Playing our show in the', 'pizzeria at Shredders') },
   { src: '/about/film/guitars-up.jpg', back: note('10/25/2026', 'More photos from Shredders') },
   { src: '/about/film/crew.jpg', back: note('10/25/2026', 'SUGAR x HEARTH', 'The band we toured with') },
@@ -122,6 +122,50 @@ function useBackNotes() {
   return notes.map(n => n.texture)
 }
 
+// A stamp drawn as a die-cut sticker: the emoji with an even, rounded off-white edge all the way round.
+// Made once per emoji and kept. How the edge is made:
+//  1. the emoji is drawn centred by its real outline (emoji aren't centred in their own text box), on a canvas
+//     with room to spare, so nothing gets cut off
+//  2. its shape is made solid (emoji have soft, see-through fringes) and pushed outward all round by the edge width
+//  3. that grown shape is blurred and then cut back to a hard line at half strength. Blurring rounds off the
+//     points and fills the narrow gaps (between fingers, round a guitar's neck) the way a real sticker's cut does,
+//     where a plain outline follows every nook and looks ragged
+const stickerCache = new Map<string, { canvas: HTMLCanvasElement; n: number }>()
+function stickerArt(emoji: string) {
+  const hit = stickerCache.get(emoji)
+  if (hit) return hit
+  const edge = STAMP_PX * 0.085, n = Math.ceil(STAMP_PX * 1.7)
+  const layer = () => { const c = document.createElement('canvas'); c.width = c.height = n; return [c, c.getContext('2d', { willReadFrequently: true })!] as const }
+
+  const [glyph, gg] = layer()
+  gg.font = `${STAMP_PX}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`
+  gg.textAlign = 'left'; gg.textBaseline = 'alphabetic'
+  const m = gg.measureText(emoji)
+  const gw = m.actualBoundingBoxLeft + m.actualBoundingBoxRight, gh = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent
+  gg.fillText(emoji, (n - gw) / 2 + m.actualBoundingBoxLeft, (n - gh) / 2 + m.actualBoundingBoxAscent)
+
+  const [solid, sg] = layer() // the emoji's shape, fully opaque
+  for (let i = 0; i < 4; i++) sg.drawImage(glyph, 0, 0)
+  const [grown, wg] = layer() // ...pushed out by the edge width in every direction
+  wg.drawImage(solid, 0, 0)
+  for (let a = 0; a < 40; a++) wg.drawImage(solid, Math.cos(a / 40 * Math.PI * 2) * edge, Math.sin(a / 40 * Math.PI * 2) * edge)
+  const [out, og] = layer() // ...blurred (drawn as a shadow of itself, which every browser can blur)
+  og.shadowColor = '#000'; og.shadowBlur = edge * 1.5; og.shadowOffsetX = n * 3
+  og.drawImage(grown, -n * 3, 0)
+  og.shadowColor = 'transparent'
+  // ...and cut back to a clean line, in the sticker's off-white
+  const px = og.getImageData(0, 0, n, n), d = px.data
+  for (let i = 0; i < d.length; i += 4) {
+    const a = THREE.MathUtils.clamp((d[i + 3] / 255 - 0.44) / 0.12, 0, 1)
+    d[i] = 251; d[i + 1] = 250; d[i + 2] = 247; d[i + 3] = a * 255
+  }
+  og.putImageData(px, 0, 0)
+  og.drawImage(glyph, 0, 0)
+  const made = { canvas: out, n }
+  stickerCache.set(emoji, made)
+  return made
+}
+
 // Your own handwriting on a print's bottom border: smoothed strokes that thin out a little when you move fast.
 // One per print, so whatever you write stays on that print when you come back to it
 function createInk() {
@@ -157,27 +201,17 @@ function createInk() {
     },
     end() { pen = null },
     drawing: () => !!pen,
-    // Stick an emoji down as a sticker: a white die-cut edge around it, a soft shadow under it, turned a little
-    // at random like it was pressed on by hand. x, y are on the sticker layer (STK_CW x STK_CH, the whole front)
+    // Stick an emoji down as a sticker (see stickerArt): a soft shadow under it, turned a little at random like it
+    // was pressed on by hand. x, y are on the sticker layer (STK_CW x STK_CH, the whole front)
     stamp(x: number, y: number, emoji: string) {
       if (stickerCanvas.width !== STK_CW) { stickerCanvas.width = STK_CW; stickerCanvas.height = STK_CH; stickers.dispose() }
-      const edge = STAMP_PX * 0.075, n = Math.ceil(STAMP_PX + edge * 2 + 16)
-      const layer = () => { const c = document.createElement('canvas'); c.width = c.height = n; return [c, c.getContext('2d')!] as const }
-      const [glyph, gg] = layer()
-      gg.font = `${STAMP_PX}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`
-      gg.textAlign = 'center'; gg.textBaseline = 'middle'
-      gg.fillText(emoji, n / 2, n / 2 + STAMP_PX * 0.06)
-      const [white, wg] = layer() // the emoji's shape, in white
-      wg.drawImage(glyph, 0, 0); wg.globalCompositeOperation = 'source-in'; wg.fillStyle = '#fbfaf7'; wg.fillRect(0, 0, n, n)
-      const [sticker, sg] = layer() // the white shape pushed out all round = the edge; then the emoji on top
-      for (let a = 0; a < 24; a++) sg.drawImage(white, Math.cos(a / 24 * Math.PI * 2) * edge, Math.sin(a / 24 * Math.PI * 2) * edge)
-      sg.drawImage(glyph, 0, 0)
+      const { canvas: sticker, n } = stickerArt(emoji)
       const g = stickerCanvas.getContext('2d')!
       const half = STAMP_PX * 0.6 // kept on the print, not hanging off its edge
       g.save()
       g.translate(THREE.MathUtils.clamp(x, half, STK_CW - half), THREE.MathUtils.clamp(y, half, STK_CH - half))
       g.rotate((Math.random() - 0.5) * 0.45)
-      g.shadowColor = 'rgba(30, 25, 20, .3)'; g.shadowBlur = 10; g.shadowOffsetY = 4
+      g.shadowColor = 'rgba(20, 16, 12, .34)'; g.shadowBlur = 12; g.shadowOffsetY = 5
       g.drawImage(sticker, -n / 2, -n / 2)
       g.restore()
       stickers.needsUpdate = true
