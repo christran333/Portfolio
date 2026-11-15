@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Geist:wght@300..600&family=Rock+Salt&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Rock+Salt&display=swap');
+
+/* Daniel: the handwriting on the backs of the prints and the little scribbled hints around the photo */
+@font-face { font-family: 'Daniel'; src: url('/daniel.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Daniel'; src: url('/danielbd.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Daniel'; src: url('/danielbk.ttf') format('truetype'); font-weight: 900; font-display: swap; }
 
 
 /* Dark is the default theme (the script in index.html sets data-theme before first paint) */
@@ -129,15 +134,11 @@ ul { list-style: none; }
    hand-drawn arrow curling down to the photo. Gone once the photo is signed */
 .polaroid-hint {
   position: absolute; right: 6%; bottom: calc(100% + 4px); display: flex; align-items: flex-start; gap: 2px;
-  font: 12px/1.2 'Rock Salt', 'Marker Felt', cursive; color: var(--muted); white-space: nowrap;
+  font: 700 17px/1.2 'Daniel', 'Marker Felt', cursive; color: var(--muted); white-space: nowrap;
   rotate: -4deg; transform-origin: right bottom; pointer-events: none; transition: opacity .5s var(--ease);
 }
 .polaroid-hint svg { width: 26px; height: auto; margin-top: 6px; }
-.polaroid.is-written .polaroid-hint:not(.polaroid-hint-spin) { opacity: 0; }
-/* "spin me" sits under the print on the left, tilted the other way, with its arrow curling up to the card */
-.polaroid-hint-spin { right: auto; left: 4%; bottom: auto; top: calc(100% + 10px); align-items: flex-end; gap: 6px; rotate: 3deg; transform-origin: left top; }
-.polaroid-hint-spin svg { margin: 0 0 4px; }
-.polaroid-hint-spin.is-done { opacity: 0; }
+.polaroid.is-written .polaroid-hint { opacity: 0; }
 /* Thick paper border with the wide bottom edge, sized in % so it scales with the print */
 .polaroid-card {
   position: relative; display: block; padding: 6% 6% 24%;
@@ -876,14 +877,63 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .polaroid.is-ghost .polaroid-card { visibility: hidden; }
 .polaroid.is-ghost { cursor: pointer; }
 .p3d-stage { z-index: 15; pointer-events: none; } /* at rest: an absolute box in the page (set inline) */
-.p3d-stage.is-open { position: fixed; inset: 0; z-index: 61; }
-.p3d-backdrop { position: fixed; inset: 0; z-index: 60; background: rgb(10 10 10 / .82); opacity: 0; pointer-events: none; transition: opacity .35s; }
+/* The canvas always fills the stage straight away. Left alone it keeps its old pixel size (pinned top-left) for a
+   few frames after the stage switches between the box and the whole window, which cut the print off as it opened */
+.p3d-stage canvas { width: 100% !important; height: 100% !important; }
+.p3d-stage.is-open { z-index: 61; } /* open: pinned to the window (set inline), above the nav */
+/* Arrows under the print (previous / next photo), drawn in the same hand as the hint */
+.p3d-nav {
+  position: absolute; z-index: 16; display: flex; align-items: center; justify-content: center; gap: 14px;
+  font: 700 17px/1 'Daniel', 'Marker Felt', cursive; color: var(--muted); animation: zoom-in .6s var(--ease);
+  user-select: none; -webkit-user-select: none;
+}
+.p3d-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.p3d-nav button { display: grid; place-items: center; width: 44px; height: 36px; color: var(--muted); border-radius: 8px; transition: color .2s, translate .25s var(--ease); }
+.p3d-nav button svg { width: 30px; height: auto; }
+.p3d-nav button:hover { color: var(--fg); }
+.p3d-nav button:first-child:hover { translate: -3px 0; }
+.p3d-nav button:last-child:hover { translate: 3px 0; }
+.p3d-nav button:active { scale: .94; }
+.p3d-nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.p3d-backdrop { position: fixed; inset: 0; z-index: 60; background: rgb(10 10 10 / .82); opacity: 0; pointer-events: none; transition: opacity .45s var(--ease); }
 .p3d-backdrop.is-open { opacity: 1; pointer-events: auto; }
 .p3d-hud {
   position: fixed; left: 50%; bottom: 28px; z-index: 62; transform: translateX(-50%); display: flex; align-items: center; gap: 12px;
   padding: 8px 8px 8px 18px; border-radius: 999px; background: rgb(28 28 27 / .85); backdrop-filter: blur(8px);
-  font: 350 14px/1 var(--sans); color: var(--text); white-space: nowrap; animation: zoom-in .3s var(--ease);
+  font: 350 14px/1 var(--sans); color: var(--text); white-space: nowrap;
 }
+/* The Clear / Done bar and the tools come in a beat after the print starts opening (so they arrive as it lands)
+   and leave at once when it closes, each sliding a little toward where it sits */
+.p3d-hud, .p3d-tools {
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .22s var(--ease), translate .3s var(--ease), visibility 0s .3s;
+}
+.p3d-hud { translate: 0 14px; }
+.p3d-tools { translate: -14px 0; }
+.p3d-hud.is-open, .p3d-tools.is-open {
+  opacity: 1; visibility: visible; pointer-events: auto; translate: 0 0;
+  transition: opacity .35s var(--ease) .18s, translate .5s var(--ease) .18s, visibility 0s;
+}
+/* Tools down the left of the open print: the pen, then stamps. The open print is 80vh tall and centred, so its
+   left edge is 32.9vh left of the middle; the bar sits just outside that (and never off the window on narrow ones) */
+.p3d-tools {
+  position: fixed; z-index: 62; top: 50%; left: max(10px, calc(50vw - 32.9vh - 86px)); transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 7px;
+  border-radius: 999px; background: rgb(28 28 27 / .85); backdrop-filter: blur(8px);
+  max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: none;
+}
+.p3d-tools button {
+  display: grid; place-items: center; width: 46px; height: 46px; flex: none; border-radius: 999px; color: var(--text);
+  font-size: 27px; line-height: 1; transition: background-color .15s, scale .2s var(--ease);
+}
+.p3d-tools button svg { width: 20px; height: 20px; }
+.p3d-tools button span { display: block; transition: scale .2s var(--ease), rotate .2s var(--ease); }
+.p3d-tools button:hover { background: rgb(255 255 255 / .08); }
+.p3d-tools button:hover span { scale: 1.2; rotate: -8deg; }
+.p3d-tools button.is-on { background: #f2eee5; color: #1d1a18; }
+.p3d-tools button:active { scale: .92; }
+.p3d-tools button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.p3d-tools-rule { width: 22px; height: 1px; margin: 5px 0; background: rgb(255 255 255 / .16); flex: none; }
 .p3d-hud button { border-radius: 999px; padding: 8px 14px; background: #f2eee5; color: #1d1a18; font: 500 14px/1 var(--sans); }
 .p3d-hud button.is-ghost { background: transparent; color: var(--text); border: 1px solid rgb(255 255 255 / .2); }
 .p3d-hud button:hover { filter: brightness(1.08); }

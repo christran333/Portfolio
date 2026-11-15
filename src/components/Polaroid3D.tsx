@@ -4,12 +4,15 @@ import * as THREE from 'three'
 import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { Environment, Lightformer, RoundedBox, useTexture } from '@react-three/drei'
 
-// The hero Polaroid as a real 3D print (built in polaroid-lab, then moved here).
+// The hero photo as a real 3D instant-film print (built in polaroid-lab, then moved here), one of a few you can go through.
 // - Resting, it sits exactly where the flat Polaroid is in the hero (it reads that element's position every frame,
 //   so it scrolls with the page), floats a little, and leans toward the cursor.
-// - Drag to spin it; flick it and it keeps turning, then settles on whichever side faces you. The back says when and where it was taken.
+// - Drag to spin it; flick it and it keeps turning, then settles on whichever side faces you. The back says when
+//   and where it was taken.
 // - Click it and it comes up big in the middle of the screen so you can write on the bottom border with the cursor.
 //   Done, Esc, or clicking off it puts it back, with your writing still on it.
+// - The arrows under it go to the next / previous photo: the one showing slides off to the side turning edge-on, and the
+//   new one comes round from the other side. One print is on screen at a time; each keeps its own writing.
 // Only loaded on desktops (see Work.tsx); phones and reduced motion keep the flat version.
 
 // Real instant-film proportions (88 x 107 mm print, 79 x 79 mm picture), in scene units of 10 cm
@@ -20,12 +23,40 @@ const STRIP_H = H - SIDE - PIC
 const STRIP_Y = -H / 2 + STRIP_H / 2
 const INK_W = W * 0.94, INK_H = STRIP_H * 0.9
 const INK_CW = 1600, INK_CH = Math.round(INK_CW * INK_H / INK_W)
-
-const TAKEN = '10/24/2026' // when the photo was taken, written on the back
 const INK = '#23242b'
 
+// The prints, in order. `back` is what's written on the back, in pen (blank if left out): the date it was taken,
+// then a line or two under it
+type Line = { text: string; size: number; y: number; weight?: number }
+const note = (date: string, ...lines: string[]): Line[] => [
+  { text: date, size: 96, y: 0.43, weight: 700 },
+  ...lines.map((text, i) => ({ text, size: 50, y: 0.525 + i * 0.053, weight: 700 })),
+]
+const PRINTS: { src: string; back?: Line[] }[] = [
+  { src: '/about/hero-night.jpg', back: note('10/24/2026', 'McAllen, Texas', 'On tour with my band, Hearth') },
+  // Film scans, cropped square for the print's window
+  { src: '/about/film/pizza.jpg', back: note('10/25/2026', 'Shredders Pizza', 'Houston, Texas') },
+  { src: '/about/film/show-floor.jpg', back: note('10/25/2026', 'Playing our show in the', 'pizzeria at Shredders') },
+  { src: '/about/film/guitars-up.jpg', back: note('10/25/2026', 'More photos from Shredders') },
+  { src: '/about/film/crew.jpg', back: note('10/25/2026', 'SUGAR x HEARTH', 'The band we toured with') },
+  { src: '/about/film/driveway.jpg', back: note('10/23/2026', 'Me and my homie Alex') },
+  { src: '/about/film/parking-lot.jpg', back: note('10/22/2026', 'My beautiful girlfriend') },
+  { src: '/about/film/sun-flare.jpg', back: note('10/23/2026', 'Band tour kickoff road trip') },
+]
+
+// Stamps you can stick anywhere on the front of a print while it's open, FigJam style. Emoji for now; to add custom
+// ones later, this list (and `stamp` in createInk, which draws them) is the place
+const STAMPS = ['❤️', '🔥', '⭐', '👍', '😎', '🤘', '🎸', '🍕', '✌️']
+const STK_CW = 1536, STK_CH = Math.round(STK_CW * H / W) // the sticker layer: a canvas over the whole front
+const STAMP_PX = 208 // a sticker's size on that canvas
+
+const SLIDE = 0.7 // seconds for one print to slide out and the next to slide in
+
 type Mode = 'rest' | 'write'
-const PEEKS = [2.2, 11], PEEK_LEN = 1.6 // seconds after load the print twists to hint it can be spun, and how long it takes
+// The idle twist that hints the print can be spun: the first comes PEEK_FIRST seconds after the page loads, so it's
+// seen straight away; after that there's a long quiet gap, one every PEEK_EVERY seconds, each taking PEEK_LEN.
+// Hovering stops it (and the long gap starts over); it stops for good once someone has spun the print
+const PEEK_FIRST = 0.6, PEEK_EVERY = 10, PEEK_LEN = 2.1
 
 function paperTexture(base: string) {
   const c = document.createElement('canvas')
@@ -43,52 +74,75 @@ function paperTexture(base: string) {
   return t
 }
 
-// The back, written in pen like the back of a real print: when and where it was taken.
-// Drawn on a canvas the size of the whole back, in a ballpoint hand (Caveat) that stays readable
-const BACK_LINES = [
-  { text: TAKEN, size: 130, y: 0.42 },
-  { text: 'McAllen, Texas', size: 74, y: 0.53 },
-  { text: 'On tour with my band, Hearth', size: 74, y: 0.595 },
-]
+// Crop a photo to the square window like the print would (centred), whatever shape the file is
+function cover(t: THREE.Texture) {
+  const img = t.image as { width: number; height: number }
+  const a = img.width / img.height
+  if (a > 1) { t.repeat.set(1 / a, 1); t.offset.set((1 - 1 / a) / 2, 0) } else { t.repeat.set(1, a); t.offset.set(0, (1 - a) / 2) }
+  t.colorSpace = THREE.SRGBColorSpace
+  t.anisotropy = 8
+}
+
+// The back of a print, written in pen: when and where it was taken.
+// Drawn on a canvas the size of the whole back, in Daniel, a ballpoint hand that stays readable
 const BACK_CW = 1024, BACK_CH = Math.round(BACK_CW * H / W)
-function useBackNote() {
-  const canvas = useMemo(() => { const c = document.createElement('canvas'); c.width = BACK_CW; c.height = BACK_CH; return c }, [])
-  const texture = useMemo(() => { const t = new THREE.CanvasTexture(canvas); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t }, [canvas])
+function useBackNotes() {
+  const notes = useMemo(() => PRINTS.map(() => {
+    const c = document.createElement('canvas'); c.width = BACK_CW; c.height = BACK_CH
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8
+    return { canvas: c, texture: t }
+  }), [])
   useEffect(() => {
-    const fonts = BACK_LINES.map(l => `600 ${l.size}px "Caveat"`)
+    const fonts = [...new Set(PRINTS.flatMap(p => p.back ?? []).map(l => `${l.weight ?? 400} ${l.size}px "Daniel"`))]
     let tries = 0
     const id = setInterval(() => {
       fonts.forEach(f => document.fonts.load(f))
       if (!fonts.every(f => document.fonts.check(f)) && ++tries < 50) return
       clearInterval(id)
-      const g = canvas.getContext('2d')!
-      g.clearRect(0, 0, BACK_CW, BACK_CH)
-      g.save(); g.translate(BACK_CW / 2, BACK_CH / 2); g.rotate(-0.05); g.translate(-BACK_CW / 2, -BACK_CH / 2)
-      g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = INK; g.globalAlpha = 0.9
-      BACK_LINES.forEach((l, i) => { g.font = fonts[i]; g.fillText(l.text, BACK_CW / 2, BACK_CH * l.y) })
-      g.restore()
-      texture.needsUpdate = true
+      PRINTS.forEach((p, i) => {
+        if (!p.back) return
+        const { canvas, texture } = notes[i]
+        const g = canvas.getContext('2d')!
+        g.clearRect(0, 0, BACK_CW, BACK_CH)
+        g.save(); g.translate(BACK_CW / 2, BACK_CH / 2); g.rotate(-0.05); g.translate(-BACK_CW / 2, -BACK_CH / 2)
+        g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = INK; g.globalAlpha = 0.9
+        p.back.forEach(l => {
+          g.font = `${l.weight ?? 400} ${l.size}px "Daniel"`
+          // a line too long for the print is written smaller, so it never runs off the edge
+          const fit = Math.min(1, (BACK_CW * 0.84) / g.measureText(l.text).width)
+          if (fit < 1) g.font = `${l.weight ?? 400} ${Math.floor(l.size * fit)}px "Daniel"`
+          g.fillText(l.text, BACK_CW / 2, BACK_CH * l.y)
+        })
+        g.restore()
+        texture.needsUpdate = true
+      })
     }, 100)
     return () => clearInterval(id)
-  }, [canvas, texture])
-  return texture
+  }, [notes])
+  return notes.map(n => n.texture)
 }
 
-// Your own handwriting on the bottom border: smoothed strokes that thin out a little when you move fast
-function useInk() {
-  const canvas = useMemo(() => { const c = document.createElement('canvas'); c.width = INK_CW; c.height = INK_CH; return c }, [])
-  const texture = useMemo(() => { const t = new THREE.CanvasTexture(canvas); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t }, [canvas])
-  const pen = useRef<{ x: number; y: number; mx: number; my: number; w: number } | null>(null)
-  return useMemo(() => ({
+// Your own handwriting on a print's bottom border: smoothed strokes that thin out a little when you move fast.
+// One per print, so whatever you write stays on that print when you come back to it
+function createInk() {
+  const canvas = document.createElement('canvas'); canvas.width = INK_CW; canvas.height = INK_CH
+  const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8
+  let pen: { x: number; y: number; mx: number; my: number; w: number } | null = null
+  // Stickers go on their own layer over the whole front (writing stays on the border). It's a big canvas, so it
+  // starts as a single empty pixel and only becomes full size the first time this print gets a sticker
+  const stickerCanvas = document.createElement('canvas'); stickerCanvas.width = stickerCanvas.height = 1
+  const stickers = new THREE.CanvasTexture(stickerCanvas); stickers.colorSpace = THREE.SRGBColorSpace; stickers.anisotropy = 8
+  return {
     texture,
+    stickers,
     start(x: number, y: number) {
       const g = canvas.getContext('2d')!
       g.fillStyle = INK; g.beginPath(); g.arc(x, y, 5, 0, Math.PI * 2); g.fill()
-      pen.current = { x, y, mx: x, my: y, w: 10 }
+      pen = { x, y, mx: x, my: y, w: 10 }
       texture.needsUpdate = true
     },
     move(x: number, y: number) {
-      const p = pen.current
+      const p = pen
       if (!p) return
       const dist = Math.hypot(x - p.x, y - p.y)
       if (dist < 1.5) return
@@ -98,28 +152,63 @@ function useInk() {
       g.strokeStyle = INK; g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = p.w; g.globalAlpha = 0.94
       g.beginPath(); g.moveTo(p.mx, p.my); g.quadraticCurveTo(p.x, p.y, mx, my); g.stroke()
       g.globalAlpha = 1
-      pen.current = { x, y, mx, my, w: p.w }
+      pen = { x, y, mx, my, w: p.w }
       texture.needsUpdate = true
     },
-    end() { pen.current = null },
-    drawing: () => !!pen.current,
-    clear() { canvas.getContext('2d')!.clearRect(0, 0, INK_CW, INK_CH); texture.needsUpdate = true },
-  }), [canvas, texture])
+    end() { pen = null },
+    drawing: () => !!pen,
+    // Stick an emoji down as a sticker: a white die-cut edge around it, a soft shadow under it, turned a little
+    // at random like it was pressed on by hand. x, y are on the sticker layer (STK_CW x STK_CH, the whole front)
+    stamp(x: number, y: number, emoji: string) {
+      if (stickerCanvas.width !== STK_CW) { stickerCanvas.width = STK_CW; stickerCanvas.height = STK_CH; stickers.dispose() }
+      const edge = STAMP_PX * 0.075, n = Math.ceil(STAMP_PX + edge * 2 + 16)
+      const layer = () => { const c = document.createElement('canvas'); c.width = c.height = n; return [c, c.getContext('2d')!] as const }
+      const [glyph, gg] = layer()
+      gg.font = `${STAMP_PX}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`
+      gg.textAlign = 'center'; gg.textBaseline = 'middle'
+      gg.fillText(emoji, n / 2, n / 2 + STAMP_PX * 0.06)
+      const [white, wg] = layer() // the emoji's shape, in white
+      wg.drawImage(glyph, 0, 0); wg.globalCompositeOperation = 'source-in'; wg.fillStyle = '#fbfaf7'; wg.fillRect(0, 0, n, n)
+      const [sticker, sg] = layer() // the white shape pushed out all round = the edge; then the emoji on top
+      for (let a = 0; a < 24; a++) sg.drawImage(white, Math.cos(a / 24 * Math.PI * 2) * edge, Math.sin(a / 24 * Math.PI * 2) * edge)
+      sg.drawImage(glyph, 0, 0)
+      const g = stickerCanvas.getContext('2d')!
+      const half = STAMP_PX * 0.6 // kept on the print, not hanging off its edge
+      g.save()
+      g.translate(THREE.MathUtils.clamp(x, half, STK_CW - half), THREE.MathUtils.clamp(y, half, STK_CH - half))
+      g.rotate((Math.random() - 0.5) * 0.45)
+      g.shadowColor = 'rgba(30, 25, 20, .3)'; g.shadowBlur = 10; g.shadowOffsetY = 4
+      g.drawImage(sticker, -n / 2, -n / 2)
+      g.restore()
+      stickers.needsUpdate = true
+    },
+    clear() {
+      canvas.getContext('2d')!.clearRect(0, 0, INK_CW, INK_CH); texture.needsUpdate = true
+      stickerCanvas.getContext('2d')!.clearRect(0, 0, stickerCanvas.width, stickerCanvas.height); stickers.needsUpdate = true
+    },
+  }
 }
 
-type Ink = ReturnType<typeof useInk>
+type Ink = ReturnType<typeof createInk>
+const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
+const easeIn = (p: number) => p * p * p
+const easeOut = (p: number) => 1 - Math.pow(1 - p, 4)
+const easeOutBack = (p: number) => 1 + 2.1 * Math.pow(p - 1, 3) + 1.1 * Math.pow(p - 1, 2) // overshoots a little, then settles
 
-function Print({ slot, mode, setMode, ink, onReady, onClosed, onSpin }: { slot: RefObject<HTMLElement | null>; mode: Mode; setMode: (m: Mode) => void; ink: Ink; onReady: () => void; onClosed: () => void; onSpin?: () => void }) {
-  const photo = useTexture('/about/hero-night.jpg')
-  photo.colorSpace = THREE.SRGBColorSpace
-  photo.anisotropy = 8
+function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClosed }: {
+  slot: RefObject<HTMLElement | null>; mode: Mode; setMode: (m: Mode) => void; inks: Ink[]
+  index: number; dir: RefObject<number>; stamp: RefObject<string | null>; onReady: () => void; onClosed: () => void
+}) {
+  const photos = useTexture(PRINTS.map(p => p.src))
+  useMemo(() => photos.forEach(cover), [photos])
   const front = useMemo(() => paperTexture('#f2eee5'), [])
   const back = useMemo(() => paperTexture('#e6e1d6'), [])
-  const note = useBackNote()
+  const notes = useBackNotes()
 
   const place = useRef<THREE.Group>(null!) // where it sits on screen and how big
-  const root = useRef<THREE.Group>(null!) // float and sway
-  const spin = useRef<THREE.Group>(null!) // turning
+  const root = useRef<THREE.Group>(null!) // float, sway and lean
+  const holders = useRef<THREE.Group[]>([]) // each print's slide out / in when the photo changes
+  const spins = useRef<THREE.Group[]>([]) // each print's turning
   const { size, camera, gl } = useThree()
   const writing = mode === 'write'
   const ready = useRef(false)
@@ -131,48 +220,76 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed, onSpin }: { slot: 
     addEventListener('pointermove', m, { passive: true })
     return () => removeEventListener('pointermove', m)
   }, [])
-  const s = useRef({ yaw: 0, vel: 0, pitch: 0, dragging: false, moved: 0, lastX: 0, lastY: 0, lastT: 0, hover: false, tx: 0, ty: 0, open: 0, spun: false })
+  const s = useRef({ dragging: false, moved: 0, lastX: 0, lastY: 0, lastT: 0, hover: false, pres: 0, tx: 0, ty: 0, open: 0, openV: 0, fy: 0, spun: false, idle: 0, peek: 0 })
+  // each print's own turning (a print always arrives face up, even if it was left showing its back)
+  const cards = useRef(PRINTS.map(() => ({ yaw: 0, vel: 0, pitch: 0 })))
+  // Which print is showing, and the change in progress (if any): `from` slides out while `to` slides in
+  const cur = useRef(index)
+  const slide = useRef<{ from: number; to: number; dir: number; p: number } | null>(null)
+  useEffect(() => {
+    if (index === cur.current) return
+    slide.current = { from: cur.current, to: index, dir: dir.current || 1, p: 0 }
+    cur.current = index
+    s.current.dragging = false
+    cards.current[index].yaw = 0; cards.current[index].vel = 0; cards.current[index].pitch = 0 // arrives face up
+  }, [index, dir])
 
-  const onDown = (e: ThreeEvent<PointerEvent>) => {
+  const onDown = (hit: number, e: ThreeEvent<PointerEvent>) => {
+    // Mid-change, the print on its way out is the one under the cursor (the new one is still edge-on): a press
+    // on it counts for the new one. Any other print isn't showing at all
+    const i = cur.current
+    if (hit !== i && hit !== slide.current?.from) return
     e.stopPropagation()
     if (writing) return
+    if (slide.current) slide.current.p = 1 // still arriving: it lands now, so the click or drag isn't swallowed
     e.nativeEvent.preventDefault() // no text selection while dragging
-    const st = s.current
-    st.dragging = true; st.moved = 0; st.vel = 0
+    const st = s.current, c = cards.current[i]
+    st.dragging = true; st.moved = 0; c.vel = 0
     st.lastX = e.clientX; st.lastY = e.clientY; st.lastT = performance.now()
     const move = (ev: PointerEvent) => {
+      if (!st.dragging) return
       const dx = ev.clientX - st.lastX, dy = ev.clientY - st.lastY
       const now = performance.now(), dt = Math.max(8, now - st.lastT) / 1000
       st.lastX = ev.clientX; st.lastY = ev.clientY; st.lastT = now
       st.moved += Math.abs(dx) + Math.abs(dy)
       const k = 6 / Math.max(900, size.width)
-      st.yaw += dx * k
-      st.vel = st.vel * 0.4 + (dx * k / dt) * 0.6
-      st.pitch = THREE.MathUtils.clamp(st.pitch + dy * k * 0.6, -0.6, 0.6)
-      if (!st.spun && st.moved > 5) { st.spun = true; onSpin?.() }
+      c.yaw += dx * k
+      c.vel = c.vel * 0.4 + (dx * k / dt) * 0.6
+      c.pitch = THREE.MathUtils.clamp(c.pitch + dy * k * 0.6, -0.6, 0.6)
+      if (!st.spun && st.moved > 5) st.spun = true // spun once: no more twist hints
     }
     const up = () => {
       removeEventListener('pointermove', move); removeEventListener('pointerup', up)
+      if (!st.dragging) return // the photo was changed mid-drag
       st.dragging = false
-      if (performance.now() - st.lastT > 80) st.vel = 0
-      st.vel = THREE.MathUtils.clamp(st.vel, -18, 18)
-      if (st.moved < 5) { st.vel = 0; setMode('write') }
+      if (performance.now() - st.lastT > 80) c.vel = 0
+      c.vel = THREE.MathUtils.clamp(c.vel, -18, 18)
+      if (st.moved < 5) { c.vel = 0; setMode('write') }
     }
     addEventListener('pointermove', move); addEventListener('pointerup', up)
   }
 
-  const toInk = (e: ThreeEvent<PointerEvent>) => e.uv && [e.uv.x * INK_CW, (1 - e.uv.y) * INK_CH] as const
-  const inkDown = (e: ThreeEvent<PointerEvent>) => {
-    if (!writing) return
+  // Presses on the open print land on one sheet over its whole front. With a stamp picked, a press anywhere
+  // sticks it there. With the pen, only the bottom border takes ink: the press is worked out in the border's own
+  // canvas, and one that starts on the photo does nothing
+  const toInk = (e: ThreeEvent<PointerEvent>) => {
+    if (!e.uv) return null
+    const x = (e.uv.x - 0.5) * W, y = (e.uv.y - 0.5) * H // on the print, from its centre
+    return [(x / INK_W + 0.5) * INK_CW, (1 - ((y - STRIP_Y) / INK_H + 0.5)) * INK_CH] as const
+  }
+  const frontDown = (i: number, e: ThreeEvent<PointerEvent>) => {
+    if (!writing || i !== cur.current || !e.uv) return
     e.stopPropagation(); e.nativeEvent.preventDefault()
-    const p = toInk(e); if (!p) return
-    ink.start(p[0], p[1])
-    const up = () => { ink.end(); removeEventListener('pointerup', up) }
+    if (stamp.current) { inks[i].stamp(e.uv.x * STK_CW, (1 - e.uv.y) * STK_CH, stamp.current); return } // one press, one sticker
+    const p = toInk(e)
+    if (!p || p[0] < 0 || p[0] > INK_CW || p[1] < 0 || p[1] > INK_CH) return
+    inks[i].start(p[0], p[1])
+    const up = () => { inks[i].end(); removeEventListener('pointerup', up) }
     addEventListener('pointerup', up)
   }
-  const inkMove = (e: ThreeEvent<PointerEvent>) => {
-    if (!writing || !ink.drawing()) return
-    const p = toInk(e); if (p) ink.move(p[0], p[1])
+  const frontMove = (i: number, e: ThreeEvent<PointerEvent>) => {
+    if (!writing || !inks[i].drawing()) return
+    const p = toInk(e); if (p) inks[i].move(p[0], p[1])
   }
 
   const tmp = useMemo(() => new THREE.Vector3(), [])
@@ -181,66 +298,110 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed, onSpin }: { slot: 
     const ease = (k: number) => 1 - Math.exp(-k * dt)
     const v = state.viewport.getCurrentViewport(camera, tmp.set(0, 0, 0))
     // Positions are measured against the canvas itself, wherever it is: at rest it's a box in the page around the
-    // hero photo (so it scrolls with the page natively, no lag), while writing it covers the window
+    // hero photo (so it scrolls with the page natively, no lag), while writing it covers the window.
+    // World units per screen pixel, across and down, come from the canvas's size on screen right now. For a frame
+    // after it switches between box and window, the picture is still drawn at the old size and stretched to the
+    // new one (unevenly); measuring each direction separately keeps the print the right size and in the right
+    // place through that frame instead of jumping
     const cr = gl.domElement.getBoundingClientRect()
-    const u = v.height / (cr.height || size.height) // world units per pixel at the card's depth
+    const ux = v.width / (cr.width || size.width), uy = v.height / (cr.height || size.height)
 
-    // resting spot and size: the flat Polaroid's card in the hero
+    // resting spot and size: the flat Polaroid's card in the hero (in pixels, from the canvas's centre)
     const el = slot.current
-    let restX = 0, restY = 0, restS = 1
+    let restX = 0, restY = 0, restPx = 300
     if (el) {
       const r = el.getBoundingClientRect()
-      restX = (r.left + r.width / 2 - (cr.left + cr.width / 2)) * u
-      restY = -(r.top + r.height / 2 - (cr.top + cr.height / 2)) * u
-      restS = Math.min(r.height / H, r.width / W) * u
+      restX = r.left + r.width / 2 - (cr.left + cr.width / 2)
+      restY = -(r.top + r.height / 2 - (cr.top + cr.height / 2))
+      restPx = Math.min(r.height / H, r.width / W)
     }
-    const bigS = Math.min((v.height * 0.8) / H, (v.width * 0.9) / W)
-    st.open += ((writing ? 1 : 0) - st.open) * ease(6)
+    const bigPx = Math.min((cr.height * 0.8) / H, (cr.width * 0.9) / W)
+    // Opening and closing ride one spring (a soft start, a quick middle, and it settles without a bounce), and
+    // everything else about the move hangs off it: where the print is, how big, and how much of its resting
+    // float, sway and lean are left. So it reads as one motion instead of several things easing separately
+    const step = Math.min(dt, 1 / 30)
+    st.openV += ((writing ? 1 : 0) - st.open) * 150 * step - st.openV * 24 * step
+    st.open += st.openV * step
     const o = st.open
-    place.current.position.set(restX * (1 - o), restY * (1 - o) + v.height * 0.035 * o, 0)
-    place.current.scale.setScalar(restS + (bigS - restS) * o)
+    const px2 = restPx * Math.pow(bigPx / restPx, o) // grows by proportion, so the size change looks even throughout
+    place.current.position.set(restX * (1 - o) * ux, (restY * (1 - o) + cr.height * 0.035 * o) * uy, 0)
+    place.current.scale.set(px2 * ux, px2 * uy, px2 * uy)
 
-    if (writing) {
-      const front = Math.round(st.yaw / (Math.PI * 2)) * Math.PI * 2
-      st.yaw += (front - st.yaw) * ease(7); st.vel = 0
-      st.pitch += (0 - st.pitch) * ease(7)
-    } else if (!st.dragging) {
-      st.yaw += st.vel * dt
-      st.vel *= Math.exp(-2.2 * dt)
-      if (Math.abs(st.vel) < 1.2) {
-        const snap = Math.round(st.yaw / Math.PI) * Math.PI
-        st.yaw += (snap - st.yaw) * ease(6)
-        st.vel *= Math.exp(-6 * dt)
-      }
-      st.pitch *= Math.exp(-4 * dt)
-    }
-    // lean toward the cursor, measured from the card's own centre
-    const lean = st.hover && !st.dragging && !writing && el
+    // Lean toward the cursor, measured from the card's own centre. "Hovering" is judged against the flat card's
+    // fixed spot (plus a margin), not the tilting 3D print: otherwise leaning moves the print's edge out from
+    // under the cursor, hover drops, it swings back, and it stutters. The lean fades in and out (st.pres)
+    // instead of switching on at full strength
     let px = 0, py = 0
-    if (lean) {
+    st.hover = false
+    if (el && !writing) {
       const r = el.getBoundingClientRect()
-      px = THREE.MathUtils.clamp((mouse.current.x - (r.left + r.width / 2)) / (r.width / 2), -1, 1)
-      py = THREE.MathUtils.clamp(-(mouse.current.y - (r.top + r.height / 2)) / (r.height / 2), -1, 1)
+      px = (mouse.current.x - (r.left + r.width / 2)) / (r.width / 2)
+      py = -(mouse.current.y - (r.top + r.height / 2)) / (r.height / 2)
+      st.hover = Math.abs(px) < 1.12 && Math.abs(py) < 1.12
+      px = THREE.MathUtils.clamp(px, -1, 1); py = THREE.MathUtils.clamp(py, -1, 1)
     }
-    st.tx += ((lean ? -py * 0.1 : 0) - st.tx) * ease(8)
-    st.ty += ((lean ? px * 0.22 : 0) - st.ty) * ease(8)
-    // Until someone spins it, it twists to one side and back now and then, hinting that it turns
-    // (twice: shortly after it appears, and once more a while later)
-    let peek = 0
-    if (!st.spun && !writing) for (const at of PEEKS) {
-      const p = (t - at) / PEEK_LEN
-      if (p > 0 && p < 1) peek = Math.sin(p * Math.PI * 2) * Math.sin(p * Math.PI) * 0.75
-    }
-    spin.current.rotation.set(st.pitch + st.tx, st.yaw + st.ty + peek, 0)
-
+    st.pres += ((st.hover && !st.dragging ? 1 : 0) - st.pres) * ease(3.5)
+    st.tx += (-py * 0.09 * st.pres - st.tx) * ease(5)
+    st.ty += (px * 0.2 * st.pres - st.ty) * ease(5)
     // hovering settles it slightly lower rather than lifting it, so it never crowds the nav bar above
-    const y = writing ? 0 : Math.sin(t * 1.1) * 0.012 - (st.hover || st.dragging ? 0.02 : 0)
-    root.current.position.y += (y - root.current.position.y) * ease(5)
-    const z = writing ? 0 : Math.sin(t * 0.7) * 0.022 - 0.035
-    root.current.rotation.z += (z - root.current.rotation.z) * ease(5)
+    const rest = Math.max(0, 1 - o) // how much of the resting float, sway and lean applies (none once it's open)
+    st.fy += (Math.sin(t * 1.1) * 0.012 - (st.dragging ? 0.02 : 0.02 * st.pres) - st.fy) * ease(5)
+    root.current.position.y = st.fy * rest
+    root.current.rotation.set(st.tx * rest, st.ty * rest, (Math.sin(t * 0.7) * 0.022 - 0.035) * rest)
+
+    // Until someone spins it, the print twists to one side and back every few seconds while it's left alone,
+    // hinting that it turns. The clock only runs while nothing is touching it, and starts over after a hover;
+    // the twist itself is eased, so a hover arriving mid-twist settles it instead of snapping it straight
+    const idle = !st.spun && !writing && !slide.current && !st.hover && !st.dragging
+    st.idle = idle ? st.idle + dt : PEEK_FIRST - (PEEK_EVERY - PEEK_LEN) // after a hover: the long gap, not the quick first one
+    const since = (st.idle - PEEK_FIRST) % PEEK_EVERY, pk = since / PEEK_LEN
+    const want = st.idle > PEEK_FIRST && pk < 1 ? Math.sin(pk * Math.PI * 2) * Math.sin(pk * Math.PI) * 0.75 : 0
+    st.peek += (want - st.peek) * ease(idle ? 30 : 7)
+    const peek = st.peek
+
+    const sl = slide.current
+    if (sl) sl.p = clamp01(sl.p + Math.min(dt, 1 / 30) / SLIDE) // stepped per frame, so a dropped frame can't skip it
+    const p = sl ? sl.p : 1
+    if (sl && p >= 1) slide.current = null
+    PRINTS.forEach((_, i) => {
+      const c = cards.current[i], h = holders.current[i], sp = spins.current[i]
+      if (!h || !sp) return
+      // Changing photo, like prints on a carousel: the one showing slides off to the side while turning edge-on
+      // (so it's gone by the time it would crowd anything); as it goes, the new one comes round from the other
+      // side, edge-on at first, and turns to face you with a small settle. Nothing fades: it's all movement
+      let x = 0, turn = 0, sc = 1, show = i === cur.current
+      if (sl && p < 1 && i === sl.from) {
+        const e = easeIn(clamp01(p / 0.5))
+        x = -sl.dir * e * W * 0.42; turn = -sl.dir * e * Math.PI / 2; sc = 1 - e * 0.06; show = p < 0.5
+      } else if (sl && p < 1 && i === sl.to) {
+        const q = clamp01((p - 0.4) / 0.6), e = easeOut(q), back = easeOutBack(q)
+        x = sl.dir * (1 - e) * W * 0.34; turn = sl.dir * (1 - back) * Math.PI / 2; sc = 0.94 + e * 0.06; show = q > 0
+      }
+      h.visible = show
+      h.position.set(x, 0, 0)
+      h.scale.setScalar(sc)
+
+      if (i === cur.current && !(sl && p < 1)) {
+        if (writing) {
+          const f = Math.round(c.yaw / (Math.PI * 2)) * Math.PI * 2
+          c.yaw += (f - c.yaw) * ease(7); c.vel = 0
+          c.pitch += (0 - c.pitch) * ease(7)
+        } else if (!st.dragging) {
+          c.yaw += c.vel * dt
+          c.vel *= Math.exp(-2.2 * dt)
+          if (Math.abs(c.vel) < 1.2) {
+            const snap = Math.round(c.yaw / Math.PI) * Math.PI
+            c.yaw += (snap - c.yaw) * ease(6)
+            c.vel *= Math.exp(-6 * dt)
+          }
+          c.pitch *= Math.exp(-4 * dt)
+        }
+      } else { c.vel = 0; c.pitch *= Math.exp(-6 * dt) }
+      sp.rotation.set(c.pitch, c.yaw + turn + (i === cur.current ? peek : 0), 0)
+    })
 
     // closing finished: hand the canvas back to the page
-    if (!writing && st.open < 0.004 && closing.current) { closing.current = false; onClosed() }
+    if (!writing && Math.abs(st.open) < 0.002 && Math.abs(st.openV) < 0.02 && closing.current) { closing.current = false; onClosed() }
     if (writing) closing.current = true
     if (!ready.current) { ready.current = true; onReady() } // first frame drawn: the flat one can step aside
   })
@@ -248,59 +409,75 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed, onSpin }: { slot: 
   return (
     <group ref={place}>
       <group ref={root}>
-        <group
-          ref={spin}
-          onPointerDown={onDown}
-          onPointerOver={() => { s.current.hover = true }}
-          onPointerOut={() => { s.current.hover = false }}
-        >
-          <RoundedBox args={[W, H, D]} radius={0.006} smoothness={4}>
-            <meshStandardMaterial map={front} roughness={0.92} metalness={0} />
-          </RoundedBox>
-          <mesh position={[0, PIC_Y, D / 2 + 0.0006]}>
-            <planeGeometry args={[PIC, PIC]} />
-            <meshPhysicalMaterial map={photo} roughness={0.45} clearcoat={0.8} clearcoatRoughness={0.18} />
-          </mesh>
-          <mesh position={[0, STRIP_Y, D / 2 + 0.0008]} onPointerDown={inkDown} onPointerMove={inkMove}>
-            <planeGeometry args={[INK_W, INK_H]} />
-            <meshBasicMaterial map={ink.texture} transparent depthWrite={false} toneMapped={false} />
-          </mesh>
-          <mesh position={[0, 0, -D / 2 - 0.0006]} rotation={[0, Math.PI, 0]}>
-            <planeGeometry args={[W - 0.004, H - 0.004]} />
-            <meshStandardMaterial map={back} roughness={0.95} />
-          </mesh>
-          <mesh position={[0, 0, -D / 2 - 0.0009]} rotation={[0, Math.PI, 0]}>
-            <planeGeometry args={[W - 0.004, H - 0.004]} />
-            <meshBasicMaterial map={note} transparent depthWrite={false} toneMapped={false} />
-          </mesh>
-        </group>
+        {PRINTS.map((p, i) => (
+          <group key={p.src} ref={g => { if (g) holders.current[i] = g }} visible={i === 0}>
+            <group ref={g => { if (g) spins.current[i] = g }} onPointerDown={e => onDown(i, e)}>
+              <RoundedBox args={[W, H, D]} radius={0.006} smoothness={4}>
+                <meshStandardMaterial map={front} roughness={0.92} metalness={0} />
+              </RoundedBox>
+              <mesh position={[0, PIC_Y, D / 2 + 0.0006]}>
+                <planeGeometry args={[PIC, PIC]} />
+                <meshPhysicalMaterial map={photos[i]} roughness={0.45} clearcoat={0.8} clearcoatRoughness={0.18} />
+              </mesh>
+              <mesh position={[0, STRIP_Y, D / 2 + 0.0008]}>
+                <planeGeometry args={[INK_W, INK_H]} />
+                <meshBasicMaterial map={inks[i].texture} transparent depthWrite={false} toneMapped={false} />
+              </mesh>
+              {/* the sticker layer, over the whole front; it's also the sheet that takes the presses while open */}
+              <mesh position={[0, 0, D / 2 + 0.0012]} renderOrder={1} onPointerDown={e => frontDown(i, e)} onPointerMove={e => frontMove(i, e)}>
+                <planeGeometry args={[W, H]} />
+                <meshBasicMaterial map={inks[i].stickers} transparent depthWrite={false} toneMapped={false} />
+              </mesh>
+              <mesh position={[0, 0, -D / 2 - 0.0006]} rotation={[0, Math.PI, 0]}>
+                <planeGeometry args={[W - 0.004, H - 0.004]} />
+                <meshStandardMaterial map={back} roughness={0.95} />
+              </mesh>
+              {p.back && (
+                <mesh position={[0, 0, -D / 2 - 0.0009]} rotation={[0, Math.PI, 0]}>
+                  <planeGeometry args={[W - 0.004, H - 0.004]} />
+                  <meshBasicMaterial map={notes[i]} transparent depthWrite={false} toneMapped={false} />
+                </mesh>
+              )}
+            </group>
+          </group>
+        ))}
       </group>
     </group>
   )
 }
 
-export default function Polaroid3D({ slot, onReady, onSpin }: { slot: RefObject<HTMLElement | null>; onReady: () => void; onSpin?: () => void }) {
+export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElement | null>; onReady: () => void }) {
   const [mode, setMode] = useState<Mode>('rest')
-  const ink = useInk()
+  const inks = useMemo(() => PRINTS.map(createInk), [])
+  const [index, setIndex] = useState(0) // which photo is showing
+  const dir = useRef(1) // which arrow was pressed last: 1 next, -1 previous
+  const go = (d: number) => { dir.current = d; setIndex(i => (i + d + PRINTS.length) % PRINTS.length) }
+  const ink = inks[index]
+  // What a press on the open print's border does: null = write with the pen, otherwise stick that stamp down
+  const [tool, setTool] = useState<string | null>(null)
+  const stamp = useRef<string | null>(null)
+  stamp.current = tool
   const writing = mode === 'write'
   const [full, setFull] = useState(false) // canvas covers the window (writing, and while it shrinks back)
   const openedAt = useRef(0)
   const open = useCallback((m: Mode) => { if (m === 'write') { setFull(true); openedAt.current = performance.now() } setMode(m) }, [])
   const close = useCallback(() => { ink.end(); setMode('rest') }, [ink])
 
-  // At rest the canvas is a box in the page around the photo, with room on every side for the spin and lean.
-  // Being part of the page, it scrolls exactly with it
-  const [box, setBox] = useState<CSSProperties>({})
+  // At rest the canvas is a box in the page, so it scrolls exactly with the page. The box is the size of the window,
+  // centred on the photo top to bottom: the same size the canvas is when a print is open and it's pinned to the
+  // window. So opening and closing never resize the canvas (resizing it used to blur and jolt the print for a few
+  // frames); it only changes from riding the page to being pinned
+  const [box, setBox] = useState<{ top: number; width: number; height: number }>({ top: 0, width: 0, height: 0 })
+  const [nav, setNav] = useState<CSSProperties>({}) // the arrows, centred under the print
   useLayoutEffect(() => {
     const el = slot.current
     if (!el) return
     const measure = () => {
       const r = el.getBoundingClientRect()
-      const m = r.height * 0.35
-      // kept inside the page's width, so it never adds sideways scrolling
-      const pageW = document.documentElement.clientWidth
-      const left = Math.max(0, r.left + scrollX - m), right = Math.min(pageW, r.right + scrollX + m)
-      setBox({ position: 'absolute', left, top: r.top + scrollY - m, width: right - left, height: r.height + m * 2 })
+      // the page's width, not the window's, so it never adds sideways scrolling
+      const width = document.documentElement.clientWidth, height = innerHeight
+      setBox({ top: r.top + scrollY + r.height / 2 - height / 2, width, height })
+      setNav({ left: r.left + scrollX, top: r.bottom + scrollY + 22, width: r.width })
     }
     measure()
     const ro = new ResizeObserver(measure)
@@ -331,8 +508,16 @@ export default function Polaroid3D({ slot, onReady, onSpin }: { slot: RefObject<
 
   return createPortal(
     <>
-      <div className={`p3d-backdrop${writing ? ' is-open' : ''}`} aria-hidden />
-      <div className={`p3d-stage${full ? ' is-open' : ''}`} style={full ? undefined : box}>
+      <div
+        className={`p3d-backdrop${writing ? ' is-open' : ''}`}
+        aria-hidden
+        // with a stamp picked, the cursor is that stamp, so you can see what you're about to stick down
+        style={writing && tool ? { cursor: `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='56' height='56'><text x='28' y='43' font-size='42' text-anchor='middle'>${tool}</text></svg>`)}") 28 28, crosshair` } : undefined}
+      />
+      <div
+        className={`p3d-stage${full ? ' is-open' : ''}`}
+        style={{ position: full ? 'fixed' : 'absolute', left: 0, top: full ? 0 : box.top, width: box.width, height: box.height }}
+      >
         <Canvas
           camera={{ position: [0, 0, 6], fov: 24 }}
           dpr={[1, 2]}
@@ -347,11 +532,11 @@ export default function Polaroid3D({ slot, onReady, onSpin }: { slot: RefObject<
               st.raycaster.setFromCamera(st.pointer, st.camera)
             },
           }) }}
-          // a click that misses the print closes it (but not clicks on the Clear / Done bar)
+          // a click that misses the print closes it (but not clicks on the Clear / Done bar or the tools)
           onPointerMissed={e => {
             // ignore the click that opened it (it lands while the canvas is resizing to full screen)
             if (performance.now() - openedAt.current < 400) return
-            if (writing && !(e.target as Element | null)?.closest?.('.p3d-hud')) close()
+            if (writing && !(e.target as Element | null)?.closest?.('.p3d-hud, .p3d-tools')) close()
           }}
         >
           <ambientLight intensity={0.9} />
@@ -361,12 +546,45 @@ export default function Polaroid3D({ slot, onReady, onSpin }: { slot: RefObject<
             <Lightformer intensity={0.8} position={[-3, 0, 1]} rotation-y={Math.PI / 2} scale={[3, 2, 1]} />
             <Lightformer intensity={0.6} position={[3, -1, 1]} rotation-y={-Math.PI / 2} scale={[3, 2, 1]} />
           </Environment>
-          <Print slot={slot} mode={mode} setMode={open} ink={ink} onReady={onReady} onClosed={() => setFull(false)} onSpin={onSpin} />
+          <Prints slot={slot} mode={mode} setMode={open} inks={inks} index={index} dir={dir} stamp={stamp} onReady={onReady} onClosed={() => setFull(false)} />
         </Canvas>
       </div>
-      {writing && (
-        <div className="p3d-hud" role="dialog" aria-label="Write on the Polaroid">
-          <span>Write on the bottom with your cursor</span>
+      {/* Under the print: hand-drawn arrows to the previous / next photo (which one it is, is only read out to screen readers) */}
+      {PRINTS.length > 1 && (
+        <div className="p3d-nav" style={nav}>
+          <button type="button" aria-label="Previous photo" onClick={() => go(-1)}>
+            <svg viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M31 11c-8-2-17-2-27-1" /><path d="M11 4c-3 2-5 4-7 6 3 2 5 3 8 6" />
+            </svg>
+          </button>
+          <span className="p3d-sr" aria-live="polite">Photo {index + 1} of {PRINTS.length}</span>
+          <button type="button" aria-label="Next photo" onClick={() => go(1)}>
+            <svg viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M3 11c8-2 17-2 27-1" /><path d="M23 4c3 2 5 4 7 6-3 2-5 3-8 6" />
+            </svg>
+          </button>
+        </div>
+      )}
+      {/* Open: tools down the left of the print (the pen, then stamps to stick on the border) and the Clear / Done bar
+          under it. Both stay in the page and slide in and out with the print, instead of popping */}
+      {(
+        <div className={`p3d-tools${writing ? ' is-open' : ''}`} inert={!writing} role="toolbar" aria-label="Pen and stamps" aria-orientation="vertical">
+          <button type="button" className={tool ? undefined : 'is-on'} aria-pressed={!tool} aria-label="Pen" onClick={() => setTool(null)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M4 20l1-4.5L16.5 4a2.1 2.1 0 013 3L8 18.5 4 20z" /><path d="M14.5 6l3 3" />
+            </svg>
+          </button>
+          <span className="p3d-tools-rule" aria-hidden />
+          {STAMPS.map(e => (
+            <button key={e} type="button" className={tool === e ? 'is-on' : undefined} aria-pressed={tool === e} aria-label={`Stamp ${e}`} onClick={() => setTool(e)}>
+              <span aria-hidden>{e}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {(
+        <div className={`p3d-hud${writing ? ' is-open' : ''}`} inert={!writing} role="dialog" aria-label="Write on the Polaroid">
+          <span>{tool ? 'Click anywhere on it to stick it down' : 'Write on the bottom with your cursor'}</span>
           <button type="button" className="is-ghost" onClick={ink.clear}>Clear</button>
           <button type="button" onClick={close}>Done</button>
         </div>

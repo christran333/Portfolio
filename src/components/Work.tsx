@@ -99,7 +99,6 @@ export default function Work() {
   const [previewing, setPreviewing] = useState(false)
   const polaroidCard = useRef<HTMLSpanElement>(null) // the flat Polaroid's card: where the 3D one sits
   const [ready3D, setReady3D] = useState(false) // 3D print drawn: hide the flat card under it
-  const [spun3D, setSpun3D] = useState(false) // someone has spun the 3D print: its "spin me" hint can go
   const [site, setSite] = useState<Project | null>(null) // project whose site screenshot is showing
   const [missing, setMissing] = useState<Set<string>>(new Set()) // screenshots that haven't been made yet
   const [peek, setPeek] = useState<number | null>(null) // index into `peekable` of the open quick view
@@ -226,7 +225,6 @@ export default function Work() {
           {/* Instant-film print: thick paper border with the wide bottom edge, and a film look on the photo (all CSS) */}
           <Polaroid
             ghost={ready3D}
-            spinHint={!spun3D}
             cardRef={polaroidCard}
             style={{ animationDelay: '.25s' }}
             src="/about/hero-night.jpg"
@@ -234,7 +232,7 @@ export default function Work() {
             width={1400}
             height={1400}
           />
-          {can3D && <Suspense fallback={null}><Polaroid3D slot={polaroidCard} onReady={() => setReady3D(true)} onSpin={() => setSpun3D(true)} /></Suspense>}
+          {can3D && <Suspense fallback={null}><Polaroid3D slot={polaroidCard} onReady={() => setReady3D(true)} /></Suspense>}
         </section>
       ) : (
       <section className="intro">
