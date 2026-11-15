@@ -349,7 +349,8 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
       restY = -(r.top + r.height / 2 - (cr.top + cr.height / 2))
       restPx = Math.min(r.height / H, r.width / W)
     }
-    const bigPx = Math.min((cr.height * 0.8) / H, (cr.width * 0.9) / W)
+    // open: 80% of the window's height, or less in a narrow window, where it leaves room beside it for the tools
+    const bigPx = Math.min((cr.height * 0.8) / H, Math.max(120, cr.width - 200) / W)
     // Opening and closing ride one spring (a soft start, a quick middle, and it settles without a bounce), and
     // everything else about the move hangs off it: where the print is, how big, and how much of its resting
     // float, sway and lean are left. So it reads as one motion instead of several things easing separately
@@ -587,13 +588,13 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
       {PRINTS.length > 1 && (
         <div className="p3d-nav" style={nav}>
           <button type="button" aria-label="Previous photo" onClick={() => go(-1)}>
-            <svg viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <svg viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M31 11c-8-2-17-2-27-1" /><path d="M11 4c-3 2-5 4-7 6 3 2 5 3 8 6" />
             </svg>
           </button>
           <span className="p3d-sr" aria-live="polite">Photo {index + 1} of {PRINTS.length}</span>
           <button type="button" aria-label="Next photo" onClick={() => go(1)}>
-            <svg viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <svg viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M3 11c8-2 17-2 27-1" /><path d="M23 4c3 2 5 4 7 6-3 2-5 3-8 6" />
             </svg>
           </button>

@@ -25,8 +25,8 @@ const LETTERS = [...NOTE].map((ch, i) => {
 // Click: "GO EXPLORE" gets written along the bottom of the frame in marker; click again and it gets rubbed out like an eraser.
 // `ghost`: the 3D Polaroid has taken over. This one stays in place (it holds the spot in the layout, and the 3D print
 // reads `cardRef` to sit exactly on top of it) but its card is invisible and clicking it does nothing
-export default function Polaroid({ src, alt, width, height, style, ghost, cardRef }: {
-  src: string; alt: string; width: number; height: number; style?: CSSProperties; ghost?: boolean; cardRef?: Ref<HTMLSpanElement>
+export default function Polaroid({ src, alt, width, height, style, ghost, nav, cardRef }: {
+  src: string; alt: string; width: number; height: number; style?: CSSProperties; ghost?: boolean; nav?: boolean; cardRef?: Ref<HTMLSpanElement>
 }) {
   const ref = useRef<HTMLButtonElement>(null)
   const [written, setWritten] = useState(false)
@@ -62,7 +62,7 @@ export default function Polaroid({ src, alt, width, height, style, ghost, cardRe
     <button
       ref={ref}
       type="button"
-      className={`polaroid rise${written ? ' is-written' : ''}${erasing ? ' is-erasing' : ''}${ghost ? ' is-ghost' : ''}`}
+      className={`polaroid rise${written ? ' is-written' : ''}${erasing ? ' is-erasing' : ''}${ghost ? ' is-ghost' : ''}${nav ? ' has-nav' : ''}`}
       style={style}
       onPointerMove={move}
       onPointerLeave={leave}

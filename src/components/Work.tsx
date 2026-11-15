@@ -225,6 +225,7 @@ export default function Work() {
           {/* Instant-film print: thick paper border with the wide bottom edge, and a film look on the photo (all CSS) */}
           <Polaroid
             ghost={ready3D}
+            nav={can3D}
             cardRef={polaroidCard}
             style={{ animationDelay: '.25s' }}
             src="/about/hero-night.jpg"

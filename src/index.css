@@ -881,18 +881,21 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
    few frames after the stage switches between the box and the whole window, which cut the print off as it opened */
 .p3d-stage canvas { width: 100% !important; height: 100% !important; }
 .p3d-stage.is-open { z-index: 61; } /* open: pinned to the window (set inline), above the nav */
-/* Arrows under the print (previous / next photo), drawn in the same hand as the hint */
+/* Arrows under the print (previous / next photo), drawn in the same hand as the hint. They float over the page
+   (they belong to the 3D print, not the layout), so the photo's slot keeps room under it for them: without it,
+   when the photo is the last thing in the hero (narrow windows), they'd sit on top of the work below */
+.polaroid.has-nav { margin-bottom: 76px; }
 .p3d-nav {
-  position: absolute; z-index: 16; display: flex; align-items: center; justify-content: center; gap: 14px;
+  position: absolute; z-index: 16; display: flex; align-items: center; justify-content: center; gap: 28px;
   font: 700 17px/1 'Daniel', 'Marker Felt', cursive; color: var(--muted); animation: zoom-in .6s var(--ease);
   user-select: none; -webkit-user-select: none;
 }
 .p3d-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.p3d-nav button { display: grid; place-items: center; width: 44px; height: 36px; color: var(--muted); border-radius: 8px; transition: color .2s, translate .25s var(--ease); }
-.p3d-nav button svg { width: 30px; height: auto; }
+.p3d-nav button { display: grid; place-items: center; width: 68px; height: 48px; color: var(--muted); border-radius: 8px; transition: color .2s, translate .25s var(--ease); }
+.p3d-nav button svg { width: 48px; height: auto; }
 .p3d-nav button:hover { color: var(--fg); }
-.p3d-nav button:first-child:hover { translate: -3px 0; }
-.p3d-nav button:last-child:hover { translate: 3px 0; }
+.p3d-nav button:first-child:hover { translate: -4px 0; }
+.p3d-nav button:last-child:hover { translate: 4px 0; }
 .p3d-nav button:active { scale: .94; }
 .p3d-nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .p3d-backdrop { position: fixed; inset: 0; z-index: 60; background: rgb(10 10 10 / .82); opacity: 0; pointer-events: none; transition: opacity .45s var(--ease); }
