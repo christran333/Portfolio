@@ -25,8 +25,8 @@ const LETTERS = [...NOTE].map((ch, i) => {
 // Click: "GO EXPLORE" gets written along the bottom of the frame in marker; click again and it gets rubbed out like an eraser.
 // `ghost`: the 3D Polaroid has taken over. This one stays in place (it holds the spot in the layout, and the 3D print
 // reads `cardRef` to sit exactly on top of it) but its card is invisible and clicking it does nothing
-export default function Polaroid({ src, alt, width, height, style, ghost, cardRef }: {
-  src: string; alt: string; width: number; height: number; style?: CSSProperties; ghost?: boolean; cardRef?: Ref<HTMLSpanElement>
+export default function Polaroid({ src, alt, width, height, style, ghost, spinHint, cardRef }: {
+  src: string; alt: string; width: number; height: number; style?: CSSProperties; ghost?: boolean; spinHint?: boolean; cardRef?: Ref<HTMLSpanElement>
 }) {
   const ref = useRef<HTMLButtonElement>(null)
   const [written, setWritten] = useState(false)
@@ -79,6 +79,17 @@ export default function Polaroid({ src, alt, width, height, style, ghost, cardRe
           <path d="M24 24l6 6 5-7" />
         </svg>
       </span>
+      {/* With the 3D print: a second scribble under it, with a curling arrow, saying it can be spun to read the back.
+          Fades out once it's been spun */}
+      {ghost && (
+        <span className={`polaroid-hint polaroid-hint-spin${spinHint ? '' : ' is-done'}`} aria-hidden>
+          <svg viewBox="0 0 40 34" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M30 6c-8-4-20-2-24 7-3 8 3 15 12 15 7 0 12-4 13-9" />
+            <path d="M26 17l5 3 3-6" />
+          </svg>
+          spin me to read the back
+        </span>
+      )}
       {/* The paper itself is an inner layer, so the tilt never fights the page's fade-in animation */}
       <span className="polaroid-card" ref={cardRef}>
         <span className="polaroid-photo">

@@ -7,7 +7,7 @@ import { Environment, Lightformer, RoundedBox, useTexture } from '@react-three/d
 // The hero Polaroid as a real 3D print (built in polaroid-lab, then moved here).
 // - Resting, it sits exactly where the flat Polaroid is in the hero (it reads that element's position every frame,
 //   so it scrolls with the page), floats a little, and leans toward the cursor.
-// - Drag to spin it; flick it and it keeps turning, then settles on whichever side faces you. The back has the date.
+// - Drag to spin it; flick it and it keeps turning, then settles on whichever side faces you. The back says when and where it was taken.
 // - Click it and it comes up big in the middle of the screen so you can write on the bottom border with the cursor.
 //   Done, Esc, or clicking off it puts it back, with your writing still on it.
 // Only loaded on desktops (see Work.tsx); phones and reduced motion keep the flat version.
@@ -25,6 +25,7 @@ const TAKEN = '10/24/2026' // when the photo was taken, written on the back
 const INK = '#23242b'
 
 type Mode = 'rest' | 'write'
+const PEEKS = [2.2, 11], PEEK_LEN = 1.6 // seconds after load the print twists to hint it can be spun, and how long it takes
 
 function paperTexture(base: string) {
   const c = document.createElement('canvas')
@@ -42,22 +43,30 @@ function paperTexture(base: string) {
   return t
 }
 
-// The date on the back in a Sharpie-style font (in Rock Salt a "/" reads like a "1")
-function useBackDate() {
-  const canvas = useMemo(() => { const c = document.createElement('canvas'); c.width = 1024; c.height = 256; return c }, [])
+// The back, written in pen like the back of a real print: when and where it was taken.
+// Drawn on a canvas the size of the whole back, in a ballpoint hand (Caveat) that stays readable
+const BACK_LINES = [
+  { text: TAKEN, size: 130, y: 0.42 },
+  { text: 'McAllen, Texas', size: 74, y: 0.53 },
+  { text: 'On tour with my band, Hearth', size: 74, y: 0.595 },
+]
+const BACK_CW = 1024, BACK_CH = Math.round(BACK_CW * H / W)
+function useBackNote() {
+  const canvas = useMemo(() => { const c = document.createElement('canvas'); c.width = BACK_CW; c.height = BACK_CH; return c }, [])
   const texture = useMemo(() => { const t = new THREE.CanvasTexture(canvas); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t }, [canvas])
   useEffect(() => {
-    const font = '120px "Permanent Marker"'
+    const fonts = BACK_LINES.map(l => `600 ${l.size}px "Caveat"`)
     let tries = 0
     const id = setInterval(() => {
-      document.fonts.load(font)
-      if (!document.fonts.check(font) && ++tries < 50) return
+      fonts.forEach(f => document.fonts.load(f))
+      if (!fonts.every(f => document.fonts.check(f)) && ++tries < 50) return
       clearInterval(id)
       const g = canvas.getContext('2d')!
-      g.clearRect(0, 0, 1024, 256)
-      g.save(); g.translate(512, 128); g.rotate(-0.06)
-      g.font = font; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = INK
-      g.fillText(TAKEN, 0, 0); g.restore()
+      g.clearRect(0, 0, BACK_CW, BACK_CH)
+      g.save(); g.translate(BACK_CW / 2, BACK_CH / 2); g.rotate(-0.05); g.translate(-BACK_CW / 2, -BACK_CH / 2)
+      g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = INK; g.globalAlpha = 0.9
+      BACK_LINES.forEach((l, i) => { g.font = fonts[i]; g.fillText(l.text, BACK_CW / 2, BACK_CH * l.y) })
+      g.restore()
       texture.needsUpdate = true
     }, 100)
     return () => clearInterval(id)
@@ -100,13 +109,13 @@ function useInk() {
 
 type Ink = ReturnType<typeof useInk>
 
-function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObject<HTMLElement | null>; mode: Mode; setMode: (m: Mode) => void; ink: Ink; onReady: () => void; onClosed: () => void }) {
+function Print({ slot, mode, setMode, ink, onReady, onClosed, onSpin }: { slot: RefObject<HTMLElement | null>; mode: Mode; setMode: (m: Mode) => void; ink: Ink; onReady: () => void; onClosed: () => void; onSpin?: () => void }) {
   const photo = useTexture('/about/hero-night.jpg')
   photo.colorSpace = THREE.SRGBColorSpace
   photo.anisotropy = 8
   const front = useMemo(() => paperTexture('#f2eee5'), [])
   const back = useMemo(() => paperTexture('#e6e1d6'), [])
-  const date = useBackDate()
+  const note = useBackNote()
 
   const place = useRef<THREE.Group>(null!) // where it sits on screen and how big
   const root = useRef<THREE.Group>(null!) // float and sway
@@ -122,7 +131,7 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObjec
     addEventListener('pointermove', m, { passive: true })
     return () => removeEventListener('pointermove', m)
   }, [])
-  const s = useRef({ yaw: 0, vel: 0, pitch: 0, dragging: false, moved: 0, lastX: 0, lastY: 0, lastT: 0, hover: false, tx: 0, ty: 0, open: 0 })
+  const s = useRef({ yaw: 0, vel: 0, pitch: 0, dragging: false, moved: 0, lastX: 0, lastY: 0, lastT: 0, hover: false, tx: 0, ty: 0, open: 0, spun: false })
 
   const onDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation()
@@ -140,6 +149,7 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObjec
       st.yaw += dx * k
       st.vel = st.vel * 0.4 + (dx * k / dt) * 0.6
       st.pitch = THREE.MathUtils.clamp(st.pitch + dy * k * 0.6, -0.6, 0.6)
+      if (!st.spun && st.moved > 5) { st.spun = true; onSpin?.() }
     }
     const up = () => {
       removeEventListener('pointermove', move); removeEventListener('pointerup', up)
@@ -214,7 +224,14 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObjec
     }
     st.tx += ((lean ? -py * 0.1 : 0) - st.tx) * ease(8)
     st.ty += ((lean ? px * 0.22 : 0) - st.ty) * ease(8)
-    spin.current.rotation.set(st.pitch + st.tx, st.yaw + st.ty, 0)
+    // Until someone spins it, it twists to one side and back now and then, hinting that it turns
+    // (twice: shortly after it appears, and once more a while later)
+    let peek = 0
+    if (!st.spun && !writing) for (const at of PEEKS) {
+      const p = (t - at) / PEEK_LEN
+      if (p > 0 && p < 1) peek = Math.sin(p * Math.PI * 2) * Math.sin(p * Math.PI) * 0.75
+    }
+    spin.current.rotation.set(st.pitch + st.tx, st.yaw + st.ty + peek, 0)
 
     // hovering settles it slightly lower rather than lifting it, so it never crowds the nav bar above
     const y = writing ? 0 : Math.sin(t * 1.1) * 0.012 - (st.hover || st.dragging ? 0.02 : 0)
@@ -252,9 +269,9 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObjec
             <planeGeometry args={[W - 0.004, H - 0.004]} />
             <meshStandardMaterial map={back} roughness={0.95} />
           </mesh>
-          <mesh position={[0, -0.02, -D / 2 - 0.0009]} rotation={[0, Math.PI, 0]}>
-            <planeGeometry args={[W * 0.8, W * 0.2]} />
-            <meshBasicMaterial map={date} transparent depthWrite={false} toneMapped={false} />
+          <mesh position={[0, 0, -D / 2 - 0.0009]} rotation={[0, Math.PI, 0]}>
+            <planeGeometry args={[W - 0.004, H - 0.004]} />
+            <meshBasicMaterial map={note} transparent depthWrite={false} toneMapped={false} />
           </mesh>
         </group>
       </group>
@@ -262,7 +279,7 @@ function Print({ slot, mode, setMode, ink, onReady, onClosed }: { slot: RefObjec
   )
 }
 
-export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElement | null>; onReady: () => void }) {
+export default function Polaroid3D({ slot, onReady, onSpin }: { slot: RefObject<HTMLElement | null>; onReady: () => void; onSpin?: () => void }) {
   const [mode, setMode] = useState<Mode>('rest')
   const ink = useInk()
   const writing = mode === 'write'
@@ -344,7 +361,7 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
             <Lightformer intensity={0.8} position={[-3, 0, 1]} rotation-y={Math.PI / 2} scale={[3, 2, 1]} />
             <Lightformer intensity={0.6} position={[3, -1, 1]} rotation-y={-Math.PI / 2} scale={[3, 2, 1]} />
           </Environment>
-          <Print slot={slot} mode={mode} setMode={open} ink={ink} onReady={onReady} onClosed={() => setFull(false)} />
+          <Print slot={slot} mode={mode} setMode={open} ink={ink} onReady={onReady} onClosed={() => setFull(false)} onSpin={onSpin} />
         </Canvas>
       </div>
       {writing && (

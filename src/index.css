@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Permanent+Marker&family=Rock+Salt&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Geist:wght@300..600&family=Rock+Salt&display=swap');
 
 
 /* Dark is the default theme (the script in index.html sets data-theme before first paint) */
@@ -133,7 +133,11 @@ ul { list-style: none; }
   rotate: -4deg; transform-origin: right bottom; pointer-events: none; transition: opacity .5s var(--ease);
 }
 .polaroid-hint svg { width: 26px; height: auto; margin-top: 6px; }
-.polaroid.is-written .polaroid-hint { opacity: 0; }
+.polaroid.is-written .polaroid-hint:not(.polaroid-hint-spin) { opacity: 0; }
+/* "spin me" sits under the print on the left, tilted the other way, with its arrow curling up to the card */
+.polaroid-hint-spin { right: auto; left: 4%; bottom: auto; top: calc(100% + 10px); align-items: flex-end; gap: 6px; rotate: 3deg; transform-origin: left top; }
+.polaroid-hint-spin svg { margin: 0 0 4px; }
+.polaroid-hint-spin.is-done { opacity: 0; }
 /* Thick paper border with the wide bottom edge, sized in % so it scales with the print */
 .polaroid-card {
   position: relative; display: block; padding: 6% 6% 24%;
