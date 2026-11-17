@@ -42,9 +42,12 @@ for (const [w, h] of [[390, 844], [375, 667], [360, 740], [430, 932], [820, 1180
   await wait(1500)
   const shot = async n => { if (!OUT) return; const r = await send('Page.captureScreenshot', { format: 'jpeg', quality: 70, clip: { x: 0, y: await ev('scrollY'), width: w, height: h, scale: 1 } }); writeFileSync(`${OUT}/${w}x${h}-${n}.jpg`, Buffer.from(r.data, 'base64')) }
   const issues = []
-  if (!await ev(`!!document.querySelector('.polaroid.is-ghost')`)) issues.push('3D not active')
   if (await ev('document.documentElement.scrollWidth') > w) issues.push('sideways scroll')
   await ev(`document.querySelector('.polaroid-card').scrollIntoView({ block: 'center' })`); await wait(500)
+  // (checked once it's on screen: on a small phone the photo starts below the fold, and the 3D print doesn't draw,
+  // or take over from the flat one, until it's about to scroll into view)
+  for (let i = 0; i < 40 && !await ev(`!!document.querySelector('.polaroid.is-ghost')`); i++) await wait(250)
+  if (!await ev(`!!document.querySelector('.polaroid.is-ghost')`)) issues.push('3D not active')
   let card = await rect('.polaroid-card'); const nav = await rect('.p3d-nav')
   if (nav && (nav[0] < 0 || nav[2] > w)) issues.push('arrows off screen')
   await shot('1-rest')
