@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Feedback-loop reports (visitor numbers; the repo is public)
+reviews
