@@ -32,16 +32,16 @@ const note = (date: string, ...lines: string[]): Line[] => [
   { text: date, size: 96, y: 0.43, weight: 700 },
   ...lines.map((text, i) => ({ text, size: 50, y: 0.525 + i * 0.053, weight: 700 })),
 ]
-const PRINTS: { src: string; back?: Line[] }[] = [
-  { src: '/about/hero-night.jpg', back: note('10/24/2026', 'McAllen, Texas', 'On tour with my band, Hearth') },
+const PRINTS: { src: string; alt: string; back?: Line[] }[] = [
+  { src: '/about/hero-night.jpg', alt: "Christopher on a street at night, lit by a camera flash", back: note('10/24/2026', 'McAllen, Texas', 'On tour with my band, Hearth') },
   // Film scans, cropped square for the print's window
-  { src: '/about/film/pizza.jpg', back: note('10/25/2026', 'Joel & Kaden', 'Shredders Pizza', 'Houston, Texas') },
-  { src: '/about/film/show-floor.jpg', back: note('10/25/2026', 'Playing our show in the', 'pizzeria at Shredders') },
-  { src: '/about/film/guitars-up.jpg', back: note('10/25/2026', 'More photos from Shredders') },
-  { src: '/about/film/crew.jpg', back: note('10/25/2026', 'SUGAR x HEARTH', 'The band we toured with') },
-  { src: '/about/film/driveway.jpg', back: note('10/23/2026', 'Me and my homie Alex') },
-  { src: '/about/film/parking-lot.jpg', back: note('10/22/2026', 'My beautiful girlfriend') },
-  { src: '/about/film/sun-flare.jpg', back: note('10/23/2026', 'Band tour kickoff road trip') },
+  { src: '/about/film/pizza.jpg', alt: "Joel and Kaden eating pizza at a yellow table", back: note('10/25/2026', 'Joel & Kaden', 'Shredders Pizza', 'Houston, Texas') },
+  { src: '/about/film/show-floor.jpg', alt: "The band playing on the floor of the pizzeria with the crowd behind", back: note('10/25/2026', 'Playing our show in the', 'pizzeria at Shredders') },
+  { src: '/about/film/guitars-up.jpg', alt: "A guitar and a bass held up over the crowd", back: note('10/25/2026', 'More photos from Shredders') },
+  { src: '/about/film/crew.jpg', alt: "Sugar and Hearth together outside at night", back: note('10/25/2026', 'SUGAR x HEARTH', 'The band we toured with') },
+  { src: '/about/film/driveway.jpg', alt: "Christopher and Alex standing in a driveway", back: note('10/23/2026', 'Me and my homie Alex') },
+  { src: '/about/film/parking-lot.jpg', alt: "Christopher's girlfriend in a parking lot at night", back: note('10/22/2026', 'My beautiful girlfriend') },
+  { src: '/about/film/sun-flare.jpg', alt: "Four of the band walking in low sun", back: note('10/23/2026', 'Band tour kickoff road trip') },
 ]
 
 // Stamps you can stick anywhere on the front of a print while it's open, FigJam style. Emoji for now; to add custom
@@ -50,6 +50,7 @@ const STAMPS = ['❤️', '🔥', '⭐', '👍', '😎', '🤘', '🎸', '🍕',
 const STK_CW = 1536, STK_CH = Math.round(STK_CW * H / W) // the sticker layer: a canvas over the whole front
 const STAMP_PX = 208 // a sticker's size on that canvas
 
+const ROLL_TILT = [-2.5, 1.5, -1, 2.5, 1, -2, 2, -1.5] // each print in the all-photos grid sits a little crooked
 const SLIDE = 0.7 // seconds for one print to slide out and the next to slide in
 
 type Mode = 'rest' | 'write'
@@ -216,6 +217,14 @@ function createInk() {
       g.restore()
       stickers.needsUpdate = true
     },
+    // Copy this print's marks (writing on the border, stickers anywhere) onto a small canvas laid over a flat
+    // picture of the print, w x h, as the all-photos grid shows them
+    paint(g: CanvasRenderingContext2D, w: number, h: number) {
+      g.clearRect(0, 0, w, h)
+      const iw = INK_W / W * w, ih = INK_H / H * h
+      g.drawImage(canvas, (w - iw) / 2, (0.5 - STRIP_Y / H) * h - ih / 2, iw, ih)
+      if (stickerCanvas.width > 1) g.drawImage(stickerCanvas, 0, 0, w, h)
+    },
     clear() {
       canvas.getContext('2d')!.clearRect(0, 0, INK_CW, INK_CH); texture.needsUpdate = true
       stickerCanvas.getContext('2d')!.clearRect(0, 0, stickerCanvas.width, stickerCanvas.height); stickers.needsUpdate = true
@@ -273,6 +282,7 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
     // on it counts for the new one. Any other print isn't showing at all
     const i = cur.current
     if (hit !== i && hit !== slide.current?.from) return
+    if ((e.nativeEvent.target as Element | null)?.closest?.('.p3d-roll')) return // the all-photos grid is open over it
     e.stopPropagation()
     if (writing) return
     if (slide.current) slide.current.p = 1 // still arriving: it lands now, so the click or drag isn't swallowed
@@ -487,6 +497,21 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
   const [index, setIndex] = useState(0) // which photo is showing
   const dir = useRef(1) // which arrow was pressed last: 1 next, -1 previous
   const go = (d: number) => { dir.current = d; setIndex(i => (i + d + PRINTS.length) % PRINTS.length) }
+  // The film roll under the print opens every photo at once, as a grid of prints over the page; picking one
+  // closes it and brings that print up
+  const [roll, setRoll] = useState(false)
+  // Each print in the grid has a small canvas over it carrying that print's writing and stickers, copied across
+  // every time the grid opens
+  const marks = useRef<(HTMLCanvasElement | null)[]>([])
+  useEffect(() => {
+    if (!roll) return
+    marks.current.forEach((c, i) => {
+      if (!c) return
+      c.width = 520; c.height = Math.round(520 * H / W)
+      inks[i].paint(c.getContext('2d')!, c.width, c.height)
+    })
+  }, [roll, inks])
+  const pick = (i: number) => { setRoll(false); if (i !== index) { dir.current = i > index ? 1 : -1; setIndex(i) } }
   const ink = inks[index]
   // What a press on the open print's border does: null = write with the pen, otherwise stick that stamp down
   const [tool, setTool] = useState<string | null>(null)
@@ -521,15 +546,15 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
     return () => { ro.disconnect(); removeEventListener('resize', measure) }
   }, [slot])
 
-  // While writing: Esc closes, and the page behind can't scroll
+  // While a print or the grid is open: Esc closes it, and the page behind can't scroll
   useEffect(() => {
-    if (!writing) return
-    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    if (!writing && !roll) return
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') { if (roll) setRoll(false); else close() } }
     const html = document.documentElement, prev = html.style.overflow
     html.style.overflow = 'hidden'
     addEventListener('keydown', key)
     return () => { removeEventListener('keydown', key); html.style.overflow = prev }
-  }, [writing, close])
+  }, [writing, roll, close])
 
   // Only draw while the hero is on screen (or while writing), so it costs nothing further down the page
   const [visible, setVisible] = useState(true)
@@ -584,12 +609,23 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
           <Prints slot={slot} mode={mode} setMode={open} inks={inks} index={index} dir={dir} stamp={stamp} onReady={onReady} onClosed={() => setFull(false)} />
         </Canvas>
       </div>
-      {/* Under the print: hand-drawn arrows to the previous / next photo (which one it is, is only read out to screen readers) */}
+      {/* Under the print: hand-drawn arrows to the previous / next photo, with a roll of film between them that opens all of them (which photo is showing is only read out to screen readers) */}
       {PRINTS.length > 1 && (
         <div className="p3d-nav" style={nav}>
           <button type="button" aria-label="Previous photo" onClick={() => go(-1)}>
             <svg viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M31 11c-8-2-17-2-27-1" /><path d="M11 4c-3 2-5 4-7 6 3 2 5 3 8 6" />
+            </svg>
+          </button>
+          {/* between the arrows: a strip of film that opens every photo at once */}
+          <button type="button" className="p3d-nav-roll" aria-label="See all the photos" aria-haspopup="dialog" onClick={() => setRoll(true)}>
+<svg viewBox="0 0 40 34" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              {/* The film-strip icon Christopher picked, redrawn by hand to sit with the arrows: the lines overshoot
+                  their corners and wobble. Frame, the two bands, the divider between frames, the sprocket holes */}
+              <path d="M4.900 6.300c10-.800 20.100-.700 30.100.200M34.500 5.600c.700 7.500.600 15.100-.300 22.600M35.100 27.900c-10 .800-20 .800-30-.100M5.600 28.700c-.800-7.600-.800-15.300.100-22.900" />
+              <path d="M5.500 11.400c9.700-.600 19.400-.500 29.100.300M5.300 22.900c9.800.600 19.500.600 29.200-.200" />
+              <path d="M20.100 11.500c-.400 3.800-.300 7.600.200 11.400" />
+              <path d="M12.500 6.400l.100 4.700M20 6.200l.200 4.900M27.600 6.400l-.100 4.900M12.600 23.200l-.100 4.700M20.200 23.300l.100 4.800M27.700 23.100l.100 4.800" />
             </svg>
           </button>
           <span className="p3d-sr" aria-live="polite">Photo {index + 1} of {PRINTS.length}</span>
@@ -600,6 +636,20 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
           </button>
         </div>
       )}
+      {/* Every photo at once: a grid of prints over the whole page. Picking one brings that print up in the hero */}
+      <div className={`p3d-roll${roll ? ' is-open' : ''}`} inert={!roll} role="dialog" aria-modal="true" aria-label="All the photos" onClick={() => setRoll(false)}>
+        <ul>
+          {PRINTS.map((p, i) => (
+            <li key={p.src} style={{ '--i': i, '--tilt': `${ROLL_TILT[i % ROLL_TILT.length]}deg` } as CSSProperties}>
+              <button type="button" aria-label={`${p.alt}. Show this photo`} aria-current={i === index || undefined} onClick={e => { e.stopPropagation(); pick(i) }}>
+                <span><img src={p.src} alt="" loading="lazy" decoding="async" draggable={false} /></span>
+                <canvas ref={c => { marks.current[i] = c }} aria-hidden />
+              </button>
+            </li>
+          ))}
+        </ul>
+        <button type="button" className="p3d-roll-close" onClick={() => setRoll(false)}>Close</button>
+      </div>
       {/* Open: tools down the left of the print (the pen, then stamps to stick on the border) and the Clear / Done bar
           under it. Both stay in the page and slide in and out with the print, instead of popping */}
       {(

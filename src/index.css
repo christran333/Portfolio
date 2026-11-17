@@ -886,16 +886,19 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
    when the photo is the last thing in the hero (narrow windows), they'd sit on top of the work below */
 .polaroid.has-nav { margin-bottom: 76px; }
 .p3d-nav {
-  position: absolute; z-index: 16; display: flex; align-items: center; justify-content: center; gap: 28px;
+  position: absolute; z-index: 16; display: flex; align-items: center; justify-content: center; gap: 10px;
   font: 700 17px/1 'Daniel', 'Marker Felt', cursive; color: var(--muted); animation: zoom-in .6s var(--ease);
   user-select: none; -webkit-user-select: none;
 }
 .p3d-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.p3d-nav .p3d-nav-roll { width: 66px; }
+.p3d-nav .p3d-nav-roll svg { width: 44px; rotate: -4deg; transition: rotate .3s var(--ease), scale .3s var(--ease); }
+.p3d-nav .p3d-nav-roll:hover svg { rotate: 4deg; scale: 1.08; }
 .p3d-nav button { display: grid; place-items: center; width: 68px; height: 48px; color: var(--muted); border-radius: 8px; transition: color .2s, translate .25s var(--ease); }
 .p3d-nav button svg { width: 48px; height: auto; }
 .p3d-nav button:hover { color: var(--fg); }
-.p3d-nav button:first-child:hover { translate: -4px 0; }
-.p3d-nav button:last-child:hover { translate: 4px 0; }
+.p3d-nav button:first-of-type:hover { translate: -4px 0; }
+.p3d-nav button:last-of-type:hover { translate: 4px 0; }
 .p3d-nav button:active { scale: .94; }
 .p3d-nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .p3d-backdrop { position: fixed; inset: 0; z-index: 60; background: rgb(10 10 10 / .82); opacity: 0; pointer-events: none; transition: opacity .45s var(--ease); }
@@ -917,6 +920,51 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
   opacity: 1; visibility: visible; pointer-events: auto; translate: 0 0;
   transition: opacity .35s var(--ease) .18s, translate .5s var(--ease) .18s, visibility 0s;
 }
+/* Every photo at once (opened by the roll of film under the print): a dark sheet over the page with the prints laid
+   out in a grid, each a little crooked. They drop in one after another; picking one closes it */
+.p3d-roll {
+  position: fixed; inset: 0; z-index: 70; overflow-y: auto; overscroll-behavior: contain;
+  display: grid; place-items: center; padding: clamp(64px, 9vh, 96px) clamp(20px, 5vw, 72px) clamp(84px, 12vh, 120px);
+  background: rgb(10 10 10 / .9); backdrop-filter: blur(6px);
+  opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .3s var(--ease), visibility 0s .3s;
+}
+.p3d-roll.is-open { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity .4s var(--ease), visibility 0s; }
+.p3d-roll ul {
+  list-style: none; margin: 0; padding: 0; width: 100%; max-width: 1080px;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(18px, 3vw, 40px);
+}
+.p3d-roll li { opacity: 0; translate: 0 26px; scale: .94; rotate: 0deg; transition: opacity .2s, translate .2s, scale .2s, rotate .2s; }
+.p3d-roll.is-open li {
+  opacity: 1; translate: 0 0; scale: 1; rotate: var(--tilt);
+  transition: opacity .45s var(--ease), translate .6s var(--ease), scale .6s var(--ease), rotate .6s var(--ease);
+  transition-delay: calc(.08s + var(--i) * .045s);
+}
+/* each one is a print with the same proportions as the 3D one in the hero (88 x 107, a 79 square picture), so the
+   canvas laid over it, carrying that print's writing and stickers, lines up exactly */
+.p3d-roll li button {
+  position: relative; display: block; width: 100%; padding: 5.11% 5.11% 26.7%; background: #f1eee6; border-radius: 2px; cursor: pointer;
+  box-shadow: 0 1px 1px rgb(0 0 0 / .2), 0 14px 34px -12px rgb(0 0 0 / .7);
+  transition: translate .3s var(--ease), scale .3s var(--ease), rotate .3s var(--ease), box-shadow .3s var(--ease);
+}
+.p3d-roll li button span { display: block; aspect-ratio: 1; overflow: hidden; background: #1a1714; }
+.p3d-roll li img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.p3d-roll li canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.p3d-roll li button[aria-current] { outline: 2px solid rgb(255 255 255 / .55); outline-offset: 5px; }
+.p3d-roll li button:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+@media (hover: hover) and (pointer: fine) {
+  .p3d-roll li button:hover { translate: 0 -8px; scale: 1.04; rotate: calc(var(--tilt) * -.6); box-shadow: 0 2px 4px rgb(0 0 0 / .2), 0 30px 50px -16px rgb(0 0 0 / .8); }
+}
+.p3d-roll-close {
+  position: fixed; left: 50%; bottom: 28px; translate: -50% 0; border-radius: 999px; padding: 10px 18px;
+  background: #f2eee5; color: #1d1a18; font: 500 14px/1 var(--sans);
+}
+.p3d-roll-close:hover { filter: brightness(1.08); }
+@media (max-width: 900px) { .p3d-roll ul { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 720px; } }
+@media (max-width: 620px) { .p3d-roll ul { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 420px; } }
+/* in a short window, four across at full size would run off the bottom: keep them small enough to see all at once */
+@media (min-width: 901px) and (max-height: 760px) { .p3d-roll ul { max-width: calc((100vh - 200px) * 1.55); } }
+@media (prefers-reduced-motion: reduce) { .p3d-roll li, .p3d-roll.is-open li { transition: opacity .2s; translate: none; scale: 1; } }
+
 /* Tools down the left of the open print: the pen, then stamps. The open print is 80vh tall and centred, so its
    left edge is 32.9vh left of the middle; the bar sits just outside that (and never off the window on narrow ones) */
 .p3d-tools {
