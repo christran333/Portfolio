@@ -875,7 +875,7 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
    it still works; the print inside lines up with the flat Polaroid's spot in the hero. While writing, the canvas
    lifts above the nav with a dim backdrop behind it */
 .polaroid.is-ghost .polaroid-card { visibility: hidden; }
-.polaroid.is-ghost { cursor: pointer; }
+.polaroid.is-ghost { cursor: pointer; touch-action: pan-y; } /* by touch: sideways drags spin the print, up and down still scrolls the page */
 .p3d-stage { z-index: 15; pointer-events: none; } /* at rest: an absolute box in the page (set inline) */
 /* The canvas always fills the stage straight away. Left alone it keeps its old pixel size (pinned top-left) for a
    few frames after the stage switches between the box and the whole window, which cut the print off as it opened */
@@ -893,16 +893,18 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .p3d-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .p3d-nav .p3d-nav-roll { width: 66px; }
 .p3d-nav .p3d-nav-roll svg { width: 44px; rotate: -4deg; transition: rotate .3s var(--ease), scale .3s var(--ease); }
-.p3d-nav .p3d-nav-roll:hover svg { rotate: 4deg; scale: 1.08; }
+@media (hover: hover) and (pointer: fine) { .p3d-nav .p3d-nav-roll:hover svg { rotate: 4deg; scale: 1.08; } }
 .p3d-nav button { display: grid; place-items: center; width: 68px; height: 48px; color: var(--muted); border-radius: 8px; transition: color .2s, translate .25s var(--ease); }
 .p3d-nav button svg { width: 48px; height: auto; }
-.p3d-nav button:hover { color: var(--fg); }
-.p3d-nav button:first-of-type:hover { translate: -4px 0; }
-.p3d-nav button:last-of-type:hover { translate: 4px 0; }
+@media (hover: hover) and (pointer: fine) {
+  .p3d-nav button:hover { color: var(--fg); }
+  .p3d-nav button:first-of-type:hover { translate: -4px 0; }
+  .p3d-nav button:last-of-type:hover { translate: 4px 0; }
+}
 .p3d-nav button:active { scale: .94; }
 .p3d-nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .p3d-backdrop { position: fixed; inset: 0; z-index: 60; background: rgb(10 10 10 / .82); opacity: 0; pointer-events: none; transition: opacity .45s var(--ease); }
-.p3d-backdrop.is-open { opacity: 1; pointer-events: auto; }
+.p3d-backdrop.is-open { opacity: 1; pointer-events: auto; touch-action: none; } /* a finger on the open print draws; it doesn't scroll or zoom the page */
 .p3d-hud {
   position: fixed; left: 50%; bottom: 28px; z-index: 62; transform: translateX(-50%); display: flex; align-items: center; gap: 12px;
   padding: 8px 8px 8px 18px; border-radius: 999px; background: rgb(28 28 27 / .85); backdrop-filter: blur(8px);
@@ -979,8 +981,11 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 }
 .p3d-tools button svg { width: 20px; height: 20px; }
 .p3d-tools button span { display: block; transition: scale .2s var(--ease), rotate .2s var(--ease); }
-.p3d-tools button:hover { background: rgb(255 255 255 / .08); }
-.p3d-tools button:hover span { scale: 1.2; rotate: -8deg; }
+@media (hover: hover) and (pointer: fine) {
+  .p3d-tools button:hover { background: rgb(255 255 255 / .08); }
+  .p3d-tools button:hover span { scale: 1.2; rotate: -8deg; }
+  .p3d-tools button.is-on:hover { background: #f2eee5; }
+}
 .p3d-tools button.is-on { background: #f2eee5; color: #1d1a18; }
 .p3d-tools button:active { scale: .92; }
 .p3d-tools button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
@@ -988,3 +993,14 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .p3d-hud button { border-radius: 999px; padding: 8px 14px; background: #f2eee5; color: #1d1a18; font: 500 14px/1 var(--sans); }
 .p3d-hud button.is-ghost { background: transparent; color: var(--text); border: 1px solid rgb(255 255 255 / .2); }
 .p3d-hud button:hover { filter: brightness(1.08); }
+/* Phone-width screens (the same 640px switch as PHONE in Polaroid3D.tsx): the open print fills the width and sits
+   higher, so the tools become a row under it that scrolls sideways, with the Clear / Done bar under that */
+@media (max-width: 640px) {
+  .p3d-tools {
+    top: auto; bottom: calc(74px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
+    flex-direction: row; max-width: calc(100vw - 20px); max-height: none; overflow: auto hidden;
+  }
+  .p3d-tools:not(.is-open) { translate: 0 14px; } /* closed: tucked down a little (it slides up as it opens) */
+  .p3d-tools-rule { width: 1px; height: 22px; margin: 0 5px; }
+  .p3d-hud { bottom: calc(14px + env(safe-area-inset-bottom)); }
+}

@@ -8,8 +8,9 @@ You run the feedback loop for Christopher Tran's portfolio (Vite + React, live a
 
 ## 1. Test the live site
 Run these from the repo root and keep the output:
-- `node scripts/check-site.mjs https://christophertran.xyz` : JavaScript errors, sideways scroll at phone / tablet / laptop / desktop, every work card opens on a phone, 3D Polaroid on desktop and the flat one on phones.
+- `node scripts/check-site.mjs https://christophertran.xyz` : JavaScript errors, sideways scroll at phone / tablet / laptop / desktop, every work card opens on a phone, 3D Polaroid on desktop and on phones.
 - `node scripts/check-hero.mjs https://christophertran.xyz reviews/shots` : the hero Polaroid, its arrows, the film-strip grid, and the open print with its tools, at eight window sizes. Screenshots land in reviews/shots; look at a few of them (Read shows images) rather than trusting the PASS lines alone.
+- `node scripts/check-touch.mjs https://christophertran.xyz reviews/shots` : the same hero by touch on four phone sizes and a tablet (scrolling past it, spinning it, opening it, drawing, stamps, the grid).
 - Walk the pages people actually visit (see the analytics below) in headless Chrome at 390px and 1440px: the home page, /info, /exploration, and the two or three most-visited case studies. `scripts/check-site.mjs` shows how to drive Chrome over the DevTools protocol. Look for: anything cut off or overlapping, broken or slow images and video, dead links, text that's hard to read, things that look clickable but aren't.
 - Check the addresses people land on that aren't real pages (analytics will show paths like /projects, /contact, /cosign, /backtrack). For each, fetch it and say whether it shows something useful, redirects, or is a dead end.
 A failing check is finding number one. Quote the failing line.
@@ -19,7 +20,7 @@ A failing check is finding number one. Quote the failing line.
 
 Look for sticking points, and always tie a number to something on the site:
 - **Drop-off**: what share of home-page visitors open any case study at all? Which case studies get opened and which almost never do? Look at where the ignored ones sit on the home page, their cover, and their title.
-- **Phones**: the share of visitors on phones against what phones actually get (for example, the hero Polaroid is flat on phones: no other photos, no arrows, no stickers). A big phone share plus a thinner phone experience is a finding.
+- **Phones**: the share of visitors on phones against what phones actually get, and how far down the first piece of work is on a phone. A big phone share plus a thinner or slower phone experience is a finding.
 - **Where people come from**: LinkedIn and direct visits are mostly recruiters and people he sent the link to. Is the first screen doing its job for them?
 - **Dead ends**: visits to addresses that don't exist.
 - **Change since last time**: what went up or down, and whether it lines up with something he shipped (read `git log --since="14 days ago" --oneline`).

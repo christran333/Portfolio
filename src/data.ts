@@ -5,7 +5,7 @@ export const profile = {
   location: 'Dallas, TX',
   email: 'christophertran2005@gmail.com',
   resume: 'https://drive.google.com/file/d/1HsIvZXTdCg23kK9ESxY5pnEG8CAijosg/view?usp=sharing',
-  status: 'Open to full-time roles after I graduate in December 2027.',
+  status: 'Open to Summer 2027 internships and full-time roles after I graduate in December 2027.',
   // The About page's intro: the personal side (the home hero covers the work side)
   aboutIntro: [
     "I grew up surrounded by creativity. My older brothers introduced me to music when I was very young, and some of my earliest memories are of dancing for as long as my little legs could handle. From there I grew up playing music, drawing, and making my own little YouTube videos, and that creative spark never dulled. When my oldest brother introduced me to design, my worlds collided: my love for computers and technology blended with art and creativity. I saw the beauty in creating polished work that could impact billions of people, and that’s what made me want to work in tech.",

@@ -5,12 +5,13 @@ import { imgAt, linkProps, profile, projects, type Project } from '../data'
 import { caseStudies } from '../caseStudies'
 import Peek from './Peek'
 import Polaroid from './Polaroid'
-// The 3D Polaroid only loads on desktops with a mouse, WebGL, and motion allowed; everyone else keeps the flat one.
+// The 3D Polaroid loads wherever there's WebGL and motion is allowed, phones and tablets included (it works by touch);
+// everyone else keeps the flat one.
 // It's a separate download, fetched after the page is up, so it never slows the first paint
 const Polaroid3D = lazy(() => import('./Polaroid3D'))
 const can3D = (() => {
   if (typeof window === 'undefined') return false
-  if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return false
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return false
   try { return !!document.createElement('canvas').getContext('webgl2') } catch { return false }
 })()
 

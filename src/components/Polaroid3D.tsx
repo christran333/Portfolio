@@ -13,7 +13,9 @@ import { Environment, Lightformer, RoundedBox, useTexture } from '@react-three/d
 //   Done, Esc, or clicking off it puts it back, with your writing still on it.
 // - The arrows under it go to the next / previous photo: the one showing slides off to the side turning edge-on, and the
 //   new one comes round from the other side. One print is on screen at a time; each keeps its own writing.
-// Only loaded on desktops (see Work.tsx); phones and reduced motion keep the flat version.
+// Phones and tablets get it too, by touch: drag sideways to spin (up and down still scrolls the page), tap to open,
+// write with a finger. On a narrow screen the open print sits higher with the tools in a row under it.
+// Loaded wherever there's WebGL and motion is allowed (see Work.tsx); everyone else keeps the flat version.
 
 // Real instant-film proportions (88 x 107 mm print, 79 x 79 mm picture), in scene units of 10 cm
 const W = 0.88, H = 1.07, D = 0.014
@@ -51,6 +53,8 @@ const STK_CW = 1536, STK_CH = Math.round(STK_CW * H / W) // the sticker layer: a
 const STAMP_PX = 208 // a sticker's size on that canvas
 
 const ROLL_TILT = [-2.5, 1.5, -1, 2.5, 1, -2, 2, -1.5] // each print in the all-photos grid sits a little crooked
+const TOUCH = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches
+const PHONE = 640 // px: at this window width and under, the open print uses the phone layout
 const SLIDE = 0.7 // seconds for one print to slide out and the next to slide in
 
 type Mode = 'rest' | 'write'
@@ -259,7 +263,8 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
 
   const mouse = useRef({ x: -1e4, y: -1e4 })
   useEffect(() => {
-    const m = (e: PointerEvent) => { mouse.current.x = e.clientX; mouse.current.y = e.clientY }
+    // only a mouse hovers: a finger's last position would otherwise leave the print "hovered" (leaning, never idle)
+    const m = (e: PointerEvent) => { if (e.pointerType === 'mouse') { mouse.current.x = e.clientX; mouse.current.y = e.clientY } }
     addEventListener('pointermove', m, { passive: true })
     return () => removeEventListener('pointermove', m)
   }, [])
@@ -296,21 +301,26 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
       const now = performance.now(), dt = Math.max(8, now - st.lastT) / 1000
       st.lastX = ev.clientX; st.lastY = ev.clientY; st.lastT = now
       st.moved += Math.abs(dx) + Math.abs(dy)
-      const k = 6 / Math.max(900, size.width)
+      const k = 6 / Math.max(420, size.width) // a drag across most of the window is one full turn; on a phone, a thumb's sweep is half a turn
       c.yaw += dx * k
       c.vel = c.vel * 0.4 + (dx * k / dt) * 0.6
       c.pitch = THREE.MathUtils.clamp(c.pitch + dy * k * 0.6, -0.6, 0.6)
       if (!st.spun && st.moved > 5) st.spun = true // spun once: no more twist hints
     }
+    const touch = e.nativeEvent.pointerType !== 'mouse'
+    const done = () => { removeEventListener('pointermove', move); removeEventListener('pointerup', up); removeEventListener('pointercancel', cancel) }
     const up = () => {
-      removeEventListener('pointermove', move); removeEventListener('pointerup', up)
+      done()
       if (!st.dragging) return // the photo was changed mid-drag
       st.dragging = false
       if (performance.now() - st.lastT > 80) c.vel = 0
       c.vel = THREE.MathUtils.clamp(c.vel, -18, 18)
-      if (st.moved < 5) { c.vel = 0; setMode('write') }
+      if (st.moved < (touch ? 12 : 5)) { c.vel = 0; setMode('write') } // a tap (a finger is never perfectly still)
     }
-    addEventListener('pointermove', move); addEventListener('pointerup', up)
+    // On a touch screen, a drag that turns out to be up-and-down is taken over by the browser to scroll the page
+    // (the photo's slot allows that: touch-action pan-y). The press ends there: no spin, and it's not a tap
+    const cancel = () => { done(); st.dragging = false; c.vel = 0 }
+    addEventListener('pointermove', move); addEventListener('pointerup', up); addEventListener('pointercancel', cancel)
   }
 
   // Presses on the open print land on one sheet over its whole front. With a stamp picked, a press anywhere
@@ -328,8 +338,8 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
     const p = toInk(e)
     if (!p || p[0] < 0 || p[0] > INK_CW || p[1] < 0 || p[1] > INK_CH) return
     inks[i].start(p[0], p[1])
-    const up = () => { inks[i].end(); removeEventListener('pointerup', up) }
-    addEventListener('pointerup', up)
+    const up = () => { inks[i].end(); removeEventListener('pointerup', up); removeEventListener('pointercancel', up) }
+    addEventListener('pointerup', up); addEventListener('pointercancel', up)
   }
   const frontMove = (i: number, e: ThreeEvent<PointerEvent>) => {
     if (!writing || !inks[i].drawing()) return
@@ -359,8 +369,13 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
       restY = -(r.top + r.height / 2 - (cr.top + cr.height / 2))
       restPx = Math.min(r.height / H, r.width / W)
     }
-    // open: 80% of the window's height, or less in a narrow window, where it leaves room beside it for the tools
-    const bigPx = Math.min((cr.height * 0.8) / H, Math.max(120, cr.width - 200) / W)
+    // Open: 80% of the window's height, or less in a narrow window, where it leaves room beside it for the tools.
+    // On a phone-width screen (PHONE and under) there's no room beside it at all: it fills the width, sits higher,
+    // and the tools go in a row under it (the CSS does the same switch at the same width)
+    const phone = cr.width <= PHONE
+    // (the phone numbers: 140px at the bottom is the tools row plus the Clear / Done bar; the print gets the rest)
+    const bigPx = phone ? Math.min((cr.height - 176) / H, (cr.width - 28) / W) : Math.min((cr.height * 0.8) / H, Math.max(120, cr.width - 200) / W)
+    const lift = phone ? 62 / cr.height : 0.035 // how far above the middle of the window the open print sits
     // Opening and closing ride one spring (a soft start, a quick middle, and it settles without a bounce), and
     // everything else about the move hangs off it: where the print is, how big, and how much of its resting
     // float, sway and lean are left. So it reads as one motion instead of several things easing separately
@@ -369,7 +384,7 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
     st.open += st.openV * step
     const o = st.open
     const px2 = restPx * Math.pow(bigPx / restPx, o) // grows by proportion, so the size change looks even throughout
-    place.current.position.set(restX * (1 - o) * ux, (restY * (1 - o) + cr.height * 0.035 * o) * uy, 0)
+    place.current.position.set(restX * (1 - o) * ux, (restY * (1 - o) + cr.height * lift * o) * uy, 0)
     place.current.scale.set(px2 * ux, px2 * uy, px2 * uy)
 
     // Lean toward the cursor, measured from the card's own centre. "Hovering" is judged against the flat card's
@@ -669,7 +684,7 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
       )}
       {(
         <div className={`p3d-hud${writing ? ' is-open' : ''}`} inert={!writing} role="dialog" aria-label="Write on the Polaroid">
-          <span>{tool ? 'Click anywhere on it to stick it down' : 'Write on the bottom with your cursor'}</span>
+          <span>{tool ? (TOUCH ? 'Tap it to stick it down' : 'Click anywhere on it to stick it down') : (TOUCH ? 'Draw on the bottom' : 'Write on the bottom with your cursor')}</span>
           <button type="button" className="is-ghost" onClick={ink.clear}>Clear</button>
           <button type="button" onClick={close}>Done</button>
         </div>

@@ -4,7 +4,7 @@
 //   1. no JavaScript errors on the home page, a case study, About, and Exploration
 //   2. no sideways scrolling at phone, tablet, laptop, and desktop widths
 //   3. on a phone, every work card opens something when tapped (cover and name)
-//   4. on a desktop, the 3D Polaroid loads; on a phone, the flat one is used instead
+//   4. the 3D Polaroid loads on a desktop and on a phone
 // Prints a pass/fail line per check and exits 1 if anything failed, so scripts and agents can rely on it.
 import { spawn } from 'node:child_process'
 import { mkdtempSync, rmSync } from 'node:fs'
@@ -100,9 +100,11 @@ try {
     check(`phone tap opens "${name}"`, ok, ok ? '' : `cover ${cover ? 'ok' : 'dead'}, name ${label ? 'ok' : 'dead'}`)
   }
 
-  // 4b. flat Polaroid on a phone
+  // 4b. the 3D Polaroid on a phone too (it works by touch), with its arrows under it and nothing wider than the screen
   await open('/', 390, 844, true)
-  check('flat Polaroid on phone (no 3D)', await ev(`!document.querySelector('.p3d-stage') && getComputedStyle(document.querySelector('.polaroid-card')).visibility === 'visible'`))
+  await wait(2500)
+  if (env?.webgl2) check('3D Polaroid loads on a phone', await ev(`!!document.querySelector('.p3d-stage canvas') && !!document.querySelector('.polaroid.is-ghost') && (() => { const r = document.querySelector('.p3d-nav').getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth })()`))
+  else console.log('SKIP  3D Polaroid loads on a phone  (this test browser has no 3D)')
 } catch (e) {
   check('site check ran', false, e.message)
 } finally {
