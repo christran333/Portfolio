@@ -902,7 +902,6 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .timeline-role { font-weight: 500; }
 .intro-para, .info-text { font-weight: 350; color: var(--text); }
 .intro-para a, .info-text a { color: var(--fg); }
-.intro-name { color: var(--fg); } /* a name that's white like the links, but not a link (nothing to hover) */
 .tile-summary { font: 350 16px/1.55 var(--sans); color: var(--text); max-width: none; margin-top: 6px; }
 .timeline-project { font-weight: 350; }
 .intro-status, .tile-tags, .tile-meta, .tile-visit, .timeline-when, .label { font-weight: 350; }

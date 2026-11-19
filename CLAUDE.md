@@ -12,7 +12,7 @@ Vite + React 19 + TypeScript, deployed by Vercel from `main` to christophertran.
 
 ## Content rules
 - Never invent facts about Christopher's work, roles, dates, or results. Ask.
-- Mesa: no link to Mesa's site until the rebrand ships; no funding, valuation, or unreleased product details.
+- Mesa: links to its X (x.com/mesaenergyai), not its site, until the rebrand ships; no funding, valuation, or unreleased product details.
 - Case studies follow Ben's story-first structure (statement section titles, "Did it work?", "What I'd tell another designer").
 
 ## Design system
