@@ -20,6 +20,14 @@
     <script>
       document.documentElement.dataset.theme = 'dark'
     </script>
+    <!-- Dark from the very first frame, before the stylesheet arrives (same color as --bg), so loading never flashes white -->
+    <meta name="theme-color" content="#171717" />
+    <!-- Fonts linked here (not @imported from the stylesheet), so they start downloading with the page instead of
+         after the script and the stylesheet, and are usually in before the hero animates -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Rock+Salt&display=swap" />
+    <style>html { background: #171717; color-scheme: dark; }</style>
   </head>
   <body>
     <div id="root"></div>

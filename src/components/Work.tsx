@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { useReveal } from '../useReveal'
 import { useColumnCount } from '../layout'
 import { imgAt, linkProps, profile, projects, type Project } from '../data'
@@ -9,6 +9,14 @@ import Polaroid from './Polaroid'
 // everyone else keeps the flat one.
 // It's a separate download, fetched after the page is up, so it never slows the first paint
 const Polaroid3D = lazy(() => import('./Polaroid3D'))
+// How long the home page's entrance may wait for the 3D Polaroid, and how long the first-visit countdown runs
+const HERO_WAIT = 3000, COUNT_LEN = 3 * 460
+// The countdown plays once per browser session, on the first visit only, and never with reduced motion
+// (sessionStorage can be blocked: then it just doesn't play)
+function countdownDue() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return false
+  try { if (sessionStorage.getItem('intro-seen')) return false; sessionStorage.setItem('intro-seen', '1'); return true } catch { return false }
+}
 const can3D = (() => {
   if (typeof window === 'undefined') return false
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return false
@@ -109,7 +117,43 @@ export default function Work() {
   const video = useRef<HTMLVideoElement>(null)
   const [previewing, setPreviewing] = useState(false)
   const polaroidCard = useRef<HTMLSpanElement>(null) // the flat Polaroid's card: where the 3D one sits
-  const [ready3D, setReady3D] = useState(false) // 3D print drawn: hide the flat card under it
+  // The first screen comes in as one sequence (.hero-in), and it waits for the 3D Polaroid so the print and its
+  // arrows come in with everything else instead of popping in later. On a first visit a 3 2 1 countdown covers the
+  // wait. It starts when the fonts are in, the 3D print has drawn, and the countdown is over, but never later than
+  // HERO_WAIT after the page opened. If the 3D print is slower than that, the flat photo comes in with the hero and
+  // the 3D print fades in on top of it once both are done, then the flat one steps aside
+  const [ready3D, setReady3D] = useState(false) // the 3D print has drawn its first frame
+  const [entered, setEntered] = useState(false) // the flat photo's entrance has finished
+  const [go, setGo] = useState(() => document.documentElement.classList.contains('hero-go')) // the entrance has started
+  const [withHero, setWithHero] = useState(false) // the 3D print was ready in time to come in with the hero
+  const [counting] = useState(() => !go && countdownDue()) // show the countdown
+  const [fontsOk, setFontsOk] = useState(false), [counted, setCounted] = useState(!counting), [late, setLate] = useState(false)
+  useEffect(() => {
+    if (go) return
+    const ok = () => setFontsOk(true)
+    Promise.all([document.fonts?.load('500 48px Geist'), document.fonts?.load('350 18px Geist')]).then(ok, ok)
+    const t1 = setTimeout(ok, 1500)
+    const t2 = counting ? setTimeout(() => setCounted(true), COUNT_LEN) : undefined
+    const t3 = setTimeout(() => setLate(true), HERO_WAIT)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, [go, counting])
+  // Only worth waiting for when the photo is on the first screen. On a phone it sits below the text, the 3D print
+  // doesn't draw until it's scrolled near, and the hero would sit waiting for nothing
+  const [wait3D, setWait3D] = useState(can3D)
+  useLayoutEffect(() => { const r = polaroidCard.current?.getBoundingClientRect(); if (r && r.top > innerHeight) setWait3D(false) }, [])
+  useEffect(() => {
+    if (go || !((fontsOk && counted && (ready3D || !wait3D)) || late)) return
+    setWithHero(can3D && ready3D)
+    document.documentElement.classList.add('hero-go')
+    setGo(true)
+  }, [go, fontsOk, counted, ready3D, wait3D, late])
+  const show3D = ready3D && (withHero || entered)
+  const [handedOver, setHandedOver] = useState(false)
+  useEffect(() => {
+    if (!show3D) return
+    if (withHero) { setHandedOver(true); return } // came in together: the flat one was never on screen
+    const t = setTimeout(() => setHandedOver(true), 320); return () => clearTimeout(t)
+  }, [show3D, withHero])
   const [site, setSite] = useState<Project | null>(null) // project whose site screenshot is showing
   const [missing, setMissing] = useState<Set<string>>(new Set()) // screenshots that haven't been made yet
   const [peek, setPeek] = useState<number | null>(null) // index into `peekable` of the open quick view
@@ -207,17 +251,22 @@ export default function Work() {
 
   return (
     <div ref={root}>
+      {counting && (
+        <div className={`intro-count${go ? ' is-done' : ''}`} aria-hidden>
+          {['3', '2', '1'].map((n, i) => <span key={n} style={{ '--n': i } as CSSProperties}>{n}</span>)}
+        </div>
+      )}
       {HERO === 'about' ? (
         <section className="intro intro-about">
           <div className="intro-text">
           <h1 className="intro-lead intro-hello">
-            <span className="rise">Hey, I'm Christopher.</span>
-            <span className="intro-hello-sub rise" style={{ animationDelay: '.08s' }}>A product designer who builds what he designs.</span>
+            <span className="hero-in" style={{ '--i': 1 } as CSSProperties}>Hey, I'm Christopher.</span>
+            <span className="intro-hello-sub hero-in" style={{ '--i': 2 } as CSSProperties}>A product designer who builds what he designs.</span>
           </h1>
           {heroParas.map((para, i) => (
-            <p key={i} className="intro-para rise" style={{ animationDelay: `${0.1 + i * 0.12}s` }}>{para}</p>
+            <p key={i} className="intro-para hero-in" style={{ '--i': 3 + i } as CSSProperties}>{para}</p>
           ))}
-          <p className="intro-para intro-status rise" style={{ animationDelay: `${0.1 + heroParas.length * 0.12}s` }}>
+          <p className="intro-para intro-status hero-in" style={{ '--i': 3 + heroParas.length } as CSSProperties}>
             <span className="intro-icons">
               <a href={profile.links.find(l => l.label === 'X')!.href} target="_blank" rel="noreferrer" aria-label="X (Twitter)">
                 <svg viewBox="0 0 24 24" aria-hidden><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
@@ -234,16 +283,17 @@ export default function Work() {
           </div>
           {/* Instant-film print: thick paper border with the wide bottom edge, and a film look on the photo (all CSS) */}
           <Polaroid
-            ghost={ready3D}
+            ghost={handedOver || withHero}
             nav={can3D}
             cardRef={polaroidCard}
-            style={{ animationDelay: '.25s' }}
+            style={{ '--i': 3 } as CSSProperties}
+            onEntered={() => setEntered(true)}
             src="/about/hero-night.jpg"
             alt="Christopher standing on a street at night, lit by a camera flash, with signs glowing behind"
             width={1400}
             height={1400}
           />
-          {can3D && <Suspense fallback={null}><Polaroid3D slot={polaroidCard} onReady={() => setReady3D(true)} /></Suspense>}
+          {can3D && <Suspense fallback={null}><Polaroid3D slot={polaroidCard} show={show3D} enter={withHero} onReady={() => setReady3D(true)} /></Suspense>}
         </section>
       ) : (
       <section className="intro">
@@ -268,7 +318,8 @@ export default function Work() {
 
       {/* The work in three groups (product, competition, then brand and visual), in two big columns. The groups sit
           flush, so it reads as one grid in that order */}
-      <div className={`work-groups${SIDE ? ' is-side' : ''}`}>
+      {/* (the work comes in last in the first screen's entrance, after the hero) */}
+      <div className={`work-groups hero-in${SIDE ? ' is-side' : ''}`} style={{ '--i': 6 } as CSSProperties}>
         {GROUPS.map(g => (
           <section key={g.id} id={g.id} className="grid is-uniform work-group" aria-label={g.aria} style={{ '--cols': SIDE ? Math.min(n, 2) : n } as CSSProperties}>
             {g.items.map(renderCard)}

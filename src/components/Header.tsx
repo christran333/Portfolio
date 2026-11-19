@@ -4,7 +4,7 @@ export type Tab = 'work' | 'exploration' | 'info'
 
 export default function Header({ tab, onTab }: { tab: Tab; onTab: (t: Tab) => void }) {
   return (
-    <header className="header">
+    <header className="header hero-in">
       <button className="brand" onClick={() => onTab('work')} aria-label="Home">
         <span className="brand-full">{profile.name}</span>
         <span className="brand-short" aria-hidden>{profile.name.split(' ')[0].replace('Christopher', 'Chris')}</span>

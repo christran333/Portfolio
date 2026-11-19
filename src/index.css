@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Rock+Salt&display=swap');
+/* Geist and Rock Salt are linked from index.html */
 
 /* Daniel: the handwriting on the backs of the prints and the little scribbled hints around the photo */
 @font-face { font-family: 'Daniel'; src: url('/daniel.ttf') format('truetype'); font-weight: 400; font-display: swap; }
@@ -44,10 +44,12 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; }
+/* The page color sits on html, not body: then body::before (the grain, behind everything) paints on top of it
+   across the whole page. With the color on body, the grain ended up underneath it everywhere but the nav bar */
+html { background: var(--bg); }
 html.lenis { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 body {
-  background: var(--bg);
   color: var(--fg);
   font: 16px/1.5 var(--sans);
   letter-spacing: -.011em;
@@ -125,7 +127,7 @@ ul { list-style: none; }
 .intro-about { min-height: 0; justify-content: flex-start; padding-top: clamp(40px, 8vh, 96px); padding-bottom: clamp(40px, 6vh, 72px); user-select: text; -webkit-user-select: text; }
 /* Text on the left, photo on the right; the photo drops below the text on narrow screens */
 .intro-about { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
-.polaroid.rise { display: block; }
+.polaroid.rise, .polaroid.hero-in { display: block; }
 
 /* ───────── Instant-film print (hero photo) ───────── */
 /* The button is just the slot in the layout (and the 3D stage); .polaroid-card is the paper */
@@ -227,6 +229,39 @@ ul { list-style: none; }
 /* Second line of the headline: same size, quieter colour, on its own line */
 .intro-hello-sub { display: block; }
 .intro-lead .intro-hello-sub.rise { display: block; }
+/* The first screen's entrance, Linear style: the nav, both headline lines, the paragraphs, the icons and the
+   photo all come in as one sequence. Same short rise, light blur and quick ease-out for every piece, each one
+   --hero-step after the one before (--i is its place in line, set in Work.tsx). It all holds until html gets
+   .hero-go: on the home page once the fonts and the Polaroid are ready (Work.tsx), elsewhere once the font is in
+   (main.tsx), so nothing swaps font or pops in mid-move */
+:root { --hero-ease: cubic-bezier(.16, 1, .3, 1); --hero-dur: .9s; --hero-step: .07s; }
+.hero-in {
+  animation: hero-in var(--hero-dur) var(--hero-ease) both; animation-delay: calc(var(--i, 0) * var(--hero-step));
+  animation-play-state: paused;
+}
+.hero-go .hero-in { animation-play-state: running; }
+@keyframes hero-in { from { opacity: 0; transform: translateY(14px); filter: blur(4px); } }
+.intro-hello .hero-in { display: block; }
+.intro-about .intro-para.hero-in { display: block; }
+.header.hero-in { animation-name: hero-fade; }
+/* First visit only (Work.tsx): a film-leader countdown, 3 2 1, in the hand from the Polaroid, while the 3D print
+   and its photos load. Each number pops in and fades; the whole layer fades out as the hero comes in */
+.intro-count {
+  position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; pointer-events: none;
+  background: var(--bg); transition: opacity .45s var(--hero-ease);
+}
+.intro-count.is-done { opacity: 0; }
+.intro-count span {
+  grid-area: 1 / 1; font: 700 clamp(64px, 9vw, 120px)/1 'Daniel', 'Marker Felt', cursive; color: var(--fg);
+  opacity: 0; animation: intro-count .46s var(--hero-ease) both; animation-delay: calc(var(--n) * .46s);
+}
+@keyframes intro-count {
+  0% { opacity: 0; transform: scale(.86) rotate(-4deg); }
+  25% { opacity: 1; transform: none; }
+  80% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: scale(1.06); }
+} /* the nav only fades: it's pinned to the top */
+@keyframes hero-fade { from { opacity: 0; } }
 .intro-para { display: block; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.6; letter-spacing: -.01em; max-width: 62ch; text-wrap: pretty; }
 /* Brand marks in front of a link in the hero copy: about cap height, sitting on the baseline */
 .inline-logo { display: inline-block; height: .78em; width: auto; vertical-align: -.06em; margin: 0 .32em 0 .18em; }
@@ -391,7 +426,7 @@ ul { list-style: none; }
   .intro-sub { margin-top: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rise { animation: none; }
+  .rise, .hero-in { animation: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .tile-media :is(img, video) { scale: 1; }
 }
@@ -882,6 +917,7 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .polaroid.is-ghost .polaroid-card { visibility: hidden; }
 .polaroid.is-ghost { cursor: pointer; touch-action: pan-y; } /* by touch: sideways drags spin the print, up and down still scrolls the page */
 .p3d-stage { z-index: 15; pointer-events: none; } /* at rest: an absolute box in the page (set inline) */
+.p3d-stage { opacity: 0; transition: opacity .3s var(--hero-ease); } .p3d-stage.is-shown { opacity: 1; } /* fades in over the flat photo once the hero's entrance is done */
 /* The canvas always fills the stage straight away. Left alone it keeps its old pixel size (pinned top-left) for a
    few frames after the stage switches between the box and the whole window, which cut the print off as it opened */
 .p3d-stage canvas { width: 100% !important; height: 100% !important; }
@@ -892,9 +928,13 @@ button.tile-cover:hover .tile-media :is(img, video) { scale: 1.03; transition-du
 .polaroid.has-nav { margin-bottom: 76px; }
 .p3d-nav {
   position: absolute; z-index: 16; display: flex; align-items: center; justify-content: center; gap: 10px;
-  font: 700 17px/1 'Daniel', 'Marker Felt', cursive; color: var(--muted); animation: zoom-in .6s var(--ease);
+  font: 700 17px/1 'Daniel', 'Marker Felt', cursive; color: var(--muted);
+  opacity: 0; translate: 0 8px; transition: opacity .5s var(--hero-ease), translate .6s var(--hero-ease);
   user-select: none; -webkit-user-select: none;
 }
+.p3d-nav.is-shown { opacity: 1; translate: 0 0; }
+/* When the 3D print is ready before the entrance starts, it and its arrows come in with everything else */
+.p3d-stage.hero-in, .p3d-nav.hero-in { opacity: 1; translate: none; transition: none; }
 .p3d-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .p3d-nav .p3d-nav-roll { width: 66px; }
 .p3d-nav .p3d-nav-roll svg { width: 44px; rotate: -4deg; transition: rotate .3s var(--ease), scale .3s var(--ease); }

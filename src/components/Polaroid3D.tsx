@@ -242,9 +242,9 @@ const easeIn = (p: number) => p * p * p
 const easeOut = (p: number) => 1 - Math.pow(1 - p, 4)
 const easeOutBack = (p: number) => 1 + 2.1 * Math.pow(p - 1, 3) + 1.1 * Math.pow(p - 1, 2) // overshoots a little, then settles
 
-function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClosed }: {
+function Prints({ slot, mode, setMode, inks, index, dir, stamp, shown, onReady, onClosed }: {
   slot: RefObject<HTMLElement | null>; mode: Mode; setMode: (m: Mode) => void; inks: Ink[]
-  index: number; dir: RefObject<number>; stamp: RefObject<string | null>; onReady: () => void; onClosed: () => void
+  index: number; dir: RefObject<number>; stamp: RefObject<string | null>; shown: RefObject<boolean>; onReady: () => void; onClosed: () => void
 }) {
   const photos = useTexture(PRINTS.map(p => p.src))
   useMemo(() => photos.forEach(cover), [photos])
@@ -268,7 +268,7 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
     addEventListener('pointermove', m, { passive: true })
     return () => removeEventListener('pointermove', m)
   }, [])
-  const s = useRef({ dragging: false, moved: 0, lastX: 0, lastY: 0, lastT: 0, hover: false, pres: 0, tx: 0, ty: 0, open: 0, openV: 0, fy: 0, spun: false, idle: 0, peek: 0 })
+  const s = useRef({ dragging: false, moved: 0, lastX: 0, lastY: 0, lastT: 0, hover: false, pres: 0, tx: 0, ty: 0, open: 0, openV: 0, fy: 0, spun: false, idle: 0, peek: 0, settle: 0 })
   // each print's own turning (a print always arrives face up, even if it was left showing its back)
   const cards = useRef(PRINTS.map(() => ({ yaw: 0, vel: 0, pitch: 0 })))
   // Which print is showing, and the change in progress (if any): `from` slides out while `to` slides in
@@ -406,13 +406,17 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
     // hovering settles it slightly lower rather than lifting it, so it never crowds the nav bar above
     const rest = Math.max(0, 1 - o) // how much of the resting float, sway and lean applies (none once it's open)
     st.fy += (Math.sin(t * 1.1) * 0.012 - (st.dragging ? 0.02 : 0.02 * st.pres) - st.fy) * ease(5)
-    root.current.position.y = st.fy * rest
-    root.current.rotation.set(st.tx * rest, st.ty * rest, (Math.sin(t * 0.7) * 0.022 - 0.035) * rest)
+    // It takes over from the flat photo dead straight, exactly on top of it; only then does the resting tilt, sway
+    // and float ease in, over a second and a half, so the handover never shows two prints at different angles
+    if (shown.current) st.settle = Math.min(1, st.settle + dt / 1.5)
+    const settle = st.settle * st.settle * (3 - 2 * st.settle), calm = rest * settle
+    root.current.position.y = st.fy * calm
+    root.current.rotation.set(st.tx * rest, st.ty * rest, (Math.sin(t * 0.7) * 0.022 - 0.035) * calm)
 
     // Until someone spins it, the print twists to one side and back every few seconds while it's left alone,
     // hinting that it turns. The clock only runs while nothing is touching it, and starts over after a hover;
     // the twist itself is eased, so a hover arriving mid-twist settles it instead of snapping it straight
-    const idle = !st.spun && !writing && !slide.current && !st.hover && !st.dragging
+    const idle = shown.current && !st.spun && !writing && !slide.current && !st.hover && !st.dragging // (not before it's on screen)
     st.idle = idle ? st.idle + dt : PEEK_FIRST - (PEEK_EVERY - PEEK_LEN) // after a hover: the long gap, not the quick first one
     const since = (st.idle - PEEK_FIRST) % PEEK_EVERY, pk = since / PEEK_LEN
     const want = st.idle > PEEK_FIRST && pk < 1 ? Math.sin(pk * Math.PI * 2) * Math.sin(pk * Math.PI) * 0.75 : 0
@@ -506,7 +510,12 @@ function Prints({ slot, mode, setMode, inks, index, dir, stamp, onReady, onClose
   )
 }
 
-export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElement | null>; onReady: () => void }) {
+export default function Polaroid3D({ slot, onReady, show = true, enter = false }: { slot: RefObject<HTMLElement | null>; onReady: () => void; show?: boolean; enter?: boolean }) {
+  // `show`: false until the hero's entrance is done; until then the print (and its arrows) stay invisible.
+  // `enter`: it was ready in time to come in with the rest of the hero, so it and its arrows take part in the
+  // entrance sequence (.hero-in) instead of fading in afterwards
+  const shown = useRef(show)
+  shown.current = show
   const [mode, setMode] = useState<Mode>('rest')
   const inks = useMemo(() => PRINTS.map(createInk), [])
   const [index, setIndex] = useState(0) // which photo is showing
@@ -590,8 +599,8 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
         style={writing && tool ? { cursor: `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='56' height='56'><text x='28' y='43' font-size='42' text-anchor='middle'>${tool}</text></svg>`)}") 28 28, crosshair` } : undefined}
       />
       <div
-        className={`p3d-stage${full ? ' is-open' : ''}`}
-        style={{ position: full ? 'fixed' : 'absolute', left: 0, top: full ? 0 : box.top, width: box.width, height: box.height }}
+        className={`p3d-stage${full ? ' is-open' : ''}${show ? ' is-shown' : ''}${enter ? ' hero-in' : ''}`}
+        style={{ position: full ? 'fixed' : 'absolute', left: 0, top: full ? 0 : box.top, width: box.width, height: box.height, '--i': 3 } as CSSProperties}
       >
         <Canvas
           camera={{ position: [0, 0, 6], fov: 24 }}
@@ -621,12 +630,12 @@ export default function Polaroid3D({ slot, onReady }: { slot: RefObject<HTMLElem
             <Lightformer intensity={0.8} position={[-3, 0, 1]} rotation-y={Math.PI / 2} scale={[3, 2, 1]} />
             <Lightformer intensity={0.6} position={[3, -1, 1]} rotation-y={-Math.PI / 2} scale={[3, 2, 1]} />
           </Environment>
-          <Prints slot={slot} mode={mode} setMode={open} inks={inks} index={index} dir={dir} stamp={stamp} onReady={onReady} onClosed={() => setFull(false)} />
+          <Prints slot={slot} mode={mode} setMode={open} inks={inks} index={index} dir={dir} stamp={stamp} shown={shown} onReady={onReady} onClosed={() => setFull(false)} />
         </Canvas>
       </div>
       {/* Under the print: hand-drawn arrows to the previous / next photo, with a roll of film between them that opens all of them (which photo is showing is only read out to screen readers) */}
       {PRINTS.length > 1 && (
-        <div className="p3d-nav" style={nav}>
+        <div className={`p3d-nav${show ? ' is-shown' : ''}${enter ? ' hero-in' : ''}`} style={enter ? { ...nav, '--i': 5 } as CSSProperties : nav} inert={!show}>
           <button type="button" aria-label="Previous photo" onClick={() => go(-1)}>
             <svg viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M31 11c-8-2-17-2-27-1" /><path d="M11 4c-3 2-5 4-7 6 3 2 5 3 8 6" />

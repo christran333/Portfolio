@@ -25,6 +25,15 @@ addEventListener('pointermove', e => {
 // Any press (mouse, finger, pen) always brings interaction back, as a safety net
 addEventListener('pointerdown', () => root.classList.remove('is-scrolling'), { passive: true, capture: true })
 
+// The first screen's entrance (.hero-in in index.css) starts when html gets .hero-go. The home page adds it itself,
+// once its fonts and the Polaroid are ready (Work.tsx). Any other page, opened directly, only waits for the font
+// (so it never swaps mid-move), and goes anyway after a moment if the font is slow
+if (location.pathname !== '/') {
+  const go = () => root.classList.add('hero-go')
+  Promise.all([document.fonts?.load('500 48px Geist'), document.fonts?.load('350 18px Geist')]).then(go, go)
+  setTimeout(go, 700)
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
