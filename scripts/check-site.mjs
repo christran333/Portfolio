@@ -68,7 +68,10 @@ try {
   // Some test browsers (cloud, no GPU) can't do 3D or don't report a mouse; then the site correctly shows the flat
   // Polaroid, so the check is skipped rather than reported as a site failure
   const env = await ev(`({ webgl2: !!document.createElement('canvas').getContext('webgl2'), mouse: matchMedia('(hover: hover) and (pointer: fine)').matches })`)
-  if (env?.webgl2 && env?.mouse) check('3D Polaroid loads on desktop', await ev(`!!document.querySelector('.p3d-stage canvas') && !!document.querySelector('.polaroid.is-ghost')`))
+  // the 3D print is its own download, plus its photos: right after a deploy nothing is cached yet, so wait for it
+  // (up to 15 seconds) instead of judging it at a fixed moment
+  const has3D = () => ev(`!!document.querySelector('.p3d-stage canvas') && !!document.querySelector('.polaroid.is-ghost')`)
+  if (env?.webgl2 && env?.mouse) { for (let i = 0; i < 60 && !await has3D(); i++) await wait(250); check('3D Polaroid loads on desktop', await has3D()) }
   else console.log('SKIP  3D Polaroid loads on desktop  (this test browser has no 3D or mouse)')
 
   // 2. no sideways scroll
@@ -103,6 +106,7 @@ try {
   // 4b. the 3D Polaroid on a phone too (it works by touch), with its arrows under it and nothing wider than the screen
   await open('/', 390, 844, true)
   await wait(2500)
+  for (let i = 0; i < 60 && !await has3D(); i++) await wait(250)
   if (env?.webgl2) check('3D Polaroid loads on a phone', await ev(`!!document.querySelector('.p3d-stage canvas') && !!document.querySelector('.polaroid.is-ghost') && (() => { const r = document.querySelector('.p3d-nav').getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth })()`))
   else console.log('SKIP  3D Polaroid loads on a phone  (this test browser has no 3D)')
 } catch (e) {
