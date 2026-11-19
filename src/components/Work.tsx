@@ -84,11 +84,14 @@ const CapitalOneLogo = () => (
     <path fill="#cc2427" d="M174 137L255 134C292 126 352 125 421 140C450 147 463 164 463 180C462 196 441 222 409 250C380 274 333 306 292 327L270 316C300 290 332 254 330 222C328 197 300 171 252 166L174 165A14 14 0 0 1 174 137Z" />
   </svg>
 )
+// Francois Labs' mark: the white glyph from their logo, cut out of its black square (public/francois-labs-mark.png)
+// and painted in the text's own color, so it sits on the dark page and in the light theme alike
+const FrancoisMark = () => <span className="inline-logo inline-logo-francois" aria-hidden />
 const siteOf = (id: string) => projects.find(p => p.id === id)!.site!
 
 // The intro paragraphs, with links (only shown here; the About page no longer repeats them)
 const heroParas = [
-  <>Right now I'm the founding designer at Mesa, building AI tools for a super niche and overlooked corner of tech: oil &amp; gas. I own design, brand, and product, and I ship it in code. I also still do client work at <L href="https://www.francoislabs.com/">Francois Labs</L>, a design studio for early-stage startups in <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, and <L href="/work/scout">B2B</L>.</>,
+  <>Right now I'm the founding design engineer at Mesa, building AI tools for a super niche and overlooked corner of tech: oil &amp; gas. I own design, brand, and product, and I ship it in code. I also still do client work at <L href="https://www.francoislabs.com/"><span className="nowrap"><FrancoisMark />Francois</span> Labs</L>, a design studio for early-stage startups, where I've worked across <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, <L href="/work/scout">B2B</L>, and more.</>,
   <>I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design &amp; Research. I'm also a <L href="https://www.instagram.com/figmacampusleaders/"><span className="nowrap"><FigmaMark />Figma</span> Campus Leader</L> and a <L href="https://bass.utdallas.edu/news/capital-one-expands-student-opportunities-with-new-scholarship/"><span className="nowrap"><CapitalOneLogo />2x Capital One</span> Design &amp; Research Scholar</L>.</>,
 ]
 
@@ -208,7 +211,6 @@ export default function Work() {
             <p key={i} className="intro-para rise" style={{ animationDelay: `${0.1 + i * 0.12}s` }}>{para}</p>
           ))}
           <p className="intro-para intro-status rise" style={{ animationDelay: `${0.1 + heroParas.length * 0.12}s` }}>
-            {profile.status}
             <span className="intro-icons">
               <a href={profile.links.find(l => l.label === 'X')!.href} target="_blank" rel="noreferrer" aria-label="X (Twitter)">
                 <svg viewBox="0 0 24 24" aria-hidden><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
@@ -249,7 +251,6 @@ export default function Work() {
             <span className="rise" style={{ animationDelay: '.35s' }}>storytelling, solving ambiguous problems, and <span className="nowrap">visual polish.</span></span>
           </span>
         </h1>
-        <p className="intro-sub rise" style={{ animationDelay: '.7s' }}>{profile.status}</p>
         <div ref={heroBox} className={`float-preview ${previewing ? 'is-open' : ''}`} aria-hidden>
           <div className="float-preview-frame">
             <video ref={video} src="/hero.mp4" muted loop playsInline preload="auto" />
