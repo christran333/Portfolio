@@ -87,11 +87,18 @@ const CapitalOneLogo = () => (
 // Francois Labs' mark: the white glyph from their logo, cut out of its black square (public/francois-labs-mark.png)
 // and painted in the text's own color, so it sits on the dark page and in the light theme alike
 const FrancoisMark = () => <span className="inline-logo inline-logo-francois" aria-hidden />
+// Mesa's mark, in the text's color. Mesa has no public site yet, so its name is white like the links but isn't one
+const MesaMark = () => (
+  <svg className="inline-logo" viewBox="0 0 225 207" aria-hidden>
+    <path fill="currentColor" d="M224.219 206.779H174.525V57.7912H116.141L59.2344 206.779H0L78.9788 0H224.219V206.779Z" />
+    <path fill="currentColor" d="M170.818 0H225V206.779H170.818V0Z" />
+  </svg>
+)
 const siteOf = (id: string) => projects.find(p => p.id === id)!.site!
 
 // The intro paragraphs, with links (only shown here; the About page no longer repeats them)
 const heroParas = [
-  <>Right now I'm the founding design engineer at Mesa, building AI tools for a super niche and overlooked corner of tech: oil &amp; gas. I own design, brand, and product, and I ship it in code. I also still do client work at <L href="https://www.francoislabs.com/"><span className="nowrap"><FrancoisMark />Francois</span> Labs</L>, a design studio for startups, where I've worked across <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, <L href="/work/scout">B2B</L>, and more.</>,
+  <>Right now I'm the founding design engineer at <span className="intro-name nowrap"><MesaMark />Mesa</span>, building AI tools for a super niche and overlooked corner of tech: oil &amp; gas. I own design, brand, and product, and I ship it in code. I also still do client work at <L href="https://www.francoislabs.com/"><span className="nowrap"><FrancoisMark />Francois</span> Labs</L>, a design studio for startups, where I've worked across <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, <L href="/work/scout">B2B</L>, and more.</>,
   <>I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design &amp; Research. I'm also a <L href="https://www.instagram.com/figmacampusleaders/"><span className="nowrap"><FigmaMark />Figma</span> Campus Leader</L> and a <L href="https://bass.utdallas.edu/news/capital-one-expands-student-opportunities-with-new-scholarship/"><span className="nowrap"><CapitalOneLogo />2x Capital One</span> Design &amp; Research Scholar</L>.</>,
 ]
 
@@ -205,7 +212,7 @@ export default function Work() {
           <div className="intro-text">
           <h1 className="intro-lead intro-hello">
             <span className="rise">Hey, I'm Christopher.</span>
-            <span className="intro-hello-sub rise" style={{ animationDelay: '.08s' }}>A product designer based in Dallas.</span>
+            <span className="intro-hello-sub rise" style={{ animationDelay: '.08s' }}>A product designer who builds what he designs.</span>
           </h1>
           {heroParas.map((para, i) => (
             <p key={i} className="intro-para rise" style={{ animationDelay: `${0.1 + i * 0.12}s` }}>{para}</p>
