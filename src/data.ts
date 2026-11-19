@@ -14,7 +14,7 @@ export const profile = {
   ],
   // Resume-style timeline on the About page, newest first. `work` lists project ids from `projects` below.
   experience: [
-    { when: 'Nov 2026 – Now', role: 'Founding Designer', org: 'Mesa' },
+    { when: 'Nov 2026 – Now', role: 'Founding Design Engineer', org: 'Mesa' },
     { when: 'Fall 2024 – Now', role: 'Product Design Intern', org: 'Francois Labs', href: 'https://www.francoislabs.com/', work: ['scout', 'act-one', 'janus', 'priority', 'oro', 'cosign', 'tennr', 'arist'] },
     { when: 'Fall 2025', role: 'Product Design Intern', org: 'Backtrack', href: 'https://www.usebacktrack.com' },
   ],
