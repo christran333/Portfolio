@@ -91,7 +91,7 @@ const siteOf = (id: string) => projects.find(p => p.id === id)!.site!
 
 // The intro paragraphs, with links (only shown here; the About page no longer repeats them)
 const heroParas = [
-  <>Right now I'm the founding design engineer at Mesa, building AI tools for a super niche and overlooked corner of tech: oil &amp; gas. I own design, brand, and product, and I ship it in code. I also still do client work at <L href="https://www.francoislabs.com/"><span className="nowrap"><FrancoisMark />Francois</span> Labs</L>, a design studio for early-stage startups, where I've worked across <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, <L href="/work/scout">B2B</L>, and more.</>,
+  <>Right now I'm the founding design engineer at Mesa, building AI tools for a super niche and overlooked corner of tech: oil &amp; gas. I own design, brand, and product, and I ship it in code. I also still do client work at <L href="https://www.francoislabs.com/"><span className="nowrap"><FrancoisMark />Francois</span> Labs</L>, a design studio for startups, where I've worked across <L href={siteOf('cosign')}>fintech</L>, <L href={siteOf('arist')}>AI</L>, <L href={siteOf('tennr')}>healthcare</L>, <L href="/work/scout">B2B</L>, and more.</>,
   <>I'm studying Media Arts and Design at UT Dallas with a certificate in Applied Experience Design &amp; Research. I'm also a <L href="https://www.instagram.com/figmacampusleaders/"><span className="nowrap"><FigmaMark />Figma</span> Campus Leader</L> and a <L href="https://bass.utdallas.edu/news/capital-one-expands-student-opportunities-with-new-scholarship/"><span className="nowrap"><CapitalOneLogo />2x Capital One</span> Design &amp; Research Scholar</L>.</>,
 ]
 
